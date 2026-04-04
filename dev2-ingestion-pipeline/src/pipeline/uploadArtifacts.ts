@@ -1,12 +1,14 @@
 import type { StorageAdapter } from "../adapters/storage/StorageAdapter.js";
 import type { CleanArticle } from "../schemas/cleanArticle.js";
 import type { StatementsArtifact } from "../schemas/statements.js";
+import type { RefinedStatementsArtifact } from "../schemas/refinedStatements.js";
 import type { RetrievalChunksArtifact } from "../schemas/retrievalChunks.js";
 import type { EmbeddingsArtifact } from "../schemas/embeddings.js";
 
 export interface UploadedAddresses {
   cleanArticle: string;
   statements: string;
+  refinedStatements?: string;
   retrievalChunks: string;
   embeddings: string;
 }
@@ -20,7 +22,8 @@ export async function uploadArtifacts(
   cleanArticle: CleanArticle,
   statements: StatementsArtifact,
   retrievalChunks: RetrievalChunksArtifact,
-  embeddings: EmbeddingsArtifact
+  embeddings: EmbeddingsArtifact,
+  refinedStatements?: RefinedStatementsArtifact
 ): Promise<UploadedAddresses> {
   console.log("[uploadArtifacts] Uploading clean_article.json …");
   const cleanArticleAddress = await adapter.uploadArtifact(
@@ -33,6 +36,15 @@ export async function uploadArtifacts(
     "statements.json",
     JSON.stringify(statements, null, 2)
   );
+
+  let refinedStatementsAddress: string | undefined;
+  if (refinedStatements) {
+    console.log("[uploadArtifacts] Uploading verified_statements.json …");
+    refinedStatementsAddress = await adapter.uploadArtifact(
+      "verified_statements.json",
+      JSON.stringify(refinedStatements, null, 2)
+    );
+  }
 
   console.log("[uploadArtifacts] Uploading retrieval_chunks.json …");
   const retrievalChunksAddress = await adapter.uploadArtifact(
@@ -49,6 +61,7 @@ export async function uploadArtifacts(
   return {
     cleanArticle: cleanArticleAddress,
     statements: statementsAddress,
+    refinedStatements: refinedStatementsAddress,
     retrievalChunks: retrievalChunksAddress,
     embeddings: embeddingsAddress,
   };

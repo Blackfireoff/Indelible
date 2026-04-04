@@ -37,6 +37,8 @@ import { extractMainArticle } from "./pipeline/extractMainArticle.js";
 import { buildCleanArticle } from "./pipeline/buildCleanArticle.js";
 import { extractStatements } from "./pipeline/extractStatements.js";
 import { validateStatements, buildParagraphMap } from "./pipeline/validateStatements.js";
+import { runLlmRefinement } from "./pipeline/llmRefinement.js";
+import { verifyRefinedStatements, deterministicStatementsToRefined } from "./pipeline/verifyRefinedStatements.js";
 import { buildRetrievalChunks } from "./pipeline/buildRetrievalChunks.js";
 import { generateEmbeddings } from "./pipeline/generateEmbeddings.js";
 import { uploadArtifacts } from "./pipeline/uploadArtifacts.js";
@@ -45,6 +47,7 @@ import { MockStorageAdapter } from "./adapters/storage/MockStorageAdapter.js";
 import { ZeroGStorageAdapter } from "./adapters/storage/ZeroGStorageAdapter.js";
 import type { StorageAdapter } from "./adapters/storage/StorageAdapter.js";
 import type { StatementsArtifact } from "./schemas/statements.js";
+import type { RefinedStatementsArtifact } from "./schemas/refinedStatements.js";
 
 async function main() {
   console.log("=== Indelible Dev 2 – Ingestion Pipeline ===\n");
@@ -94,20 +97,12 @@ async function main() {
     `${cleanArticle.fullText.length} chars\n`
   );
 
-  // ── 5. Extract & validate statements ────────────────────────────────────
-  console.log("[statements] Extracting statements (rules + optional LLM) …");
-  // LLM fallback is opt-in: requires both USE_LLM_FALLBACK=true AND a real API key.
-  // A placeholder value like "your_openai_api_key_here" is treated as absent.
-  const hasRealOpenAiKey =
-    !!process.env.OPENAI_API_KEY &&
-    !process.env.OPENAI_API_KEY.startsWith("your_") &&
-    process.env.OPENAI_API_KEY.length > 20;
-  const useLlmFallback =
-    process.env.USE_LLM_FALLBACK === "true" && hasRealOpenAiKey;
+  // ── 5. Extract & validate statements (deterministic phase) ──────────────
+  console.log("[statements] Extracting statements (deterministic rules) …");
   const rawStatements = await extractStatements(
     cleanArticle.paragraphs,
     rawCapture.attestationId,
-    { useLlmFallback }
+    { useLlmFallback: false }
   );
 
   const paragraphMap = buildParagraphMap(cleanArticle.paragraphs);
@@ -129,6 +124,67 @@ async function main() {
     },
     statements: validatedStatements,
   };
+
+  // ── 5b. LLM refinement step (optional) ──────────────────────────────────
+  const enableLlmRefinement = process.env.ENABLE_LLM_REFINEMENT === "true";
+  let refinedStatementsArtifact: RefinedStatementsArtifact | undefined;
+
+  if (enableLlmRefinement) {
+    console.log("[llm-refinement] Running LLM refinement step …");
+    const { statements: llmRaw, modelUsed } = await runLlmRefinement(cleanArticle);
+
+    // Convert deterministic statements to the refined format as a baseline
+    const deterministicRefined = deterministicStatementsToRefined(validatedStatements);
+
+    let llmVerified = verifyRefinedStatements(llmRaw, cleanArticle, { keepUnverified: false });
+
+    // Merge: deterministic always included, LLM adds new ones not already covered
+    const deterministicTexts = new Set(deterministicRefined.map((s) => s.statement_text.slice(0, 80)));
+    const newFromLlm = llmVerified.filter(
+      (s) => !deterministicTexts.has(s.statement_text.slice(0, 80))
+    );
+
+    const allRefined = [...deterministicRefined, ...newFromLlm];
+    const verifiedCount = allRefined.filter((s) => s.verified).length;
+
+    refinedStatementsArtifact = {
+      schemaVersion: "1.0",
+      attestationId: rawCapture.attestationId,
+      requestId: rawCapture.requestId,
+      sourceUrl: rawCapture.sourceUrl,
+      llm_used: llmRaw.length > 0,
+      llm_model: modelUsed,
+      statements: allRefined,
+      extraction_summary: {
+        total: allRefined.length,
+        verified: verifiedCount,
+        unverified: allRefined.length - verifiedCount,
+      },
+    };
+
+    console.log(
+      `[llm-refinement] ${allRefined.length} total statements ` +
+      `(${deterministicRefined.length} deterministic + ${newFromLlm.length} new from LLM), ` +
+      `${verifiedCount} verified\n`
+    );
+  } else {
+    // Even without LLM, produce a refined statements artifact from deterministic results
+    const deterministicRefined = deterministicStatementsToRefined(validatedStatements);
+    refinedStatementsArtifact = {
+      schemaVersion: "1.0",
+      attestationId: rawCapture.attestationId,
+      requestId: rawCapture.requestId,
+      sourceUrl: rawCapture.sourceUrl,
+      llm_used: false,
+      llm_model: null,
+      statements: deterministicRefined,
+      extraction_summary: {
+        total: deterministicRefined.length,
+        verified: deterministicRefined.length,
+        unverified: 0,
+      },
+    };
+  }
 
   // ── 6. Build retrieval chunks ────────────────────────────────────────────
   console.log("[chunks] Building retrieval chunks …");
@@ -157,7 +213,8 @@ async function main() {
     cleanArticle,
     statementsArtifact,
     retrievalChunks,
-    embeddings
+    embeddings,
+    refinedStatementsArtifact
   );
 
   // Re-upload raw capture if we loaded from file (so manifest has its address)
@@ -183,12 +240,19 @@ async function main() {
   console.log("\n=== Pipeline Complete ===");
   console.log(`Attestation:         ${rawCapture.attestationId}`);
   console.log(`Paragraphs:          ${cleanArticle.paragraphs.length}`);
-  console.log(`Statements:          ${validatedStatements.length}`);
+  console.log(`Statements:          ${validatedStatements.length} (deterministic)`);
+  if (refinedStatementsArtifact) {
+    const s = refinedStatementsArtifact.extraction_summary;
+    console.log(`Refined statements:  ${s.total} total, ${s.verified} verified, ${s.unverified} unverified${refinedStatementsArtifact.llm_used ? ` (LLM: ${refinedStatementsArtifact.llm_model})` : " (deterministic only)"}`);
+  }
   console.log(`Chunks:              ${retrievalChunks.chunks.length}`);
   console.log(`Vectors:             ${embeddings.vectors.length}`);
   console.log(`Manifest address:    ${manifestAddress}`);
   console.log(`clean_article:       ${addresses.cleanArticle}`);
   console.log(`statements:          ${addresses.statements}`);
+  if (addresses.refinedStatements) {
+    console.log(`verified_statements: ${addresses.refinedStatements}`);
+  }
   console.log(`retrieval_chunks:    ${addresses.retrievalChunks}`);
   console.log(`embeddings:          ${addresses.embeddings}`);
 }
