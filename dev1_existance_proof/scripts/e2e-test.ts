@@ -4,7 +4,7 @@ import { keccak256, toBytes, decodeEventLog, parseAbi, parseEventLogs } from "vi
 
 // Import our CRE handlers and storage real adapter
 import { handleSourceRequested, decodeRequestEvent } from "../workflow/handlers/onSourceRequested";
-import { Real0GStorageAdapter } from "../workflow/adapters/storage/Real0GStorageAdapter";
+import { Sdk0GStorageAdapter } from "../workflow/adapters/storage/Sdk0GStorageAdapter";
 import { SourceRequestEvent } from "../workflow/types";
 
 dotenv.config();
@@ -88,7 +88,7 @@ async function main() {
     requestedAt: Number(requestedAt)
   };
 
-  const storageAdapter = new Real0GStorageAdapter({
+  const storageAdapter = new Sdk0GStorageAdapter({
     privateKey: process.env.PRIVATE_KEY!,
     rpcUrl: process.env.ZG_RPC_URL,
     indexerUrl: process.env.ZG_INDEXER_URL

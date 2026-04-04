@@ -27,7 +27,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import { Mock0GStorageAdapter } from "./adapters/storage/Mock0GStorageAdapter";
-import { Real0GStorageAdapter } from "./adapters/storage/Real0GStorageAdapter";
+import { Sdk0GStorageAdapter } from "./adapters/storage/Sdk0GStorageAdapter";
 import type { StorageAdapter } from "./adapters/storage/StorageAdapter";
 
 // ──────────────────────────────────────────────
@@ -59,7 +59,7 @@ const SOURCE_ATTESTATION_REQUESTED_SIG = keccak256(
 // ──────────────────────────────────────────────
 
 const storageAdapter: StorageAdapter = process.env.USE_REAL_0G_STORAGE === "true" 
-  ? new Real0GStorageAdapter({
+  ? new Sdk0GStorageAdapter({
       privateKey: process.env.PRIVATE_KEY!,
       rpcUrl: process.env.ZG_RPC_URL,
       indexerUrl: process.env.ZG_INDEXER_URL

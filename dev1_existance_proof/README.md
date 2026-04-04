@@ -116,7 +116,7 @@ interface StorageAdapter {
 
 ### Real (production)
 
-`Real0GStorageAdapter` — uses `@0glabs/0g-ts-sdk` to upload to 0G Galileo testnet. Returns `0g://<merkleRootHash>` addresses. Requires:
+`Sdk0GStorageAdapter` — uses `@0gfoundation/0g-ts-sdk` to upload to 0G Galileo testnet. Returns `0g://<merkleRootHash>` addresses. Requires:
 
 - `ZG_PRIVATE_KEY` — signer private key
 - `ZG_RPC_URL` — default: `https://evmrpc-testnet.0g.ai`
@@ -181,7 +181,7 @@ The `SourceAttestationRegistry` has an `onlyOracle` modifier:
 |---|---|
 | `@chainlink/cre-sdk` | CRE workflow SDK (triggers, runtime, runner) |
 | `viem` | ABI encoding/decoding, keccak256, event parsing |
-| `@0glabs/0g-ts-sdk` | 0G storage uploads (optional, for real adapter) |
+| `@0gfoundation/0g-ts-sdk` | 0G storage uploads (optional, for real adapter) |
 | `ethers` | 0G signer setup (optional, for real adapter) |
 | `vitest` | Test runner |
 | `typescript` | Type checking |
