@@ -6,6 +6,8 @@ import { useAppKitProvider, useAppKit } from '@reown/appkit/react'
 import { parseUnits, formatEther, numberToHex } from 'viem'
 import { sepolia } from 'wagmi/chains'
 import { Button } from '@heroui/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
 
 // TODO: Ensure this is the TokenSale contract address, not just the ERC20 Token address.
 const TOKEN_SALE_ADDRESS = '0x4625ab479D4645A4d96D18A5DAe05b0537c247D3' as `0x${string}`
@@ -176,7 +178,7 @@ export default function GetTokenClient() {
       </div>
 
       <div className="max-w-lg w-full mx-auto bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl p-6 shadow-sm">
-        <h3 className="text-[16px] font-semibold text-[var(--landing-text-primary)] mb-4">Checkout</h3>
+        <h3 className="text-[16px] font-semibold text-[var(--landing-text-primary)] text-center mb-4">Checkout</h3>
 
         {!isConnected ? (
           <div className="text-center p-3 text-[14px] font-medium text-orange-600 bg-orange-50 rounded-xl border border-orange-200">
@@ -214,27 +216,62 @@ export default function GetTokenClient() {
       </div>
 
       {/* INDL Description & Add to Wallet */}
-      <div className="max-w-lg w-full mx-auto bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-3">
-          <h3 className="text-[15px] font-semibold text-[var(--landing-text-primary)]">About INDL Token</h3>
-          <span className="px-2 py-0.5 rounded-full bg-[var(--landing-bg-light)] border border-[var(--landing-border)] text-[var(--landing-text-secondary)] text-[11px] font-bold uppercase tracking-wide">
-            Optional
-          </span>
+      <div className="max-w-lg w-full mx-auto border border-[var(--landing-primary-light)] rounded-2xl p-8" style={{
+        background: 'linear-gradient(167.8deg, var(--landing-primary-subtle) 0%, rgba(3, 105, 209, 0.05) 100%)'
+      }}>
+        <div className="flex items-center gap-4 mb-5">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary-darker)] to-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
+            <FontAwesomeIcon icon={faCoins} className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-[18px] font-semibold leading-[28px] text-[var(--landing-text-primary)]" style={{ textDecorationLine: 'underline', textDecorationColor: 'var(--accent-color-dark)', textDecorationThickness: '3px', textUnderlineOffset: '6px' }}>About INDL Token</h3>
+            <span className="px-2 py-0.5 rounded-full bg-[var(--accent-color-light)] border border-[var(--accent-color-dark)] text-[var(--accent-color-dark)] text-[11px] font-bold uppercase tracking-wide">
+              Optional
+            </span>
+          </div>
         </div>
-        <p className="text-[13px] text-[var(--landing-text-secondary)] mb-4 leading-relaxed">
-          INDL is the utility token powering your activity. <strong className="text-[var(--landing-text-primary)] font-semibold">You do not need to add it to your wallet manually</strong>; our app tracks your balance automatically! However, if you want to view it directly inside your wallet software, you can optionally pin it using the button below.
-        </p>
+
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex gap-4">
+            <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
+              <span className="text-[16px] font-semibold text-white">1</span>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[16px] font-semibold leading-[24px] text-[var(--landing-text-primary)] mb-1">
+                Automatic Tracking
+              </h4>
+              <p className="text-[14px] leading-[20px] text-[var(--landing-text-secondary)]">
+                INDL is the utility token powering your activity. <strong className="text-[var(--landing-text-primary)] font-semibold">You do not need to add it to your wallet manually</strong> — our app tracks your balance automatically.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
+              <span className="text-[16px] font-semibold text-white">2</span>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[16px] font-semibold leading-[24px] text-[var(--landing-text-primary)] mb-1">
+                Optional Wallet Pin
+              </h4>
+              <p className="text-[14px] leading-[20px] text-[var(--landing-text-secondary)]">
+                If you want to view your INDL balance directly inside your wallet software, you can optionally pin it using the button below.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <button
           onClick={isConnected ? handleAddToken : undefined}
           disabled={!isConnected}
-          className={`w-full py-2.5 rounded-xl border font-medium text-[14px] transition-colors
+          className={`w-full h-12 rounded-xl font-semibold text-[14px] transition-all
             ${isConnected
-              ? 'bg-[var(--landing-bg-white)] border-[var(--landing-border)] text-[var(--landing-text-primary)] hover:bg-[var(--landing-bg-light)] cursor-pointer shadow-sm'
-              : 'bg-[var(--landing-bg-light)] border-[var(--landing-border)] text-[var(--landing-text-muted)] cursor-not-allowed'
+              ? 'bg-[var(--landing-primary-dark)] hover:bg-[var(--landing-primary)] text-white cursor-pointer shadow-sm'
+              : 'bg-[var(--landing-bg-light)] border border-[var(--landing-border)] text-[var(--landing-text-muted)] cursor-not-allowed'
             }
           `}
         >
-          🦊 Add INDL to Wallet
+          Add INDL to Wallet
         </button>
       </div>
     </div>

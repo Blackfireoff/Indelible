@@ -15,7 +15,7 @@ import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 interface Citation {
   chunkId: string
@@ -231,7 +231,9 @@ export default function SearchResults() {
               isDisabled={isLoading || !searchQuery.trim()}
               className="h-10 bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium rounded-xl px-6 cursor-pointer"
             >
-              {isLoading ? 'Searching...' : 'Search'}
+              {isLoading ? (
+                <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 animate-spin" />
+              ) : 'Search'}
             </Button>
           </div>
         </div>
@@ -251,8 +253,8 @@ export default function SearchResults() {
               }}
             >
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
-                  <FontAwesomeIcon icon={faStar} className="w-4 h-4 text-[var(--landing-bg-white)]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--accent-color-dark)] flex items-center justify-center shrink-0">
+                  <FontAwesomeIcon icon={faMagicWandSparkles} className="w-4 h-4 text-[var(--landing-bg-white)]" />
                 </div>
                 <div>
                   <h3 className="text-[18px] font-semibold text-[var(--landing-text-primary)]">AI Summary</h3>
