@@ -9,8 +9,15 @@
  * Returns a list of Contradiction objects compatible with the AgentOutput schema.
  */
 
-import type { Chunk } from "../storage/types";
+import type { Chunk, RetrievedChunk } from "../storage/types";
 import type { Contradiction } from "../../schemas/agent-output";
+
+/**
+ * Alias for detectContradictions that accepts RetrievedChunk (adds score field).
+ */
+export function detectContradictionsFromChunks(chunks: RetrievedChunk[]): Contradiction[] {
+  return detectContradictions(chunks);
+}
 
 const NEGATION_PATTERNS = [
   /\bnot\b/i,

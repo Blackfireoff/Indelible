@@ -75,8 +75,7 @@ export async function searchChunks(
       .filter((r): r is RetrievedChunk => r !== null);
   } else {
     // Dev fallback: compute vectors on the fly via embedder
-    const { embedChunks } = embedder as IEmbedder & { embedChunks: (chunks: Chunk[]) => Promise<Array<{ chunkId: string; vector: number[] }>> };
-    const chunkEmbeddings = await embedChunks(chunks);
+    const chunkEmbeddings = await embedder.embedChunks(chunks);
     scored = chunkEmbeddings.map((emb): RetrievedChunk => {
       const score = cosineSimilarity(queryVector, emb.vector);
       const chunk = chunks.find((c) => c.chunkId === emb.chunkId)!;
