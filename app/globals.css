@@ -58,4 +58,6 @@ body {
 
   /* Component Specific */
   --landing-quote-mark: rgba(4, 133, 247, 0.2);
+
+  --accent-color: #ffcb21;
 }
