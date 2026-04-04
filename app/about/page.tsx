@@ -9,7 +9,7 @@ import { faWandMagicSparkles, faShieldHalved, faGlobe, faCheckCircle } from '@fo
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">
-      <NavBar showWallet showFreeTier />
+      <NavBar showWallet />
 
       <main className="flex-1 max-w-5xl mx-auto px-6 py-12 w-full">
         {/* Heading */}

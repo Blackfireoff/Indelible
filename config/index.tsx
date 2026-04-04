@@ -20,8 +20,8 @@ if (!globalAny.__wagmi_adapter__) {
 export const wagmiAdapter: WagmiAdapter = globalAny.__wagmi_adapter__;
 
 export const metadata = {
-  name: 'My Next.js dApp',
-  description: 'Next.js dApp with AppKit',
+  name: 'Indelible',
+  description: 'Indelible. - Making political discourse transparent and accessible',
   url: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
-  icons: ['https://mydapp.com/icon.png']
+  icons: ['/logo/small.svg']
 }
