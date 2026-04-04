@@ -42,6 +42,7 @@ import { verifyRefinedStatements, deterministicStatementsToRefined } from "./pip
 import { buildRetrievalChunks } from "./pipeline/buildRetrievalChunks.js";
 import { generateEmbeddings } from "./pipeline/generateEmbeddings.js";
 import { uploadArtifacts } from "./pipeline/uploadArtifacts.js";
+import { saveArtifactLocallyIfEnabled } from "./utils/saveLocalArtifact.js";
 import { buildDocumentManifest } from "./pipeline/buildDocumentManifest.js";
 import { MockStorageAdapter } from "./adapters/storage/MockStorageAdapter.js";
 import { ZeroGStorageAdapter } from "./adapters/storage/ZeroGStorageAdapter.js";
@@ -218,9 +219,11 @@ async function main() {
   );
 
   // Re-upload raw capture if we loaded from file (so manifest has its address)
+  const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
+  saveArtifactLocallyIfEnabled("raw_capture.json", rawCaptureJson);
   const rawCaptureAddress =
     dataAddress ??
-    (await adapter.uploadArtifact("raw_capture.json", JSON.stringify(rawCapture, null, 2)));
+    (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
 
   // ── 9. Build & upload manifest ───────────────────────────────────────────
   const manifest = buildDocumentManifest(
@@ -231,10 +234,9 @@ async function main() {
     "completed"
   );
 
-  const manifestAddress = await adapter.uploadArtifact(
-    "document_manifest.json",
-    JSON.stringify(manifest, null, 2)
-  );
+  const manifestJson = JSON.stringify(manifest, null, 2);
+  saveArtifactLocallyIfEnabled("document_manifest.json", manifestJson);
+  const manifestAddress = await adapter.uploadArtifact("document_manifest.json", manifestJson);
 
   // ── 10. Download verification (0G only) ─────────────────────────────────
   if (adapterType === "zerog") {

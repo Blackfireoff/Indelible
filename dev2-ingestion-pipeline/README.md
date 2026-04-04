@@ -279,6 +279,8 @@ The field `verification_method` records how each statement was matched:
 |---|---|---|
 | `STORAGE_ADAPTER` | `mock` | `mock` or `zerog` |
 | `OUTPUT_DIR` | `./output` | Mock storage output directory |
+| `SAVE_ARTIFACTS_BEFORE_UPLOAD` | — | Set to `true` to write all pipeline JSON files under `OUTPUT_DIR`/`LOCAL_ARTIFACTS_SUBDIR` before upload |
+| `LOCAL_ARTIFACTS_SUBDIR` | `local-artifacts` | Subfolder for local copies (when `SAVE_ARTIFACTS_BEFORE_UPLOAD=true`) |
 | `RAW_CAPTURE_PATH` | `./src/fixtures/sample-raw-capture.json` | Local raw capture file |
 | `RAW_CAPTURE_DATA_ADDRESS` | — | 0G data address (overrides PATH) |
 | `ZEROG_RPC_URL` | `https://evmrpc-testnet.0g.ai` | 0G EVM RPC endpoint |
