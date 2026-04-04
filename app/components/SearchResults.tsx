@@ -1,6 +1,8 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useAppKitAccount } from '@reown/appkit/react'
 import { Button } from '@heroui/react'
 import NavBar from './NavBar'
 import Footer from './Footer'
@@ -85,6 +87,19 @@ function SearchIcon({ className }) {
 export default function SearchResults() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
+  const { isConnected, status } = useAppKitAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    // Only redirect if we are certain they're not connected and not currently connecting
+    if (status !== 'reconnecting' && status !== 'connecting' && !isConnected) {
+      router.push('/')
+    }
+  }, [isConnected, status, router])
+
+  if (!isConnected) {
+    return null // avoid flash of unauthorized content
+  }
 
   return (
     <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">

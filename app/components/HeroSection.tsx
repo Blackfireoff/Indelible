@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@heroui/react'
 import { useRouter } from 'next/navigation'
+import { useAppKitAccount, useAppKit } from '@reown/appkit/react'
 
 const suggestions = [
   "Biden on climate change",
@@ -24,15 +25,28 @@ export default function HeroSection() {
   const [query, setQuery] = useState('')
   const router = useRouter()
 
+  const { isConnected } = useAppKitAccount()
+  const { open } = useAppKit()
+
   const handleSearch = () => {
+    if (!isConnected) {
+      open()
+      return
+    }
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query)}`)
     }
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`)
+    if (e.key === 'Enter') {
+      if (!isConnected) {
+        open()
+        return
+      }
+      if (query.trim()) {
+        router.push(`/search?q=${encodeURIComponent(query)}`)
+      }
     }
   }
 
