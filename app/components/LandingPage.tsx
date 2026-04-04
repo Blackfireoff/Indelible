@@ -1,8 +1,8 @@
 'use client'
 
 import { Button } from '@heroui/react'
-import { AppKitButton } from '@reown/appkit/react'
-import { useWalletSync } from '@/hooks/useWalletSync'
+import NavBar from './NavBar'
+import HeroSection from './HeroSection'
 
 // Quote data from Figma
 const quotes = [
@@ -37,15 +37,6 @@ const quotes = [
 ]
 
 // Icon components
-function SearchIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 function StarIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
@@ -73,32 +64,6 @@ function CalendarIcon({ className }) {
   )
 }
 
-function ChevronDownIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function GlobeIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  )
-}
-
-function UserIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="5.333" r="3.333" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M2.667 14c0-2.947 2.347-5.333 5.333-5.333s5.333 2.386 5.333 5.333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 function ExternalLinkIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
@@ -108,58 +73,10 @@ function ExternalLinkIcon({ className }) {
 }
 
 export default function LandingPage() {
-  // Sync wallet state to localStorage for extension access
-  useWalletSync()
-
   return (
     <div className="min-h-screen bg-[var(--landing-bg)]">
-      {/* Header */}
-      <header className="bg-[var(--landing-bg-white)] border-b border-[var(--landing-border)] sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
-          {/* Logo & Nav */}
-          <div className="flex items-center gap-12">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
-                <GlobeIcon className="w-5 h-5 text-[var(--landing-bg-white)]" />
-              </div>
-              <span className="text-[20px] font-semibold text-[var(--landing-text-primary)]">
-                Political Speech Analyzer
-              </span>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-[14px] font-medium text-[var(--landing-primary)]">
-                Search
-              </a>
-              <a href="#" className="text-[14px] font-medium text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)] transition-colors">
-                About
-              </a>
-              <a href="#" className="text-[14px] font-medium text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)] transition-colors">
-                Pricing
-              </a>
-            </nav>
-          </div>
-
-          {/* User Area */}
-          <div className="flex items-center gap-3">
-            {/* Free Tier Badge */}
-            <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">
-              <span className="w-2 h-2 bg-[var(--landing-success)] rounded-full" />
-              <span className="text-[14px] font-medium text-[var(--landing-text-secondary)]">Free Tier:</span>
-              <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">2/3 left</span>
-              <ChevronDownIcon className="w-4 h-4 text-[var(--landing-text-secondary)]" />
-            </div>
-
-            {/* Wallet Connect */}
-            <AppKitButton
-              balance="show"
-              className="h-10 px-4 rounded-full border border-[#e4e4e7] text-[14px] font-medium bg-white"
-            />
-          </div>
-        </div>
-      </header>
+      {/* NavBar with wallet and free tier */}
+      <NavBar showWallet showFreeTier />
 
       {/* Main Content */}
       <main>
