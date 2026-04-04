@@ -43,7 +43,7 @@ body {
   --landing-primary-dark: #3b3b3b;
   --landing-primary-darker: #292929;
   --landing-primary-light: rgba(4, 133, 247, 0.2);
-  --landing-primary-subtle: rgba(4, 133, 247, 0.05);
+  --landing-primary-subtle: #ffd321;
 
   /* Border Colors */
   --landing-border: #e4e4e7;
