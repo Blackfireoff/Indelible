@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@heroui/react'
 import NavBar from './NavBar'
+import Footer from './Footer'
 
 // Quote data from Figma
 const quotes = [
@@ -86,12 +87,12 @@ export default function SearchResults() {
   const query = searchParams.get('q') || ''
 
   return (
-    <div className="min-h-screen bg-[var(--landing-bg)]">
+    <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">
       {/* NavBar */}
       <NavBar showWallet showFreeTier />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
         {/* Search Input */}
         <div className="relative mb-6">
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm h-14 flex items-center px-4 gap-3">
@@ -187,24 +188,7 @@ export default function SearchResults() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[var(--landing-bg-white)] border-t border-[var(--landing-border)] py-4">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Powered by AI</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Real-time data</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Fact-checked</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

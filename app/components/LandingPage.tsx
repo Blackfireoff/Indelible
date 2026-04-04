@@ -3,6 +3,7 @@
 import { Button } from '@heroui/react'
 import NavBar from './NavBar'
 import HeroSection from './HeroSection'
+import Footer from './Footer'
 
 // Quote data from Figma
 const quotes = [
@@ -74,110 +75,18 @@ function ExternalLinkIcon({ className }) {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[var(--landing-bg)]">
+    <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">
       {/* NavBar with wallet and free tier */}
       <NavBar showWallet showFreeTier />
 
       {/* Main Content */}
-      <main>
+      <main className="flex-1">
         {/* Hero Section */}
         <HeroSection />
-
-        {/* AI Summary Card */}
-        <div className="relative mb-8 p-6 rounded-2xl border border-[var(--landing-primary-light)] shadow-sm overflow-hidden"
-          style={{
-            background: 'linear-gradient(167.8deg, var(--landing-primary-subtle) 0%, rgba(3, 105, 209, 0.05) 100%)'
-          }}
-        >
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
-              <StarIcon className="w-4 h-4 text-[var(--landing-bg-white)]" />
-            </div>
-            <div>
-              <h3 className="text-[18px] font-semibold text-[var(--landing-text-primary)]">AI Summary</h3>
-              <p className="text-[14px] text-[var(--landing-text-secondary)]">Generated from 4 verified sources</p>
-            </div>
-          </div>
-          <p className="text-[16px] leading-[26px] text-[var(--landing-text-primary)] pl-11">
-            Emmanuel Macron has consistently emphasized the importance of multilateral cooperation in addressing global challenges. His speeches highlight climate change as a critical priority, advocating for international collaboration on environmental policies. Macron positions France as a leader in sustainable development and green technology implementation, while stressing that global affairs require collective action rather than unilateral approaches.
-          </p>
-        </div>
-
-        {/* Source Documents Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-[20px] font-semibold text-[var(--landing-text-primary)]">Source Documents</h2>
-            <p className="text-[14px] text-[var(--landing-text-secondary)]">Found 4 relevant quotes</p>
-          </div>
-        </div>
-
-        {/* Quote Cards */}
-        <div className="flex flex-col gap-5">
-          {quotes.map((quote, index) => (
-            <div
-              key={index}
-              className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm p-6"
-            >
-              {/* Quote */}
-              <div className="relative mb-4">
-                <span className="absolute -left-1 -top-2 text-[36px] text-[var(--landing-quote-mark)] font-normal">"</span>
-                <p className="text-[16px] leading-[26px] text-[var(--landing-text-primary)] pl-5">
-                  {quote.text}
-                </p>
-              </div>
-
-              {/* Author & Source */}
-              <div className="flex items-start justify-between pt-4 border-t border-[var(--landing-border)]">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
-                      <span className="text-[14px] font-semibold text-[var(--landing-bg-white)]">{quote.initials}</span>
-                    </div>
-                    <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">{quote.author}</span>
-                  </div>
-                  <div className="flex items-center gap-4 pl-10">
-                    <div className="flex items-center gap-1.5">
-                      <FileTextIcon className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
-                      <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.source}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <CalendarIcon className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
-                      <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.date}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Button
-                  className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex gap-2"
-                >
-                  Read Original Document
-                  <ExternalLinkIcon className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-[var(--landing-bg-white)] border-t border-[var(--landing-border)] py-4">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Powered by AI</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Real-time data</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Fact-checked</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
