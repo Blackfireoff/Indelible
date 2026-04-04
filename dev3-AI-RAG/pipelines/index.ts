@@ -97,17 +97,54 @@ export async function runPipeline(
   const correctionReason = routeResult.reason;
 
   // -------------------------------------------------------------------------
-  // Step 3: Retrieve chunks from 0G
+  // Step 3: Local similarity search on all embeddings
   // -------------------------------------------------------------------------
 
-  // If documentIds not specified, search across all known documents
-  const searchDocIds =
-    documentIds.length > 0
-      ? documentIds
-      : ["doc-001", "doc-002"]; // In production, maintain a document index
+  // Embed the query
+  const queryVector = await embedder.embed(query);
+
+  // Search local vector store for top-K chunks by similarity
+  const { getLocalVectorStore } = await import("../storage/local-vector-store");
+  const vectorStore = await getLocalVectorStore();
+  const topScoredChunks = vectorStore.searchBySimilarity(queryVector, topK * 2); // Get more to account for multiple chunks per doc
+
+  // Extract unique document IDs from top results
+  const topDocIds = [...new Set(topScoredChunks.map(c => c.documentId))];
+  console.log(`[Pipeline] Top matching docs: ${topDocIds.join(", ")} (from ${vectorStore.getVectorCount()} total vectors)`);
+
+  // -------------------------------------------------------------------------
+  // Step 4: Fetch only top-scoring documents from 0G Storage
+  // -------------------------------------------------------------------------
 
   const allChunks: Chunk[] = [];
   const documents: DocumentManifest[] = [];
+
+  // Use topDocIds if no specific documentIds provided, otherwise use provided ones
+  // Note: If topDocIds is empty, no local embeddings matched - return empty results
+  const searchDocIds = documentIds.length > 0
+    ? documentIds
+    : topDocIds.length > 0
+      ? topDocIds
+      : []; // No fallback - if no local embeddings match, return empty
+
+  // Early exit if no documents matched the similarity search
+  if (searchDocIds.length === 0) {
+    console.log(`[Pipeline] No local embeddings matched the query. Returning empty results.`);
+    return {
+      mode,
+      corrected,
+      correctionReason,
+      output: {
+        answer: "",
+        citations: [],
+        confidence: 0.0,
+        evidence: [],
+        limitations: "No documents matched the query based on local embeddings similarity search.",
+        contradictions: [],
+      } as AgentOutput,
+      retrievalPassed: false,
+    };
+  }
 
   for (const docId of searchDocIds) {
     const manifest = await storageAdapter.getManifest(docId);
@@ -118,37 +155,16 @@ export async function runPipeline(
     allChunks.push(...chunks);
   }
 
-  // -------------------------------------------------------------------------
-  // Step 4: Embed query and chunks, then retrieve top-K using cosine similarity
-  // -------------------------------------------------------------------------
-
-  // Embed the query
-  const queryVector = await embedder.embed(query);
-
-  // Embed all chunks using the embedder (on-the-fly embedding)
-  // This works for both mock data and production (where dev2 precomputes)
-  const chunkEmbeddings = await embedder.embedChunks(allChunks);
-  const chunkVectorMap = new Map(chunkEmbeddings.map(e => [e.chunkId, e.vector]));
-
-  // Cosine similarity between two vectors
-  function cosineSimilarity(a: number[], b: number[]): number {
-    if (a.length !== b.length) return 0;
-    let dot = 0,
-      magA = 0,
-      magB = 0;
-    for (let i = 0; i < a.length; i++) {
-      dot += a[i] * b[i];
-      magA += a[i] * a[i];
-      magB += b[i] * b[i];
-    }
-    const denom = Math.sqrt(magA) * Math.sqrt(magB);
-    return denom === 0 ? 0 : dot / denom;
+  // Build vector map from local store for scoring
+  const chunkVectorMap = new Map<string, number[]>();
+  for (const scored of topScoredChunks) {
+    chunkVectorMap.set(scored.chunkId, scored.vector);
   }
 
-  // Score chunks using real embeddings from the embedder
+  // Score chunks using pre-computed embeddings from local files
   const scoredChunks: RetrievedChunk[] = allChunks
     .map((chunk) => {
-      // Get the embedding for this chunk (generated on-the-fly)
+      // Get pre-computed vector from local storage
       const chunkVector = chunkVectorMap.get(chunk.chunkId);
 
       // Compute cosine similarity with query vector
@@ -167,6 +183,19 @@ export async function runPipeline(
     scoredChunks.length > 0
       ? scoredChunks.reduce((s, c) => s + c.score, 0) / scoredChunks.length
       : 0;
+
+  // Cosine similarity helper
+  function cosineSimilarity(a: number[], b: number[]): number {
+    if (a.length !== b.length) return 0;
+    let dot = 0, magA = 0, magB = 0;
+    for (let i = 0; i < a.length; i++) {
+      dot += a[i] * b[i];
+      magA += a[i] * a[i];
+      magB += b[i] * b[i];
+    }
+    const denom = Math.sqrt(magA) * Math.sqrt(magB);
+    return denom === 0 ? 0 : dot / denom;
+  }
 
   // -------------------------------------------------------------------------
   // Step 5: Dispatch to correct pipeline (early exit for empty results)

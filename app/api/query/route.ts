@@ -3,10 +3,15 @@
  *
  * POST /api/query
  * Body: { query: string }
+ *
+ * Uses:
+ * - Local embeddings from data/embeddings/*.json (via LocalVectorStore)
+ * - Documents from 0G Storage (via ZeroGStorageAdapter)
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { query, initialize0GProvider, configureAgent, listProviders } from "../../../dev3-AI-RAG/agent/agent";
+import { query, initialize0GProvider, configureAgent, listProviders, setStorageAdapter } from "../../../dev3-AI-RAG/agent/agent";
+import { ZeroGStorageAdapter } from "../../../dev3-AI-RAG/storage/0g-adapter";
 
 let initialized = false;
 
@@ -18,10 +23,19 @@ async function ensureInitialized() {
     throw new Error("ZERO_G_PRIVATE_KEY environment variable is not set");
   }
 
+  // Initialize 0G provider for inference
   await initialize0GProvider(privateKey, {
     rpcUrl: process.env.ZERO_G_RPC_URL ?? "https://evmrpc-testnet.0g.ai",
     providerAddress: process.env.ZERO_G_PROVIDER_ADDRESS,
   });
+
+  // Set storage adapter to use 0G Storage for documents
+  const storageAdapter = new ZeroGStorageAdapter({
+    rpcUrl: process.env.ZEROG_RPC_URL ?? "https://evmrpc-testnet.0g.ai",
+    indexerUrl: process.env.ZEROG_INDEXER_URL ?? "https://indexer-storage-testnet-turbo.0g.ai",
+  });
+  setStorageAdapter(storageAdapter);
+  console.log("[API] Using ZeroGStorageAdapter for documents");
 
   initialized = true;
 }
