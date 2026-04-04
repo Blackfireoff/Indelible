@@ -9,8 +9,14 @@ import ConnectButton from './ConnectButton'
 import ClaimButton from './ClaimButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlobe, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { useAccount, useReadContract } from 'wagmi'
+import { erc20Abi, formatUnits } from 'viem'
 
 // (Custom inline icons have been removed in favor of FontAwesome)
+
+// TODO: Replace with the actual deployed INDL token contract address
+const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f' as `0x${string}`
+
 
 interface NavBarProps {
   showWallet?: boolean
@@ -19,6 +25,16 @@ interface NavBarProps {
 
 export default function NavBar({ showWallet = false, showFreeTier = false }: NavBarProps) {
   const pathname = usePathname()
+  const { address, isConnected } = useAccount()
+  const { data: balanceData } = useReadContract({
+    address: INDL_TOKEN_ADDRESS,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: isConnected && !!address,
+    }
+  })
 
   // Sync wallet state for extensions
   useWalletSync()
@@ -65,15 +81,18 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
 
         {/* User Area */}
         <div className="flex items-center gap-3">
-          {/* Free Tier Badge */}
-          {showFreeTier && (
-            <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">
-              <span className="w-2 h-2 bg-[var(--landing-success)] rounded-full" />
-              <span className="text-[14px] font-medium text-[var(--landing-text-secondary)]">Free Tier:</span>
-              <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">2/3 left</span>
-              <FontAwesomeIcon icon={faChevronDown} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
-            </div>
-          )}
+          {/* Free Tier Badge replacement (INDL Balance) */}
+          {isConnected && showFreeTier && (() => {
+            const indlCount = balanceData !== undefined ? Math.floor(Number(formatUnits(balanceData, 18))) : 0;
+            return (
+              <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">
+                <span className={`w-2 h-2 rounded-full ${indlCount > 0 ? "bg-[var(--landing-success)]" : "bg-red-500"}`} />
+                <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">
+                  {indlCount} Requests
+                </span>
+              </div>
+            );
+          })()}
 
           {/* Wallet Connect */}
           {showWallet && (
