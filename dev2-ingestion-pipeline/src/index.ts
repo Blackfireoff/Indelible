@@ -96,7 +96,14 @@ async function main() {
 
   // ── 5. Extract & validate statements ────────────────────────────────────
   console.log("[statements] Extracting statements (rules + optional LLM) …");
-  const useLlmFallback = !!process.env.OPENAI_API_KEY;
+  // LLM fallback is opt-in: requires both USE_LLM_FALLBACK=true AND a real API key.
+  // A placeholder value like "your_openai_api_key_here" is treated as absent.
+  const hasRealOpenAiKey =
+    !!process.env.OPENAI_API_KEY &&
+    !process.env.OPENAI_API_KEY.startsWith("your_") &&
+    process.env.OPENAI_API_KEY.length > 20;
+  const useLlmFallback =
+    process.env.USE_LLM_FALLBACK === "true" && hasRealOpenAiKey;
   const rawStatements = await extractStatements(
     cleanArticle.paragraphs,
     rawCapture.attestationId,

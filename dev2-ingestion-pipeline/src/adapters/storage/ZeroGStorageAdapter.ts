@@ -75,6 +75,19 @@ export class ZeroGStorageAdapter implements StorageAdapter {
 
       const [_tx, uploadErr] = await indexer.upload(file, this.rpcUrl, signer);
       if (uploadErr !== null) {
+        const msg = String(uploadErr);
+        const isInsufficientFunds =
+          msg.includes("require(false)") ||
+          msg.includes("insufficient funds") ||
+          msg.includes("CALL_EXCEPTION");
+        if (isInsufficientFunds) {
+          throw new Error(
+            `0G upload error: transaction reverted – wallet likely has insufficient A0GI testnet tokens.\n` +
+            `  Wallet address: ${await signer.getAddress()}\n` +
+            `  Get testnet tokens at: https://faucet.0g.ai\n` +
+            `  Original error: ${uploadErr}`
+          );
+        }
         throw new Error(`0G upload error: ${uploadErr}`);
       }
 
