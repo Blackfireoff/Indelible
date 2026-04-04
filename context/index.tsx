@@ -2,8 +2,8 @@
 
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React, { type ReactNode } from 'react'
-import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+import { cookieToInitialState, WagmiProvider } from 'wagmi'
+import type { Config } from 'wagmi'
 import { projectId, networks, wagmiAdapter, metadata } from '@/config'
 
 const queryClient = new QueryClient()
@@ -22,7 +22,7 @@ export default function ContextProvider({
   children,
   cookies,
 }: {
-  children: ReactNode
+  children: React.ReactNode
   cookies: string | null
 }) {
   const initialState = cookieToInitialState(
