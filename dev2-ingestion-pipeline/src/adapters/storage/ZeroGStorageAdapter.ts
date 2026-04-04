@@ -18,7 +18,11 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomBytes } from "crypto";
 import type { StorageAdapter } from "./StorageAdapter.js";
-import { buildRetryOptsFromEnv, buildTxOptsFromEnv } from "./zeroGStarterKitUpload.js";
+import {
+  buildRetryOptsFromEnv,
+  buildTxOptsFromEnv,
+  waitUntilIndexerHasLocations,
+} from "./zeroGStarterKitUpload.js";
 
 export interface ZeroGConfig {
   rpcUrl?: string;
@@ -120,13 +124,15 @@ export class ZeroGStorageAdapter implements StorageAdapter {
         if (!errMsg.includes("already exists")) {
           throw new Error(`Upload failed: ${errMsg}`);
         }
-        console.log(`[0G] File already exists on storage nodes — continuing.`);
+        console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
+        await waitUntilIndexerHasLocations(indexer, rootHash, "post-upload (dedup)");
         return rootHash;
       }
 
       const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
       const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
       console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
+      await waitUntilIndexerHasLocations(indexer, returnedRoot, "post-upload");
       return returnedRoot;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -172,70 +178,46 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     const indexer = new Indexer(this.indexerUrl);
     const rootHash = dataAddress.replace("0g://", "");
 
-    const MAX_RETRIES = 4;
-    const RETRY_DELAY_MS = 4000;
-    let lastError: Error = new Error("Download did not start");
+    // Same wait as post-upload: avoids spinning 4× on "no locations" when the fix is
+    // to poll the indexer once (up to ZEROG_INDEXER_SYNC_TIMEOUT_MS).
+    await waitUntilIndexerHasLocations(indexer, rootHash, "pre-download");
 
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      const tmpPath = join(
-        tmpdir(),
-        `indelible-download-${randomBytes(8).toString("hex")}.json`,
-      );
+    const tmpPath = join(
+      tmpdir(),
+      `indelible-download-${randomBytes(8).toString("hex")}.json`,
+    );
+
+    try {
+      const err = await indexer.download(rootHash, tmpPath, true);
+      if (err !== null) {
+        throw new Error(`0G download error: ${err}`);
+      }
+
+      const content = readFileSync(tmpPath, "utf-8").trimEnd();
 
       try {
-        // Pre-check locations to avoid SDK null crash when indexer hasn't synced yet
-        const locations = await indexer.getFileLocations(rootHash).catch(() => null);
-        if (!locations || locations.length === 0) {
+        const parsed = JSON.parse(content) as Record<string, unknown>;
+        if (typeof parsed.code === "number" && typeof parsed.message === "string") {
           throw new Error(
-            `Indexer returned no locations for ${rootHash} — file may not be indexed yet`,
+            `Storage node returned error: ${parsed.message} (code ${parsed.code})`,
           );
         }
-
-        // 0G indexer SDK uses fs.appendFileSync internally, so we need a path
-        const err = await indexer.download(rootHash, tmpPath, true);
-        if (err !== null) {
-          throw new Error(`0G download error: ${err}`);
+      } catch (parseErr) {
+        if (!(parseErr instanceof SyntaxError)) {
+          throw parseErr;
         }
+      }
 
-        // trimEnd() strips the padding spaces added during upload
-        const content = readFileSync(tmpPath, "utf-8").trimEnd();
-
-        // Detect JSON-RPC error responses written to the file by the storage node
-        // e.g. {"code":101,"message":"File not found","data":null}
+      return content;
+    } finally {
+      if (existsSync(tmpPath)) {
         try {
-          const parsed = JSON.parse(content) as Record<string, unknown>;
-          if (typeof parsed.code === "number" && typeof parsed.message === "string") {
-            throw new Error(
-              `Storage node returned error: ${parsed.message} (code ${parsed.code})`,
-            );
-          }
-        } catch (parseErr) {
-          if (!(parseErr instanceof SyntaxError)) {
-            throw parseErr; // re-throw our own error
-          }
-          // SyntaxError → content is not a JSON error, proceed normally
-        }
-
-        return content;
-      } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err));
-        if (attempt < MAX_RETRIES) {
-          console.warn(
-            `[0G] Download attempt ${attempt}/${MAX_RETRIES} failed: ${lastError.message}. ` +
-            `Retrying in ${RETRY_DELAY_MS / 1000}s…`,
-          );
-          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
-        }
-      } finally {
-        if (existsSync(tmpPath)) {
-          try { unlinkSync(tmpPath); } catch { /* ignore */ }
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
         }
       }
     }
-
-    throw new Error(
-      `0G download failed after ${MAX_RETRIES} attempts for ${rootHash}: ${lastError.message}`,
-    );
   }
 
   /** Check and display the wallet balance without uploading anything. */

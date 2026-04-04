@@ -3,6 +3,8 @@
  * @see https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts
  */
 
+import type { Indexer } from "@0gfoundation/0g-ts-sdk";
+
 /** SDK upload retry options (seconds between attempts = Interval). */
 export type StarterKitRetryOpts = {
   Retries: number;
@@ -42,4 +44,51 @@ export function buildTxOptsFromEnv(): { gasPrice?: bigint; gasLimit?: bigint } |
   if (gp) opts.gasPrice = BigInt(gp);
   if (gl) opts.gasLimit = BigInt(gl);
   return Object.keys(opts).length > 0 ? opts : undefined;
+}
+
+/** Poll interval / timeout after upload until indexer_getFileLocations returns nodes (required for download). */
+export function buildIndexerSyncWaitFromEnv(): { timeoutMs: number; intervalMs: number } {
+  const timeoutMs = Math.max(
+    5000,
+    parseInt(process.env.ZEROG_INDEXER_SYNC_TIMEOUT_MS ?? "120000", 10) || 120_000,
+  );
+  const intervalMs = Math.max(
+    500,
+    parseInt(process.env.ZEROG_INDEXER_SYNC_INTERVAL_MS ?? "3000", 10) || 3000,
+  );
+  return { timeoutMs, intervalMs };
+}
+
+/**
+ * Block until the indexer reports at least one storage node for this root, or timeout.
+ * Required for `indexer.download` / verify step; otherwise getFileLocations stays empty
+ * for minutes after a successful on-chain + segment upload.
+ */
+export async function waitUntilIndexerHasLocations(
+  indexer: Indexer,
+  rootHash: string,
+  label = "indexer sync",
+): Promise<void> {
+  const { timeoutMs, intervalMs } = buildIndexerSyncWaitFromEnv();
+  const started = Date.now();
+  let attempt = 0;
+  for (;;) {
+    attempt++;
+    const locs = await indexer.getFileLocations(rootHash).catch(() => null);
+    if (locs && locs.length > 0) {
+      const elapsed = Date.now() - started;
+      console.log(
+        `[0G] ${label}: ${locs.length} location(s) for ${rootHash.slice(0, 18)}… (${elapsed}ms, attempt ${attempt})`,
+      );
+      return;
+    }
+    if (Date.now() - started >= timeoutMs) {
+      throw new Error(
+        `[0G] Indexer did not return storage locations for ${rootHash} within ${timeoutMs}ms (${label}). ` +
+          `Check ZEROG_INDEXER_URL (turbo vs standard), increase ZEROG_INDEXER_SYNC_TIMEOUT_MS, or retry later. ` +
+          `Docs: https://docs.0g.ai/developer-hub/building-on-0g/storage/sdk`,
+      );
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
 }

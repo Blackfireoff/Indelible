@@ -344,9 +344,9 @@ The field `verification_method` records how each statement was matched:
 ## 0G Storage adapter
 
 The `ZeroGStorageAdapter` uses `@0gfoundation/0g-ts-sdk` aligned with the official [0g-storage-ts-starter-kit](https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts) (`upload.ts` / `uploadData` in `src/storage.ts`):
-- Upload: write padded JSON to a temp file → `ZgFile.fromFilePath` → `indexer.upload(file, rpcUrl, signer, uploadOpts, retryOpts, txOpts)` → returns root hash as `dataAddress`
-- Small files are padded to ≥ 2 KB (storage node preference); optional env: `ZEROG_UPLOAD_MAX_RETRIES`, `ZEROG_GAS_PRICE`, `ZEROG_GAS_LIMIT` (see `.env.example`)
-- Download: `indexer.download` to temp file → read → `trimEnd()` (drop padding)
+- Upload: write padded JSON to a temp file → `ZgFile.fromFilePath` → `indexer.upload(file, rpcUrl, signer, uploadOpts, retryOpts, txOpts)` → **poll `indexer_getFileLocations` until the indexer lists storage nodes** (or timeout) → returns root hash as `dataAddress`
+- Small files are padded to ≥ 2 KB (storage node preference); optional env: `ZEROG_UPLOAD_MAX_RETRIES`, `ZEROG_GAS_PRICE`, `ZEROG_GAS_LIMIT`, `ZEROG_INDEXER_SYNC_TIMEOUT_MS`, `ZEROG_INDEXER_SYNC_INTERVAL_MS` (see `.env.example`)
+- Download: same indexer wait, then `indexer.download` → read → `trimEnd()` (drop padding)
 - The Flow contract is auto-discovered from the indexer (no manual ABI patching needed)
 
 The `dataAddress` in `document_manifest.json` is the 0G Merkle root hash for each artifact.
