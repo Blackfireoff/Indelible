@@ -15,7 +15,7 @@ import { erc20Abi, formatUnits } from 'viem'
 // (Custom inline icons have been removed in favor of FontAwesome)
 
 // TODO: Replace with the actual deployed INDL token contract address
-const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f' as `0x${string}`
+const INDL_TOKEN_ADDRESS = '0x4625ab479D4645A4d96D18A5DAe05b0537c247D3' as `0x${string}`
 
 
 interface NavBarProps {
@@ -42,7 +42,7 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
   const navLinks = [
     { href: '/', label: 'Search' },
     { href: '/about', label: 'About' },
-    { href: '/pricing', label: 'Pricing' },
+    { href: '/get-token', label: 'Get token' },
   ]
 
   return (
