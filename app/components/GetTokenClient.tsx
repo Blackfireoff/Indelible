@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useReadContract, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
-import { parseUnits, formatEther } from 'viem'
+import { useAccount, useReadContract, useWaitForTransactionReceipt, useBalance } from 'wagmi'
+import { useAppKitProvider, useAppKit } from '@reown/appkit/react'
+import { parseUnits, formatEther, numberToHex } from 'viem'
+import { sepolia } from 'wagmi/chains'
 import { Button } from '@heroui/react'
 
 // TODO: Ensure this is the TokenSale contract address, not just the ERC20 Token address.
@@ -25,8 +27,15 @@ const PACKAGES = [
 ]
 
 export default function GetTokenClient() {
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
+  const { data: balanceData } = useBalance({ address })
+  const { walletProvider } = useAppKitProvider('eip155')
+  const { open } = useAppKit()
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
+  
+  const [customHash, setCustomHash] = useState<`0x${string}` | undefined>(undefined)
+  const [isPending, setIsPending] = useState(false)
+  const [errorObj, setErrorObj] = useState<Error | null>(null)
 
   // Read ETH price from contract
   const { data: ethPriceRaw } = useReadContract({
@@ -45,38 +54,53 @@ export default function GetTokenClient() {
     return (targetIndlWei * BigInt(100000000)) / ethPrice
   }
 
-  // Send transaction hook
-  const {
-    data: hash,
-    isPending,
-    sendTransaction,
-    error
-  } = useSendTransaction()
-
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
+    hash: customHash,
   })
 
   // Handlers
-  const handleBuy = () => {
+  const handleBuy = async () => {
     if (!selectedPackage || ethPrice === BigInt(0)) return
     const pkg = PACKAGES.find(p => p.id === selectedPackage)
     if (!pkg) return
 
     const ethReq = getEthRequired(pkg.indl)
-    if (ethReq === BigInt(0)) return
+    if (ethReq === BigInt(0) || !address || !walletProvider) return
 
-    sendTransaction({
-      to: TOKEN_SALE_ADDRESS,
-      value: ethReq,
-    })
+    // Check if user has enough ETH for the transaction
+    if (balanceData && balanceData.value < ethReq) {
+      // Open AppKit to explicitly let the user purchase or swap for ETH
+      open({ view: 'OnRampProviders' })
+      return
+    }
+
+    setIsPending(true)
+    setErrorObj(null)
+    setCustomHash(undefined)
+
+    try {
+      const txHash = await (walletProvider as any).request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: address,
+          to: TOKEN_SALE_ADDRESS,
+          value: numberToHex(ethReq)
+        }]
+      })
+      setCustomHash(txHash as `0x${string}`)
+    } catch (err: any) {
+      console.error('Provider Request Error:', err)
+      setErrorObj(err)
+    } finally {
+      setIsPending(false)
+    }
   }
 
   const isLoading = isPending || isConfirming
 
   const getErrorMessage = () => {
-    if (!error) return null
-    return error.message.split('\\n')[0]
+    if (!errorObj) return null
+    return errorObj.message?.split('\n')[0] || 'Unknown error occurred'
   }
 
   return (
@@ -154,13 +178,13 @@ export default function GetTokenClient() {
               {isConfirmed ? 'Purchase Successful!' : isLoading ? 'Processing Transaction...' : 'Confirm Purchase'}
             </Button>
 
-            {error && (
+            {errorObj && (
               <div className="p-3 text-[12px] text-red-600 bg-red-50 rounded-xl border border-red-100 mt-2">
                 {getErrorMessage()}
               </div>
             )}
 
-            {isConfirmed && hash && (
+            {isConfirmed && customHash && (
               <div className="text-center text-[13px] text-green-600 mt-2">
                 Transaction completed successfully!
               </div>
