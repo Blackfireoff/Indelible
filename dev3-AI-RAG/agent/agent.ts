@@ -37,7 +37,7 @@ export interface AgentConfig {
 
 const DEFAULT_CONFIG: AgentConfig = {
   topK: 5,
-  minScore: 0.0, // 0 for mock data (random embeddings don't match semantic queries)
+  minScore: 0.1, // Reasonable threshold for real semantic embeddings
   modelProvider: "0g",
   modelName: "qwen/qwen-2.5-7b-instruct",
 };
@@ -165,6 +165,7 @@ export async function query(
     },
     {
       embed: (text: string) => embedder.embed(text),
+      embedChunks: (chunks: import("../storage/types").Chunk[]) => embedder.embedChunks(chunks),
     },
     { topK, minScore },
     llmCall
