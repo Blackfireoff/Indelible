@@ -16,20 +16,23 @@ window.addEventListener('wallet-state-changed', function(event) {
     chrome.storage.local.set({
       walletState: {
         account: state.account,
-        chainId: state.chainId
+        chainId: state.chainId,
+        indlBalance: state.indlBalance || 0
       }
     });
     chrome.runtime.sendMessage({
       type: 'WALLET_STATE_UPDATE',
       account: state.account,
-      chainId: state.chainId
+      chainId: state.chainId,
+      indlBalance: state.indlBalance || 0
     }).catch(() => {});
   } else {
     chrome.storage.local.remove(['walletState']);
     chrome.runtime.sendMessage({
       type: 'WALLET_STATE_UPDATE',
       account: null,
-      chainId: null
+      chainId: null,
+      indlBalance: 0
     }).catch(() => {});
   }
 });
@@ -41,7 +44,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (stored) {
       try {
         const state = JSON.parse(stored);
-        sendResponse({ account: state.account, chainId: state.chainId });
+        sendResponse({ account: state.account, chainId: state.chainId, indlBalance: state.indlBalance || 0 });
       } catch (e) {
         sendResponse(null);
       }
