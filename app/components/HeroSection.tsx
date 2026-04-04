@@ -15,8 +15,8 @@ const suggestions = [
 function SearchIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
@@ -24,7 +24,7 @@ function SearchIcon({ className }) {
 function ChevronDownIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -32,8 +32,8 @@ function ChevronDownIcon({ className }) {
 function GlobeIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   )
 }
@@ -41,8 +41,8 @@ function GlobeIcon({ className }) {
 function UserIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="5.333" r="3.333" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M2.667 14c0-2.947 2.347-5.333 5.333-5.333s5.333 2.386 5.333 5.333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="8" cy="5.333" r="3.333" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2.667 14c0-2.947 2.347-5.333 5.333-5.333s5.333 2.386 5.333 5.333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
@@ -141,7 +141,7 @@ export default function HeroSection() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about a politician... e.g., What are Macron's thoughts on global affairs?"
+              placeholder="Ask about a politician..."
               className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-secondary)] placeholder:text-[var(--landing-text-muted)] outline-none"
             />
             <Button
