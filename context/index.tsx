@@ -8,18 +8,28 @@ import { projectId, networks, wagmiAdapter, metadata } from '@/config'
 
 const queryClient = new QueryClient()
 
-createAppKit({
-  adapters: [wagmiAdapter],
-  networks,
-  projectId,
-  metadata,
-  features: {
-    email: true,
-    socials: ['google', 'x', 'github', 'discord', 'apple', 'facebook', 'farcaster'],
-    emailShowWallets: true,
-    analytics: false
-  }
-})
+const globalAny = globalThis as any;
+
+if (!globalAny.__appkit_modal__) {
+  globalAny.__appkit_modal__ = createAppKit({
+    adapters: [wagmiAdapter],
+    networks,
+    projectId,
+    metadata,
+    themeMode: 'light',
+    themeVariables: {
+      '--w3m-accent': '#0485f7',
+      '--w3m-border-radius-master': '9999px',
+    },
+    features: {
+      email: true,
+      socials: ['google', 'x', 'github', 'discord', 'apple', 'facebook', 'farcaster'],
+      emailShowWallets: true,
+      analytics: false
+    }
+  })
+}
+const modal = globalAny.__appkit_modal__;
 
 export default function ContextProvider({
   children,

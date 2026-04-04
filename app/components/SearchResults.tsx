@@ -1,8 +1,13 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useAppKitAccount } from '@reown/appkit/react'
 import { Button } from '@heroui/react'
 import NavBar from './NavBar'
+import Footer from './Footer'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
 // Quote data from Figma
 const quotes = [
@@ -36,66 +41,36 @@ const quotes = [
   },
 ]
 
-// Icon components
-function StarIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M8 1.333l1.84 3.727 4.16.6-3 2.92.72 4.153L8 9.778l-3.72 1.955.72-4.153-3-2.92 4.16-.6L8 1.333z" fill="currentColor"/>
-    </svg>
-  )
-}
-
-function FileTextIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M9 1H3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L9 1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M9 1v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M5 10h6M5 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  )
-}
-
-function CalendarIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M1 7h14M5 1v4M11 1v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  )
-}
-
-function ExternalLinkIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M12 9.333v2.667a1.333 1.333 0 01-1.333 1.333H3.333A1.333 1.333 0 012 12V5.333A1.333 1.333 0 013.333 4h2.667M9.333 2h4.667v4.667M14 2L8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-}
-
-function SearchIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  )
-}
+// (Custom inline icons have been removed in favor of FontAwesome)
 
 export default function SearchResults() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
+  const { isConnected, status } = useAppKitAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    // Only redirect if we are certain they're not connected and not currently connecting
+    if (status !== 'reconnecting' && status !== 'connecting' && !isConnected) {
+      router.push('/')
+    }
+  }, [isConnected, status, router])
+
+  if (!isConnected) {
+    return null // avoid flash of unauthorized content
+  }
 
   return (
-    <div className="min-h-screen bg-[var(--landing-bg)]">
+    <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">
       {/* NavBar */}
       <NavBar showWallet showFreeTier />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
         {/* Search Input */}
         <div className="relative mb-6">
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm h-14 flex items-center px-4 gap-3">
-            <SearchIcon className="w-5 h-5 text-[var(--landing-text-secondary)]" />
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-5 h-5 text-[var(--landing-text-secondary)]" />
             <input
               type="text"
               defaultValue={query}
@@ -118,7 +93,7 @@ export default function SearchResults() {
         >
           <div className="flex items-start gap-3 mb-4">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
-              <StarIcon className="w-4 h-4 text-[var(--landing-bg-white)]" />
+              <FontAwesomeIcon icon={faStar} className="w-4 h-4 text-[var(--landing-bg-white)]" />
             </div>
             <div>
               <h3 className="text-[18px] font-semibold text-[var(--landing-text-primary)]">AI Summary</h3>
@@ -164,21 +139,21 @@ export default function SearchResults() {
                   </div>
                   <div className="flex items-center gap-4 pl-10">
                     <div className="flex items-center gap-1.5">
-                      <FileTextIcon className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
+                      <FontAwesomeIcon icon={faFileLines} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
                       <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.source}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <CalendarIcon className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
+                      <FontAwesomeIcon icon={faCalendarDays} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
                       <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.date}</span>
                     </div>
                   </div>
                 </div>
 
                 <Button
-                  className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex gap-2"
+                  className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Read Original Document
-                  <ExternalLinkIcon className="w-4 h-4" />
+                  <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -187,24 +162,7 @@ export default function SearchResults() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[var(--landing-bg-white)] border-t border-[var(--landing-border)] py-4">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Powered by AI</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Real-time data</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-              <span className="text-[14px] text-[var(--landing-text-secondary)]">Fact-checked</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
