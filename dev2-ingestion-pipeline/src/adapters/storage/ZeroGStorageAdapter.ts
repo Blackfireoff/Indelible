@@ -6,10 +6,12 @@
  *  - Indexer: https://indexer-storage-testnet-turbo.0g.ai
  *  - Faucet:  https://faucet.0g.ai
  *
- * Uses @0gfoundation/0g-ts-sdk which auto-discovers the correct Flow contract
- * from the indexer. No ABI patching required.
+ * Implementation mirrors Sdk0GStorageAdapter from dev1_existance_proof for
+ * maximum compatibility: static imports, same padding/upload/download patterns.
  */
 
+import { Indexer, MemData } from "@0gfoundation/0g-ts-sdk";
+import { ethers } from "ethers";
 import { readFileSync, unlinkSync, existsSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
@@ -22,6 +24,9 @@ export interface ZeroGConfig {
   privateKey?: string;
 }
 
+const DEFAULT_RPC_URL = "https://evmrpc-testnet.0g.ai";
+const DEFAULT_INDEXER_URL = "https://indexer-storage-testnet-turbo.0g.ai";
+
 /** Minimum balance considered safe for at least one upload (~0.001 A0GI). */
 const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
 
@@ -31,15 +36,8 @@ export class ZeroGStorageAdapter implements StorageAdapter {
   private readonly privateKey: string;
 
   constructor(config: ZeroGConfig = {}) {
-    this.rpcUrl =
-      config.rpcUrl ??
-      process.env.ZEROG_RPC_URL ??
-      "https://evmrpc-testnet.0g.ai";
-
-    this.indexerUrl =
-      config.indexerUrl ??
-      process.env.ZEROG_INDEXER_URL ??
-      "https://indexer-storage-testnet-turbo.0g.ai";
+    this.rpcUrl = config.rpcUrl ?? process.env.ZEROG_RPC_URL ?? DEFAULT_RPC_URL;
+    this.indexerUrl = config.indexerUrl ?? process.env.ZEROG_INDEXER_URL ?? DEFAULT_INDEXER_URL;
 
     const key = config.privateKey ?? process.env.ZEROG_PRIVATE_KEY;
     if (!key) {
@@ -52,14 +50,14 @@ export class ZeroGStorageAdapter implements StorageAdapter {
   }
 
   async uploadArtifact(fileName: string, data: string): Promise<string> {
-    const { MemData, Indexer } = await import("@0gfoundation/0g-ts-sdk");
-    const { ethers } = await import("ethers");
-
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
-    const address = await signer.getAddress();
+
+    // Flow contract is auto-discovered by the Indexer in the new SDK
+    const indexer = new Indexer(this.indexerUrl);
 
     // ── Balance pre-flight check ──────────────────────────────────────────
+    const address = await signer.getAddress();
     const balance = await provider.getBalance(address);
     if (balance < MIN_SAFE_BALANCE_WEI) {
       throw new Error(
@@ -71,34 +69,41 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       );
     }
 
-    // ── Pad to ≥ 2 KB (storage node preference, matches Dev 1 behaviour) ──
+    // ── Pad to ≥ 2 KB (storage node preference, mirrors Dev 1) ──────────
     const padded = data.length < 2048 ? data.padEnd(2048, " ") : data;
 
-    // ── Build MemData (no temp file needed) ──────────────────────────────
-    const bytes = new TextEncoder().encode(padded);
-    const memData = new MemData(bytes);
+    const dataBytes = new TextEncoder().encode(padded);
+    const memData = new MemData(dataBytes);
 
-    const [tree, treeErr] = await memData.merkleTree();
-    if (treeErr !== null || !tree) {
-      throw new Error(`0G merkle tree error: ${String(treeErr)}`);
-    }
-    const rootHash = tree.rootHash() as string;
+    console.log(`[0G] Uploading ${fileName} (${dataBytes.length} bytes, padded from ${data.length})`);
+    console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
+    console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
 
-    console.log(`[ZeroGStorage] Uploading ${fileName} (${bytes.length} bytes, padded from ${data.length})`);
-    console.log(`  root hash: ${rootHash}`);
-    console.log(`  wallet:    ${address} (${ethers.formatEther(balance)} A0GI)`);
-
-    // ── Upload ────────────────────────────────────────────────────────────
-    const indexer = new Indexer(this.indexerUrl);
-    const [tx, uploadErr] = await indexer.upload(memData, this.rpcUrl, signer);
-
-    if (uploadErr !== null) {
-      const msg = String(uploadErr);
-
-      if (msg.includes("already exists")) {
-        console.log(`[ZeroGStorage] File already exists on storage nodes — continuing.`);
-        return rootHash;
+    try {
+      const [tree, treeErr] = await memData.merkleTree();
+      if (treeErr !== null) {
+        throw new Error(`Merkle tree error: ${treeErr}`);
       }
+
+      const rootHash = tree!.rootHash() as string;
+      console.log(`[0G] Attempting on-chain submission for root: ${rootHash}…`);
+
+      const [tx, uploadErr] = await indexer.upload(memData, this.rpcUrl, signer);
+
+      if (uploadErr !== null) {
+        const errMsg = String(uploadErr);
+        if (!errMsg.includes("already exists")) {
+          throw new Error(`Upload failed: ${errMsg}`);
+        }
+        console.log(`[0G] File already exists on storage nodes — continuing.`);
+      } else {
+        const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
+        console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${rootHash}`);
+      }
+
+      return rootHash;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
 
       const isFundsError =
         msg.includes("require(false)") ||
@@ -109,37 +114,34 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       if (isFundsError) {
         const balanceAfter = await provider.getBalance(address);
         throw new Error(
-          `[ZeroGStorage] Transaction reverted on Galileo (chainId 16602).\n` +
+          `[0G] Transaction reverted on Galileo (chainId 16602).\n` +
           `  Wallet:  ${address}\n` +
           `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
           `  This usually means the wallet ran out of A0GI mid-upload.\n` +
           `  Faucet:  https://faucet.0g.ai\n` +
-          `  Original error: ${uploadErr}`,
+          `  Original error: ${msg}`,
         );
       }
-      throw new Error(`0G upload error: ${uploadErr}`);
-    }
 
-    const finalRootHash = "rootHash" in tx ? tx.rootHash : rootHash;
-    console.log(`[ZeroGStorage] ✓ Uploaded ${fileName} → ${finalRootHash}`);
-    return finalRootHash;
+      throw err;
+    }
   }
 
   async downloadArtifact(dataAddress: string): Promise<string> {
-    const { Indexer } = await import("@0gfoundation/0g-ts-sdk");
-
+    const indexer = new Indexer(this.indexerUrl);
+    const rootHash = dataAddress.replace("0g://", "");
     const tmpPath = join(
       tmpdir(),
-      `indelible_dl_${randomBytes(8).toString("hex")}.json`,
+      `indelible-download-${randomBytes(8).toString("hex")}.json`,
     );
 
+    // 0G indexer SDK uses fs.appendFileSync internally, so we need a path
+    const err = await indexer.download(rootHash, tmpPath, true);
+    if (err !== null) {
+      throw new Error(`0G download error: ${err}`);
+    }
+
     try {
-      const indexer = new Indexer(this.indexerUrl);
-      // proof = true matches Dev 1 behaviour and enables Merkle proof verification
-      const err = await indexer.download(dataAddress, tmpPath, true);
-      if (err !== null) {
-        throw new Error(`0G download error: ${String(err)}`);
-      }
       // trimEnd() strips the padding spaces added during upload
       return readFileSync(tmpPath, "utf-8").trimEnd();
     } finally {
@@ -151,7 +153,6 @@ export class ZeroGStorageAdapter implements StorageAdapter {
 
   /** Check and display the wallet balance without uploading anything. */
   async checkBalance(): Promise<void> {
-    const { ethers } = await import("ethers");
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
     const address = await signer.getAddress();
