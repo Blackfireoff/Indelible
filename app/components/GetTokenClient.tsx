@@ -107,7 +107,7 @@ export default function GetTokenClient() {
             address: '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f',
             symbol: 'INDL',
             decimals: 18,
-            image: window.location.origin + '/logo/small.svg',
+            image: window.location.origin + '/logo/circle.svg',
           },
         },
       })
@@ -228,8 +228,8 @@ export default function GetTokenClient() {
           onClick={isConnected ? handleAddToken : undefined}
           disabled={!isConnected}
           className={`w-full py-2.5 rounded-xl border font-medium text-[14px] transition-colors
-            ${isConnected 
-              ? 'bg-[var(--landing-bg-white)] border-[var(--landing-border)] text-[var(--landing-text-primary)] hover:bg-[var(--landing-bg-light)] cursor-pointer shadow-sm' 
+            ${isConnected
+              ? 'bg-[var(--landing-bg-white)] border-[var(--landing-border)] text-[var(--landing-text-primary)] hover:bg-[var(--landing-bg-light)] cursor-pointer shadow-sm'
               : 'bg-[var(--landing-bg-light)] border-[var(--landing-border)] text-[var(--landing-text-muted)] cursor-not-allowed'
             }
           `}
