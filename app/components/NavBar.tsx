@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 // Import cleanly removed
 import { useWalletSync } from '@/hooks/useWalletSync'
 import ConnectButton from './ConnectButton'
+import ClaimButton from './ClaimButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlobe, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
