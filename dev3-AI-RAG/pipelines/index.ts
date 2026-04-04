@@ -16,7 +16,6 @@ import { classifyIntent } from "../intent/classifier";
 import { runGeneralQuestionPipeline } from "./general-question";
 import { runVerifyClaimPipeline } from "./verify-claim";
 import { runDetectContradictionsPipeline } from "./detect-contradictions";
-import { EmbeddingsLoader } from "../storage/embeddings-loader";
 
 // ---------------------------------------------------------------------------
 // Unified output type
@@ -61,6 +60,7 @@ export async function runPipeline(
   },
   embedder: {
     embed(text: string): Promise<number[]>;
+    embedChunks(chunks: Chunk[]): Promise<Array<{ chunkId: string; vector: number[] }>>;
   },
   config: PipelineConfig = {},
   llmCall?: LLMCall
@@ -97,7 +97,7 @@ export async function runPipeline(
   const correctionReason = routeResult.reason;
 
   // -------------------------------------------------------------------------
-  // Step 3: Retrieve chunks and embeddings from 0G
+  // Step 3: Retrieve chunks from 0G
   // -------------------------------------------------------------------------
 
   // If documentIds not specified, search across all known documents
@@ -108,7 +108,6 @@ export async function runPipeline(
 
   const allChunks: Chunk[] = [];
   const documents: DocumentManifest[] = [];
-  const embeddingsByDocId = new Map<string, EmbeddingsLoader>();
 
   for (const docId of searchDocIds) {
     const manifest = await storageAdapter.getManifest(docId);
@@ -117,19 +116,19 @@ export async function runPipeline(
     documents.push(manifest);
     const chunks = await storageAdapter.listChunksForDocument(docId);
     allChunks.push(...chunks);
-
-    // Load precomputed embeddings for this document
-    const loader = await EmbeddingsLoader.create(storageAdapter, docId);
-    if (loader) {
-      embeddingsByDocId.set(docId, loader);
-    }
   }
 
   // -------------------------------------------------------------------------
-  // Step 4: Embed query and retrieve top-K chunks using cosine similarity
+  // Step 4: Embed query and chunks, then retrieve top-K using cosine similarity
   // -------------------------------------------------------------------------
 
+  // Embed the query
   const queryVector = await embedder.embed(query);
+
+  // Embed all chunks using the embedder (on-the-fly embedding)
+  // This works for both mock data and production (where dev2 precomputes)
+  const chunkEmbeddings = await embedder.embedChunks(allChunks);
+  const chunkVectorMap = new Map(chunkEmbeddings.map(e => [e.chunkId, e.vector]));
 
   // Cosine similarity between two vectors
   function cosineSimilarity(a: number[], b: number[]): number {
@@ -146,17 +145,16 @@ export async function runPipeline(
     return denom === 0 ? 0 : dot / denom;
   }
 
-  // Score chunks using precomputed embeddings from 0G Storage
+  // Score chunks using real embeddings from the embedder
   const scoredChunks: RetrievedChunk[] = allChunks
     .map((chunk) => {
-      // Find the embedding for this chunk from the correct document
-      const loader = embeddingsByDocId.get(chunk.documentId);
-      const embedding = loader?.getVector(chunk.chunkId);
+      // Get the embedding for this chunk (generated on-the-fly)
+      const chunkVector = chunkVectorMap.get(chunk.chunkId);
 
       // Compute cosine similarity with query vector
       let score = 0;
-      if (embedding?.vector) {
-        score = cosineSimilarity(queryVector, embedding.vector);
+      if (chunkVector) {
+        score = cosineSimilarity(queryVector, chunkVector);
       }
 
       return { ...chunk, score };
@@ -171,7 +169,7 @@ export async function runPipeline(
       : 0;
 
   // -------------------------------------------------------------------------
-  // Step 5: Dispatch to correct pipeline
+  // Step 5: Dispatch to correct pipeline (early exit for empty results)
   // -------------------------------------------------------------------------
 
   if (scoredChunks.length === 0) {
@@ -234,6 +232,10 @@ export async function runPipeline(
       };
     }
   }
+
+  // -------------------------------------------------------------------------
+  // Step 6: Dispatch to correct pipeline
+  // -------------------------------------------------------------------------
 
   // Build the LLM caller wrapper based on mode
   const callLLM = async (systemPrompt: string, userPrompt: string): Promise<unknown> => {

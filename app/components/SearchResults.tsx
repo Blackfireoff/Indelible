@@ -1,7 +1,7 @@
 'use client'
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { Button } from '@heroui/react'
 import NavBar from './NavBar'
@@ -60,6 +60,7 @@ export default function SearchResults() {
   const [result, setResult] = useState<ApiResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const lastSearchedQuery = useRef<string | null>(null)
 
   useEffect(() => {
     if (status !== 'reconnecting' && status !== 'connecting' && !isConnected) {
@@ -70,6 +71,9 @@ export default function SearchResults() {
   // Fetch results when query changes
   useEffect(() => {
     if (!query) return
+    // Prevent duplicate searches (React StrictMode runs effects twice in dev)
+    if (lastSearchedQuery.current === query) return
+    lastSearchedQuery.current = query
     setSearchQuery(query)
     performSearch(query)
   }, [query])
@@ -117,6 +121,19 @@ export default function SearchResults() {
     articleAuthor: 'Indelible RAG',
     fullArticle: cit.quote,
   })) || []
+
+  // Human-readable message when no evidence is found
+  const getSummaryMessage = () => {
+    if (result?.output?.answer) return result.output.answer;
+    if (result?.output?.limitations) {
+      const limit = result.output.limitations;
+      if (limit.includes('No chunks retrieved') || limit.includes('No relevant chunks') || limit.includes('Insufficient')) {
+        return "I couldn't find any relevant content in the database that matches your question. This could mean the topic hasn't been documented yet, or the search terms don't match what's stored. Try different keywords or check back later.";
+      }
+      return limit;
+    }
+    return 'No response generated.';
+  }
 
   if (!isConnected) {
     return null
@@ -178,7 +195,7 @@ export default function SearchResults() {
                 </div>
               </div>
               <p className="text-[16px] leading-[26px] text-[var(--landing-text-primary)] pl-11">
-                {result.output.answer || result.output.limitations || 'No response generated.'}
+                {getSummaryMessage()}
               </p>
             </div>
 
