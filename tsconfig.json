@@ -36,6 +36,10 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dev1_existance_proof",
+    "dev2-ingestion-pipeline",
+    "trash",
+    "tests"
   ]
 }

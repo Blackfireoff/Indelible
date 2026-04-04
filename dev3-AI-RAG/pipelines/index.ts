@@ -2,6 +2,12 @@
  * Pipeline orchestrator.
  *
  * Routes intent to the correct pipeline and returns mode-specific output.
+ *
+ * Data flow:
+ * 1. Embed query using Transformers.js
+ * 2. Search local embeddings (data/embeddings/{attestationId}/embeddings.json)
+ * 3. Get matching chunks with text from local retrieval_chunks.json
+ * 4. Optionally verify with 0G Storage if needed
  */
 
 import type { IntentOutput, IntentMode } from "../../schemas/intent-output";
@@ -16,6 +22,7 @@ import { classifyIntent } from "../intent/classifier";
 import { runGeneralQuestionPipeline } from "./general-question";
 import { runVerifyClaimPipeline } from "./verify-claim";
 import { runDetectContradictionsPipeline } from "./detect-contradictions";
+import { getLocalVectorStore, type ScoredChunk } from "../storage/local-vector-store";
 
 // ---------------------------------------------------------------------------
 // Unified output type
@@ -52,7 +59,7 @@ export interface PipelineConfig {
 
 export async function runPipeline(
   query: string,
-  documentIds: string[],
+  attestationIds: string[],
   storageAdapter: {
     getManifest(docId: string): Promise<DocumentManifest | null>;
     listChunksForDocument(docId: string): Promise<Chunk[]>;
@@ -104,31 +111,22 @@ export async function runPipeline(
   const queryVector = await embedder.embed(query);
 
   // Search local vector store for top-K chunks by similarity
-  const { getLocalVectorStore } = await import("../storage/local-vector-store");
   const vectorStore = await getLocalVectorStore();
-  const topScoredChunks = vectorStore.searchBySimilarity(queryVector, topK * 2); // Get more to account for multiple chunks per doc
+  const topScoredChunks = vectorStore.searchBySimilarity(queryVector, topK * 2);
 
-  // Extract unique document IDs from top results
-  const topDocIds = [...new Set(topScoredChunks.map(c => c.documentId))];
-  console.log(`[Pipeline] Top matching docs: ${topDocIds.join(", ")} (from ${vectorStore.getVectorCount()} total vectors)`);
+  // Extract unique attestation IDs from top results
+  const topAttestationIds = [...new Set(topScoredChunks.map(c => c.attestationId))];
+  console.log(`[Pipeline] Top matching attestations: ${topAttestationIds.join(", ")} (from ${vectorStore.getVectorCount()} total vectors)`);
 
-  // -------------------------------------------------------------------------
-  // Step 4: Fetch only top-scoring documents from 0G Storage
-  // -------------------------------------------------------------------------
+  // Use topAttestationIds if no specific ones provided, otherwise use provided ones
+  const searchAttestationIds = attestationIds.length > 0
+    ? attestationIds
+    : topAttestationIds.length > 0
+      ? topAttestationIds
+      : [];
 
-  const allChunks: Chunk[] = [];
-  const documents: DocumentManifest[] = [];
-
-  // Use topDocIds if no specific documentIds provided, otherwise use provided ones
-  // Note: If topDocIds is empty, no local embeddings matched - return empty results
-  const searchDocIds = documentIds.length > 0
-    ? documentIds
-    : topDocIds.length > 0
-      ? topDocIds
-      : []; // No fallback - if no local embeddings match, return empty
-
-  // Early exit if no documents matched the similarity search
-  if (searchDocIds.length === 0) {
+  // Early exit if no embeddings matched
+  if (searchAttestationIds.length === 0) {
     console.log(`[Pipeline] No local embeddings matched the query. Returning empty results.`);
     return {
       mode,
@@ -146,36 +144,33 @@ export async function runPipeline(
     };
   }
 
-  for (const docId of searchDocIds) {
-    const manifest = await storageAdapter.getManifest(docId);
-    if (!manifest) continue;
+  // -------------------------------------------------------------------------
+  // Step 4: Build chunks from local data (text already available)
+  // -------------------------------------------------------------------------
 
-    documents.push(manifest);
-    const chunks = await storageAdapter.listChunksForDocument(docId);
-    allChunks.push(...chunks);
-  }
-
-  // Build vector map from local store for scoring
-  const chunkVectorMap = new Map<string, number[]>();
-  for (const scored of topScoredChunks) {
-    chunkVectorMap.set(scored.chunkId, scored.vector);
-  }
-
-  // Score chunks using pre-computed embeddings from local files
-  const scoredChunks: RetrievedChunk[] = allChunks
-    .map((chunk) => {
-      // Get pre-computed vector from local storage
-      const chunkVector = chunkVectorMap.get(chunk.chunkId);
-
-      // Compute cosine similarity with query vector
-      let score = 0;
-      if (chunkVector) {
-        score = cosineSimilarity(queryVector, chunkVector);
-      }
-
-      return { ...chunk, score };
-    })
-    .filter((c) => c.score >= minScore)
+  // Filter scored chunks to only those from matching attestations and above min score
+  const scoredChunks: RetrievedChunk[] = topScoredChunks
+    .filter(c => searchAttestationIds.includes(c.attestationId) && c.score >= minScore)
+    .map(c => ({
+      chunkId: c.chunkId,
+      documentId: c.attestationId, // Use attestationId as documentId
+      seq: 0,
+      text: c.text,
+      charStart: 0,
+      charEnd: c.text.length,
+      tokenCount: Math.ceil(c.text.split(/\s+/).length * 1.3),
+      sectionPath: [],
+      speaker: c.speaker,
+      sourceUrl: c.sourceUrl,
+      observedAt: new Date().toISOString(),
+      rawContentHash: "",
+      canonicalTextHash: "",
+      storagePointer: `local://${c.attestationId}/${c.chunkId}`,
+      prevChunkId: null,
+      nextChunkId: null,
+      chunkType: c.chunkType as "statement" | "paragraph" | "section",
+      score: c.score,
+    }))
     .sort((a, b) => b.score - a.score)
     .slice(0, topK);
 
@@ -184,18 +179,28 @@ export async function runPipeline(
       ? scoredChunks.reduce((s, c) => s + c.score, 0) / scoredChunks.length
       : 0;
 
-  // Cosine similarity helper
-  function cosineSimilarity(a: number[], b: number[]): number {
-    if (a.length !== b.length) return 0;
-    let dot = 0, magA = 0, magB = 0;
-    for (let i = 0; i < a.length; i++) {
-      dot += a[i] * b[i];
-      magA += a[i] * a[i];
-      magB += b[i] * b[i];
-    }
-    const denom = Math.sqrt(magA) * Math.sqrt(magB);
-    return denom === 0 ? 0 : dot / denom;
-  }
+  // Build document manifests from local data
+  const documents: DocumentManifest[] = searchAttestationIds.map(attId => ({
+    documentId: attId,
+    attestationId: attId,
+    title: topScoredChunks.find(c => c.attestationId === attId)?.sourceUrl.split("/").pop() ?? "Unknown",
+    speaker: topScoredChunks.find(c => c.attestationId === attId)?.speaker ?? "Unknown",
+    sourceUrl: topScoredChunks.find(c => c.attestationId === attId)?.sourceUrl ?? "",
+    sourceType: "local",
+    observedAt: new Date().toISOString(),
+    language: "en",
+    rawContentHash: "",
+    canonicalTextHash: "",
+    storagePointer: `local://${attId}`,
+    chunkManifestPointer: "",
+    embeddingsPointer: "",
+    chunks: scoredChunks.filter(c => c.documentId === attId).map(c => ({
+      chunkId: c.chunkId,
+      storagePointer: c.storagePointer,
+    })),
+  }));
+
+  console.log(`[Pipeline] Returning ${scoredChunks.length} chunks from ${documents.length} documents`);
 
   // -------------------------------------------------------------------------
   // Step 5: Dispatch to correct pipeline (early exit for empty results)
