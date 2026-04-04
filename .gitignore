@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+dev1_existance_proof/artifacts
+dev1_existance_proof/cache
+dev1_existance_proof/typechain-types
