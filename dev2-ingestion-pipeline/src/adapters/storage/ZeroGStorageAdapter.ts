@@ -24,6 +24,7 @@ import {
   parseIndexerUrlCandidates,
   waitUntilAnyIndexerHasLocations,
 } from "./zeroGStarterKitUpload.js";
+import { prepareStringForZeroGUpload } from "./zeroGUploadPayload.js";
 
 export interface ZeroGConfig {
   rpcUrl?: string;
@@ -86,8 +87,11 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       );
     }
 
-    // ── Pad to ≥ 2 KB (storage node preference, mirrors Dev 1) ──────────
-    const padded = data.length < 2048 ? data.padEnd(2048, " ") : data;
+    // ── Optional JSON minify + pad (see zeroGUploadPayload.ts) ─────────────
+    const { payload: padded, minified } = prepareStringForZeroGUpload(data);
+    if (minified) {
+      console.log(`[0G] JSON minified for upload: ${fileName} (ZEROG_UPLOAD_MINIFY_JSON=true)`);
+    }
 
     const safeBase = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
     const tmpPath = join(
@@ -98,7 +102,9 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     const retryOpts = buildRetryOptsFromEnv();
     const txOpts = buildTxOptsFromEnv();
 
-    console.log(`[0G] Uploading ${fileName} (${padded.length} bytes padded, from ${data.length} raw)`);
+    console.log(
+      `[0G] Uploading ${fileName} (${padded.length} bytes after prepare, ${data.length} bytes raw input)`,
+    );
     console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
     console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
     if (retryOpts) {

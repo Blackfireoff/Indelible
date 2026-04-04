@@ -286,6 +286,8 @@ The field `verification_method` records how each statement was matched:
 | `ZEROG_RPC_URL` | `https://evmrpc-testnet.0g.ai` | 0G EVM RPC endpoint |
 | `ZEROG_INDEXER_URL` | `https://indexer-storage-testnet-turbo.0g.ai` | 0G storage indexer |
 | `ZEROG_PRIVATE_KEY` | — | Signing key for 0G uploads |
+| `ZEROG_UPLOAD_MINIFY_JSON` | — | Set `true` to compact JSON before 0G upload (new Merkle root; helps avoid stale artifact dedup) |
+| `ZEROG_UPLOAD_PAD_MIN_BYTES` | `2048` | Minimum UTF-8 length before padding spaces |
 | `ENABLE_LLM_REFINEMENT` | `false` | Enable LLM refinement step |
 | `LOCAL_LLM_BASE_URL` | `http://127.0.0.1:1234/v1` | OpenAI-compatible endpoint |
 | `LOCAL_LLM_API_KEY` | `lm-studio` | API key (any string for LM Studio) |
@@ -352,6 +354,20 @@ The `ZeroGStorageAdapter` uses `@0gfoundation/0g-ts-sdk` aligned with the offici
 - The Flow contract is auto-discovered from the indexer (no manual ABI patching needed)
 
 The `dataAddress` in `document_manifest.json` is the 0G Merkle root hash for each artifact.
+
+### Why some artifacts fail on 0G while embeddings / manifest work
+
+- **Embeddings** and **document_manifest** usually change every pipeline run (vectors + new 0G addresses), so the **Merkle root is new** each time. The SDK performs a full upload path and indexers tend to list locations.
+- **clean_article**, **statements**, **chunks**, etc. can be **byte-for-byte identical** across runs (same fixture / same article). The root hash matches **older submissions** that may be in a bad state on nodes or missing from the indexer. The SDK may then short-circuit (`tasks.length === 0`) while downloads still see **no locations**.
+
+**Mitigations** (optional, in `.env`):
+
+| Variable | Effect |
+|--------|--------|
+| `ZEROG_UPLOAD_MINIFY_JSON=true` | `JSON.parse` → `JSON.stringify` (compact, no indentation). **Different bytes** than pretty-printed pipeline output → **new root** → avoids stale dedup with broken historical uploads. |
+| `ZEROG_UPLOAD_PAD_MIN_BYTES` | Minimum size before upload (default `2048`). Raise only if you suspect segment-size edge cases. |
+
+Downloads return whatever was stored (often **minified** JSON if minify was on). Local copies from `SAVE_ARTIFACTS_BEFORE_UPLOAD` stay **pretty-printed** from the pipeline.
 
 ## Dev 3 interface
 
