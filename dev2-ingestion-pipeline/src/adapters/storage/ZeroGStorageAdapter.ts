@@ -21,7 +21,8 @@ import type { StorageAdapter } from "./StorageAdapter.js";
 import {
   buildRetryOptsFromEnv,
   buildTxOptsFromEnv,
-  waitUntilIndexerHasLocations,
+  parseIndexerUrlCandidates,
+  waitUntilAnyIndexerHasLocations,
 } from "./zeroGStarterKitUpload.js";
 
 export interface ZeroGConfig {
@@ -38,12 +39,17 @@ const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
 
 export class ZeroGStorageAdapter implements StorageAdapter {
   private readonly rpcUrl: string;
+  /** First entry of `indexerUrlCandidates` — used for `indexer.upload`. */
   private readonly indexerUrl: string;
+  /** Turbo + optional standard (or any fallbacks) — used for location polling + download. */
+  private readonly indexerUrlCandidates: string[];
   private readonly privateKey: string;
 
   constructor(config: ZeroGConfig = {}) {
     this.rpcUrl = config.rpcUrl ?? process.env.ZEROG_RPC_URL ?? DEFAULT_RPC_URL;
-    this.indexerUrl = config.indexerUrl ?? process.env.ZEROG_INDEXER_URL ?? DEFAULT_INDEXER_URL;
+    const primary = config.indexerUrl ?? process.env.ZEROG_INDEXER_URL ?? DEFAULT_INDEXER_URL;
+    this.indexerUrlCandidates = parseIndexerUrlCandidates(primary);
+    this.indexerUrl = this.indexerUrlCandidates[0] ?? primary;
 
     const key = config.privateKey ?? process.env.ZEROG_PRIVATE_KEY;
     if (!key) {
@@ -59,8 +65,13 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
 
-    // Flow contract is auto-discovered by the Indexer in the new SDK
+    // Flow contract is auto-discovered by the Indexer in the new SDK (first candidate only)
     const indexer = new Indexer(this.indexerUrl);
+    if (this.indexerUrlCandidates.length > 1) {
+      console.log(
+        `[0G] Indexer candidates for location polling: ${this.indexerUrlCandidates.join(" | ")} (upload uses first)`,
+      );
+    }
 
     // ── Balance pre-flight check ──────────────────────────────────────────
     const address = await signer.getAddress();
@@ -125,14 +136,22 @@ export class ZeroGStorageAdapter implements StorageAdapter {
           throw new Error(`Upload failed: ${errMsg}`);
         }
         console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
-        await waitUntilIndexerHasLocations(indexer, rootHash, "post-upload (dedup)");
+        await waitUntilAnyIndexerHasLocations(
+          this.indexerUrlCandidates,
+          rootHash,
+          "post-upload (dedup)",
+        );
         return rootHash;
       }
 
       const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
       const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
       console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
-      await waitUntilIndexerHasLocations(indexer, returnedRoot, "post-upload");
+      await waitUntilAnyIndexerHasLocations(
+        this.indexerUrlCandidates,
+        returnedRoot,
+        "post-upload",
+      );
       return returnedRoot;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -175,12 +194,13 @@ export class ZeroGStorageAdapter implements StorageAdapter {
   }
 
   async downloadArtifact(dataAddress: string): Promise<string> {
-    const indexer = new Indexer(this.indexerUrl);
     const rootHash = dataAddress.replace("0g://", "");
 
-    // Same wait as post-upload: avoids spinning 4× on "no locations" when the fix is
-    // to poll the indexer once (up to ZEROG_INDEXER_SYNC_TIMEOUT_MS).
-    await waitUntilIndexerHasLocations(indexer, rootHash, "pre-download");
+    const indexer = await waitUntilAnyIndexerHasLocations(
+      this.indexerUrlCandidates,
+      rootHash,
+      "pre-download",
+    );
 
     const tmpPath = join(
       tmpdir(),
