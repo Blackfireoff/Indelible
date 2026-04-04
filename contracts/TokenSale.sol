@@ -24,8 +24,7 @@ contract TokenSale is AccessControl {
 
     function getIndlAmount(uint256 ethAmount) public view returns (uint256) {
         int256 ethPrice = getEthPrice();
-        uint256 usdValue = (ethAmount * uint256(ethPrice)) / 1e18;
-        return (usdValue * 100) / INDL_PRICE_CENTS;
+        return (ethAmount * uint256(ethPrice) * 100) / (1e8 * INDL_PRICE_CENTS);
     }
 
     function withdrawEth() external onlyRole(DEFAULT_ADMIN_ROLE) {
