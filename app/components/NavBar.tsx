@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { AppKitButton } from '@reown/appkit/react'
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
 import { useWalletSync } from '@/hooks/useWalletSync'
 
 // Icon components
@@ -30,6 +30,8 @@ interface NavBarProps {
 
 export default function NavBar({ showWallet = false, showFreeTier = false }: NavBarProps) {
   const pathname = usePathname()
+  const { open } = useAppKit()
+  const { isConnected } = useAppKitAccount()
 
   // Sync wallet state for extensions
   useWalletSync()
@@ -51,7 +53,7 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
               <GlobeIcon className="w-5 h-5 text-[var(--landing-bg-white)]" />
             </div>
             <span className="text-[20px] font-semibold text-[var(--landing-text-primary)]">
-              Political Speech Analyzer
+              Indelible.
             </span>
           </Link>
 
@@ -61,11 +63,10 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-[14px] font-medium transition-colors ${
-                  pathname === link.href
-                    ? 'text-[var(--landing-primary)]'
-                    : 'text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)]'
-                }`}
+                className={`text-[14px] font-medium transition-colors ${pathname === link.href
+                  ? 'text-[var(--landing-primary)]'
+                  : 'text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)]'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -87,10 +88,12 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
 
           {/* Wallet Connect */}
           {showWallet && (
-            <AppKitButton
-              balance="show"
-              className="h-10 px-4 rounded-full border border-[#e4e4e7] text-[14px] font-medium bg-white"
-            />
+            <button
+              onClick={() => open()}
+              className="h-10 px-6 rounded-xl bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium text-[14px] cursor-pointer"
+            >
+              {isConnected ? 'Profil' : 'Sign in'}
+            </button>
           )}
         </div>
       </div>
