@@ -6,17 +6,19 @@
  *  - Indexer: https://indexer-storage-testnet-turbo.0g.ai
  *  - Faucet:  https://faucet.0g.ai
  *
- * Implementation mirrors Sdk0GStorageAdapter from dev1_existance_proof for
- * maximum compatibility: static imports, same padding/upload/download patterns.
+ * Upload path follows 0g-storage-ts-starter-kit (`upload.ts` + `uploadData` in src/storage.ts):
+ * ZgFile.fromFilePath → indexer.upload(..., uploadOpts, retryOpts, txOpts).
+ * @see https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts
  */
 
-import { Indexer, MemData } from "@0gfoundation/0g-ts-sdk";
+import { Indexer, ZgFile } from "@0gfoundation/0g-ts-sdk";
 import { ethers } from "ethers";
-import { readFileSync, unlinkSync, existsSync } from "fs";
+import { readFileSync, unlinkSync, existsSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomBytes } from "crypto";
 import type { StorageAdapter } from "./StorageAdapter.js";
+import { buildRetryOptsFromEnv, buildTxOptsFromEnv } from "./zeroGStarterKitUpload.js";
 
 export interface ZeroGConfig {
   rpcUrl?: string;
@@ -72,15 +74,31 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     // ── Pad to ≥ 2 KB (storage node preference, mirrors Dev 1) ──────────
     const padded = data.length < 2048 ? data.padEnd(2048, " ") : data;
 
-    const dataBytes = new TextEncoder().encode(padded);
-    const memData = new MemData(dataBytes);
+    const safeBase = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const tmpPath = join(
+      tmpdir(),
+      `indelible_zg_${randomBytes(8).toString("hex")}_${safeBase}`,
+    );
 
-    console.log(`[0G] Uploading ${fileName} (${dataBytes.length} bytes, padded from ${data.length})`);
+    const retryOpts = buildRetryOptsFromEnv();
+    const txOpts = buildTxOptsFromEnv();
+
+    console.log(`[0G] Uploading ${fileName} (${padded.length} bytes padded, from ${data.length} raw)`);
     console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
     console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
+    if (retryOpts) {
+      console.log(`  retryOpts: Retries=${retryOpts.Retries}, Interval=${retryOpts.Interval}s`);
+    }
+
+    let zgFile: Awaited<ReturnType<typeof ZgFile.fromFilePath>> | null = null;
 
     try {
-      const [tree, treeErr] = await memData.merkleTree();
+      writeFileSync(tmpPath, padded, "utf-8");
+
+      // Same as starter kit uploadFile(): ZgFile.fromFilePath → merkleTree → indexer.upload(…6 args)
+      zgFile = await ZgFile.fromFilePath(tmpPath);
+
+      const [tree, treeErr] = await zgFile.merkleTree();
       if (treeErr !== null) {
         throw new Error(`Merkle tree error: ${treeErr}`);
       }
@@ -88,7 +106,14 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       const rootHash = tree!.rootHash() as string;
       console.log(`[0G] Attempting on-chain submission for root: ${rootHash}…`);
 
-      const [tx, uploadErr] = await indexer.upload(memData, this.rpcUrl, signer);
+      const [tx, uploadErr] = await indexer.upload(
+        zgFile,
+        this.rpcUrl,
+        signer,
+        undefined,
+        retryOpts,
+        txOpts,
+      );
 
       if (uploadErr !== null) {
         const errMsg = String(uploadErr);
@@ -96,12 +121,13 @@ export class ZeroGStorageAdapter implements StorageAdapter {
           throw new Error(`Upload failed: ${errMsg}`);
         }
         console.log(`[0G] File already exists on storage nodes — continuing.`);
-      } else {
-        const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
-        console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${rootHash}`);
+        return rootHash;
       }
 
-      return rootHash;
+      const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
+      const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
+      console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
+      return returnedRoot;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
@@ -124,6 +150,21 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       }
 
       throw err;
+    } finally {
+      if (zgFile !== null) {
+        try {
+          await zgFile.close();
+        } catch {
+          /* ignore */
+        }
+      }
+      if (existsSync(tmpPath)) {
+        try {
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
+        }
+      }
     }
   }
 
