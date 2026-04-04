@@ -1,9 +1,16 @@
 /**
- * Embedder for retrieval.
- * Currently uses simple TF-IDF-like keyword matching.
- * Replace with proper embeddings (OpenAI, local model, or 0G-native) for production.
+ * Embedder for retrieval using Transformers.js.
+ * Runs sentence-transformers locally via WebAssembly - no API key needed.
+ *
+ * Model: Xenova/all-MiniLM-L6-v2
+ * - 384 dimensions
+ * - Fast (~22MB model)
+ * - Semantic embeddings (understands meaning, not just keywords)
+ *
+ * This must match the model used by Dev 2 for pre-computing chunk embeddings.
  */
 
+import { pipeline, type FeatureExtractionPipeline } from "@xenova/transformers";
 import type { Chunk } from "../storage/types";
 
 export interface Embedding {
@@ -16,59 +23,77 @@ export interface IEmbedder {
   embedChunks(chunks: Chunk[]): Promise<Embedding[]>;
 }
 
+// Model identifier - must match what Dev 2 uses
+const MODEL_NAME = "Xenova/all-MiniLM-L6-v2";
+
 /**
- * Simple keyword-based embedder for hackathon.
- * Uses character n-grams to create pseudo-vectors.
- * Cosine similarity computed over these vectors.
+ * Production-grade embedder using Transformers.js.
+ * Caches the model pipeline for reuse across calls.
  */
-export class KeywordEmbedder implements IEmbedder {
-  private readonly ngramSize = 3;
+export class TransformersEmbedder implements IEmbedder {
+  private pipeline: FeatureExtractionPipeline | null = null;
+  private initPromise: Promise<FeatureExtractionPipeline> | null = null;
 
+  /**
+   * Get or initialize the Transformers.js pipeline.
+   * Thread-safe singleton initialization.
+   */
+  private async getPipeline(): Promise<FeatureExtractionPipeline> {
+    if (this.pipeline) {
+      return this.pipeline;
+    }
+
+    // Prevent concurrent initialization
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
+    this.initPromise = pipeline(
+      "feature-extraction",
+      MODEL_NAME
+    ).then((p) => {
+      this.pipeline = p;
+      return p;
+    });
+
+    return this.initPromise;
+  }
+
+  /**
+   * Embed a single text into a vector.
+   * @param text - Text to embed
+   * @returns Normalized embedding vector (384 dimensions)
+   */
   async embed(text: string): Promise<number[]> {
-    return this.textToVector(text.toLowerCase());
+    const p = await this.getPipeline();
+    const output = await p(text, {
+      pooling: "mean",
+      normalize: true,
+    });
+    return Array.from(output.data);
   }
 
+  /**
+   * Embed multiple chunks in batch for efficiency.
+   * @param chunks - Array of chunks to embed
+   * @returns Array of embeddings with chunkId
+   */
   async embedChunks(chunks: Chunk[]): Promise<Embedding[]> {
-    return Promise.all(
-      chunks.map(async (chunk) => ({
-        chunkId: chunk.chunkId,
-        vector: await this.embed(chunk.text),
-      }))
-    );
-  }
+    if (chunks.length === 0) return [];
 
-  private textToVector(text: string): number[] {
-    const ngrams = this.extractNgrams(text);
-    const freq: Record<string, number> = {};
-    for (const ng of ngrams) {
-      freq[ng] = (freq[ng] ?? 0) + 1;
-    }
-    // Create a sparse vector representation (fixed size for common ngrams)
-    const allNgrams = Object.keys(freq);
-    const vector = new Array(1000).fill(0);
-    for (let i = 0; i < allNgrams.length && i < 1000; i++) {
-      vector[i] = freq[allNgrams[i]] ?? 0;
-    }
-    // Normalize
-    const magnitude = Math.sqrt(vector.reduce((s, v) => s + v * v, 0));
-    if (magnitude > 0) {
-      for (let i = 0; i < vector.length; i++) {
-        vector[i] /= magnitude;
-      }
-    }
-    return vector;
-  }
+    // Batch embed all texts at once for efficiency
+    const texts = chunks.map((c) => c.text);
+    const p = await this.getPipeline();
 
-  private extractNgrams(text: string): string[] {
-    const cleaned = text.replace(/[^a-z0-9\s]/g, " ").toLowerCase();
-    const words = cleaned.split(/\s+/).filter((w) => w.length > 0);
-    const ngrams: string[] = [];
-    for (const word of words) {
-      for (let i = 0; i <= word.length - this.ngramSize; i++) {
-        ngrams.push(word.slice(i, i + this.ngramSize));
-      }
-    }
-    return ngrams;
+    const output = await p(texts, {
+      pooling: "mean",
+      normalize: true,
+    });
+
+    return chunks.map((chunk, i) => ({
+      chunkId: chunk.chunkId,
+      vector: Array.from(output[i].data),
+    }));
   }
 }
 
@@ -80,7 +105,7 @@ export function setEmbedder(embedder: IEmbedder): void {
 
 export function getEmbedder(): IEmbedder {
   if (!_embedder) {
-    _embedder = new KeywordEmbedder();
+    _embedder = new TransformersEmbedder();
   }
   return _embedder;
 }
