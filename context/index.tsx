@@ -23,7 +23,9 @@ if (!globalAny.__appkit_modal__) {
       email: true,
       socials: ['google', 'x', 'github', 'discord', 'apple', 'facebook', 'farcaster'],
       emailShowWallets: true,
-      analytics: false
+      analytics: false,
+      swaps: true,
+      onramp: true
     }
   })
 }
