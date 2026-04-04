@@ -106,8 +106,8 @@ export default function GetTokenClient() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)]">Get requests to use <em className="italic">INDELIBLE.</em></h1>
-        <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package to top up your account. Conversions are calculated automatically from live rates.</p>
+        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)] mb-4">Get requests to use <em className="italic" style={{ textDecorationLine: 'underline', textDecorationColor: 'var(--accent-color)', textDecorationThickness: '3px', textUnderlineOffset: '6px' }}>INDELIBLE.</em></h1>
+        <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package below. Don&apos;t have ETH yet? No worries — we&apos;ll help you purchase some first, then you can use it to buy your requests.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
