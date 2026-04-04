@@ -1,0 +1,381 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+  "requestId": "0x7cbf777729bcfd61ee2a146c9d92fcff4ee4b9aaecb34ddc24bc29230dfc636c",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+  "publisher": "Reuters",
+  "language": "en",
+  "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters",
+  "subtitle": null,
+  "publishedAt": "2026-04-01T13:13:39.114Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_ac73e50ff02c93f2",
+      "order": 1,
+      "text": "Trump criticizes NATO, considers US withdrawal from alliance",
+      "charStart": 0,
+      "charEnd": 60,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_864cd95ed6403c90",
+      "order": 2,
+      "text": "He says Iran now incapable of developing nuclear weapons",
+      "charStart": 62,
+      "charEnd": 118,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_6a997fac3ea25a2c",
+      "order": 3,
+      "text": "Change in Iran leadership offers deal possibilities, he says",
+      "charStart": 120,
+      "charEnd": 180,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_e77c736e22b03f4c",
+      "order": 4,
+      "text": "WASHINGTON, April 1 (Reuters) - The United States will be \"out of Iran pretty quickly\" and could return for \"spot hits\" if needed, President Donald Trump told Reuters on Wednesday, hours before he was scheduled to make a primetime address to the nation about the war.",
+      "charStart": 182,
+      "charEnd": 449,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(5)"
+      }
+    },
+    {
+      "paragraphId": "para_e616aa6a05facce1",
+      "order": 5,
+      "text": "With the conflict in its fifth week and Trump under pressure for an off-ramp amid rising gasoline prices, the president scheduled a 9 p.m. EDT (0100 GMT) speech to discuss the way forward. His address will end a day that began with Trump making a historic visit to the Supreme Court.",
+      "charStart": 451,
+      "charEnd": 734,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(6)"
+      }
+    },
+    {
+      "paragraphId": "para_b702c16674a94bae",
+      "order": 6,
+      "text": "The Reuters Iran Briefing newsletter keeps you informed with the latest developments and analysis of the Iran war. Sign up here.",
+      "charStart": 736,
+      "charEnd": 864,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_fb3ec22657040639",
+      "order": 7,
+      "text": "Trump, in a phone interview with Reuters, said one element of his speech would be to express his disgust with NATO for what he considers the alliance's lack of support for U.S. objectives in Iran.",
+      "charStart": 866,
+      "charEnd": 1062,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(8)"
+      }
+    },
+    {
+      "paragraphId": "para_3496a958afbaab94",
+      "order": 8,
+      "text": "A transatlantic rift in Trump's second term deepened after European allies rebuffed his request to help maintain safe passage for oil traffic through the Strait of Hormuz.",
+      "charStart": 1064,
+      "charEnd": 1235,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    },
+    {
+      "paragraphId": "para_3c343ff6f349da17",
+      "order": 9,
+      "text": "He said he was \"absolutely\" considering withdrawing the United States from NATO, a treaty organization ratified by the U.S. Senate in 1949. Trump has flirted with a withdrawal in the past and has successfully pressured NATO members to increase their defense spending.",
+      "charStart": 1237,
+      "charEnd": 1504,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(10)"
+      }
+    },
+    {
+      "paragraphId": "para_ef65769ad7f0cc59",
+      "order": 10,
+      "text": "\"They haven't been friends when we needed them,\" Trump said. \"We've never asked them for much ... it's a one-way street.\"",
+      "charStart": 1506,
+      "charEnd": 1627,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(11)"
+      }
+    },
+    {
+      "paragraphId": "para_13736b13ce5a09c7",
+      "order": 11,
+      "text": "Trump and his top officials have offered a variety of timelines for ending the war. He said on Tuesday that the U.S. could end its military campaign against Iran within two to three weeks.",
+      "charStart": 1629,
+      "charEnd": 1817,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(12)"
+      }
+    },
+    {
+      "paragraphId": "para_933538c845809bd6",
+      "order": 12,
+      "text": "In the Reuters interview, he declined to provide a timeline.",
+      "charStart": 1819,
+      "charEnd": 1879,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(13)"
+      }
+    },
+    {
+      "paragraphId": "para_bd7a1d3ef015a09b",
+      "order": 13,
+      "text": "\"I can't tell you exactly ... we're going to be out pretty quickly,\" he said, adding that once a U.S. exit is achieved, \"we'll come back to do spot hits\" on Iranian targets as needed.",
+      "charStart": 1881,
+      "charEnd": 2064,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(14)"
+      }
+    },
+    {
+      "paragraphId": "para_ffd34a9d97879208",
+      "order": 14,
+      "text": "The war has spread across the Middle East, killing thousands of people and causing soaring energy prices that have fueled global inflation fears.",
+      "charStart": 2066,
+      "charEnd": 2211,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(16)"
+      }
+    },
+    {
+      "paragraphId": "para_6a67656389e94156",
+      "order": 15,
+      "text": "Two-thirds of Americans believe that the U.S. should work to end its involvement in the Iran war quickly, even if that means not achieving the goals set out by the Trump administration, found a Reuters/Ipsos poll conducted from Friday to Sunday.",
+      "charStart": 2213,
+      "charEnd": 2458,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(17)"
+      }
+    },
+    {
+      "paragraphId": "para_65271d21fffccd9b",
+      "order": 16,
+      "text": "Trump said he hoped for a deal with Iran after the first wave of airstrikes killed Supreme Leader Ayatollah Ali Khamenei. A number of other senior Iranian figures have also been killed.",
+      "charStart": 2460,
+      "charEnd": 2645,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(18)"
+      }
+    },
+    {
+      "paragraphId": "para_a6b099e80ae35b53",
+      "order": 17,
+      "text": "Mojtaba Khamenei has replaced his father as Iran's supreme leader; the U.S. has said it believes he is wounded and likely disfigured. The country's president and foreign minister remain the same as before the conflict.",
+      "charStart": 2647,
+      "charEnd": 2865,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(19)"
+      }
+    },
+    {
+      "paragraphId": "para_c8600ca97b6ec6bb",
+      "order": 18,
+      "text": "Trump said Iran's leadership was now \"totally different people.\"",
+      "charStart": 2867,
+      "charEnd": 2931,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(20)"
+      }
+    },
+    {
+      "paragraphId": "para_ceebb8c561e3bbaa",
+      "order": 19,
+      "text": "\"I didn't need regime change, but we got it because of the casualties of war. We got it. So we have regime change and the big thing we have is they're not going to have a nuclear weapon,\" said Trump, adding: \"Nor do they want one.\"",
+      "charStart": 2933,
+      "charEnd": 3164,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(21)"
+      }
+    },
+    {
+      "paragraphId": "para_8c68d28a51ded5ef",
+      "order": 20,
+      "text": "The White House has said behind-the-scenes negotiations are ongoing with Iran, a point that Tehran denies. A source briefed on the matter said Vice President JD Vance was talking to intermediaries from Pakistan about the conflict as recently as Tuesday.",
+      "charStart": 3166,
+      "charEnd": 3419,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(22)"
+      }
+    },
+    {
+      "paragraphId": "para_755617823076ced6",
+      "order": 21,
+      "text": "At Trump's direction, Vance signaled privately that Trump was open to a ceasefire as long as certain U.S. demands were met, the source told Reuters on Wednesday.",
+      "charStart": 3421,
+      "charEnd": 3582,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(23)"
+      }
+    },
+    {
+      "paragraphId": "para_dc2e956c8068d238",
+      "order": 22,
+      "text": "\"We have had full regime change,\" Trump said. \"I'm dealing with a very good chance that we'll make a deal because they don't want to be blasted anymore.\"",
+      "charStart": 3584,
+      "charEnd": 3737,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(24)"
+      }
+    },
+    {
+      "paragraphId": "para_89158ea70a7b3289",
+      "order": 23,
+      "text": "Trump has said a primary aim of launching the war was to prevent Iran from developing a nuclear weapon.",
+      "charStart": 3739,
+      "charEnd": 3842,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(26)"
+      }
+    },
+    {
+      "paragraphId": "para_226b72e4d5339ceb",
+      "order": 24,
+      "text": "Almost half of Iran's uranium enriched to up to 60% purity, a short step from weapons-grade, was stored in a tunnel complex at Isfahan and is probably still there, the U.N. nuclear watchdog chief Rafael Grossi said earlier this month.",
+      "charStart": 3844,
+      "charEnd": 4078,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(27)"
+      }
+    },
+    {
+      "paragraphId": "para_d1a390babdf5b7cd",
+      "order": 25,
+      "text": "The tunnel complex is the only target that appears not to have been badly damaged in attacks last June by Israel and the U.S. on Iran's nuclear facilities.",
+      "charStart": 4080,
+      "charEnd": 4235,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(28)"
+      }
+    },
+    {
+      "paragraphId": "para_c18ba0af26e652ae",
+      "order": 26,
+      "text": "Trump said the objective of preventing a nuclear weapon has been achieved, however.",
+      "charStart": 4237,
+      "charEnd": 4320,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(29)"
+      }
+    },
+    {
+      "paragraphId": "para_baede9fd603d3c0f",
+      "order": 27,
+      "text": "Of the enriched uranium, Trump said: \"That's so far underground, I don't care about that.\"",
+      "charStart": 4322,
+      "charEnd": 4412,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(30)"
+      }
+    },
+    {
+      "paragraphId": "para_38430e84352d2d52",
+      "order": 28,
+      "text": "\"We'll always be watching it by satellite,\" he added.",
+      "charStart": 4414,
+      "charEnd": 4467,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(31)"
+      }
+    },
+    {
+      "paragraphId": "para_80e579a66c36d395",
+      "order": 29,
+      "text": "He said Iran was \"incapable\" of developing a weapon now.",
+      "charStart": 4469,
+      "charEnd": 4525,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(32)"
+      }
+    },
+    {
+      "paragraphId": "para_5a30e48ced4bfbc1",
+      "order": 30,
+      "text": "Iran has long denied wanting to develop a nuclear weapon and says its nuclear program is peaceful.",
+      "charStart": 4527,
+      "charEnd": 4625,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(33)"
+      }
+    },
+    {
+      "paragraphId": "para_f961cb92445ca2ad",
+      "order": 31,
+      "text": "The International Atomic Energy Agency estimates that when Israel launched its first attacks in June, Iran had 440.9 kg of 60% uranium. If enriched further, that would provide the explosive needed for 10 nuclear weapons, according to an IAEA yardstick.",
+      "charStart": 4627,
+      "charEnd": 4879,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(34)"
+      }
+    },
+    {
+      "paragraphId": "para_41313be9aae657cd",
+      "order": 32,
+      "text": "Reporting by Steve Holland; Writing by Katharine Jackson and Steve Holland, editing by Michelle Nichols and Rosalba O'Brien",
+      "charStart": 4881,
+      "charEnd": 5004,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(35)"
+      }
+    },
+    {
+      "paragraphId": "para_624bb22defdc5909",
+      "order": 33,
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "charStart": 5006,
+      "charEnd": 5073,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(36)"
+      }
+    }
+  ],
+  "fullText": "Trump criticizes NATO, considers US withdrawal from alliance\n\nHe says Iran now incapable of developing nuclear weapons\n\nChange in Iran leadership offers deal possibilities, he says\n\nWASHINGTON, April 1 (Reuters) - The United States will be \"out of Iran pretty quickly\" and could return for \"spot hits\" if needed, President Donald Trump told Reuters on Wednesday, hours before he was scheduled to make a primetime address to the nation about the war.\n\nWith the conflict in its fifth week and Trump under pressure for an off-ramp amid rising gasoline prices, the president scheduled a 9 p.m. EDT (0100 GMT) speech to discuss the way forward. His address will end a day that began with Trump making a historic visit to the Supreme Court.\n\nThe Reuters Iran Briefing newsletter keeps you informed with the latest developments and analysis of the Iran war. Sign up here.\n\nTrump, in a phone interview with Reuters, said one element of his speech would be to express his disgust with NATO for what he considers the alliance's lack of support for U.S. objectives in Iran.\n\nA transatlantic rift in Trump's second term deepened after European allies rebuffed his request to help maintain safe passage for oil traffic through the Strait of Hormuz.\n\nHe said he was \"absolutely\" considering withdrawing the United States from NATO, a treaty organization ratified by the U.S. Senate in 1949. Trump has flirted with a withdrawal in the past and has successfully pressured NATO members to increase their defense spending.\n\n\"They haven't been friends when we needed them,\" Trump said. \"We've never asked them for much ... it's a one-way street.\"\n\nTrump and his top officials have offered a variety of timelines for ending the war. He said on Tuesday that the U.S. could end its military campaign against Iran within two to three weeks.\n\nIn the Reuters interview, he declined to provide a timeline.\n\n\"I can't tell you exactly ... we're going to be out pretty quickly,\" he said, adding that once a U.S. exit is achieved, \"we'll come back to do spot hits\" on Iranian targets as needed.\n\nThe war has spread across the Middle East, killing thousands of people and causing soaring energy prices that have fueled global inflation fears.\n\nTwo-thirds of Americans believe that the U.S. should work to end its involvement in the Iran war quickly, even if that means not achieving the goals set out by the Trump administration, found a Reuters/Ipsos poll conducted from Friday to Sunday.\n\nTrump said he hoped for a deal with Iran after the first wave of airstrikes killed Supreme Leader Ayatollah Ali Khamenei. A number of other senior Iranian figures have also been killed.\n\nMojtaba Khamenei has replaced his father as Iran's supreme leader; the U.S. has said it believes he is wounded and likely disfigured. The country's president and foreign minister remain the same as before the conflict.\n\nTrump said Iran's leadership was now \"totally different people.\"\n\n\"I didn't need regime change, but we got it because of the casualties of war. We got it. So we have regime change and the big thing we have is they're not going to have a nuclear weapon,\" said Trump, adding: \"Nor do they want one.\"\n\nThe White House has said behind-the-scenes negotiations are ongoing with Iran, a point that Tehran denies. A source briefed on the matter said Vice President JD Vance was talking to intermediaries from Pakistan about the conflict as recently as Tuesday.\n\nAt Trump's direction, Vance signaled privately that Trump was open to a ceasefire as long as certain U.S. demands were met, the source told Reuters on Wednesday.\n\n\"We have had full regime change,\" Trump said. \"I'm dealing with a very good chance that we'll make a deal because they don't want to be blasted anymore.\"\n\nTrump has said a primary aim of launching the war was to prevent Iran from developing a nuclear weapon.\n\nAlmost half of Iran's uranium enriched to up to 60% purity, a short step from weapons-grade, was stored in a tunnel complex at Isfahan and is probably still there, the U.N. nuclear watchdog chief Rafael Grossi said earlier this month.\n\nThe tunnel complex is the only target that appears not to have been badly damaged in attacks last June by Israel and the U.S. on Iran's nuclear facilities.\n\nTrump said the objective of preventing a nuclear weapon has been achieved, however.\n\nOf the enriched uranium, Trump said: \"That's so far underground, I don't care about that.\"\n\n\"We'll always be watching it by satellite,\" he added.\n\nHe said Iran was \"incapable\" of developing a weapon now.\n\nIran has long denied wanting to develop a nuclear weapon and says its nuclear program is peaceful.\n\nThe International Atomic Energy Agency estimates that when Israel launched its first attacks in June, Iran had 440.9 kg of 60% uranium. If enriched further, that would provide the explosive needed for 10 nuclear weapons, according to an IAEA yardstick.\n\nReporting by Steve Holland; Writing by Katharine Jackson and Steve Holland, editing by Michelle Nichols and Rosalba O'Brien\n\nOur Standards: The Thomson Reuters Trust Principles., opens new tab"
+}

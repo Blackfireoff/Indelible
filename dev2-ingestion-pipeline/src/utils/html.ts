@@ -4,6 +4,24 @@
  */
 
 /**
+ * Strip invisible Unicode characters that news sites (Reuters, etc.) embed
+ * in their rendered HTML.  These characters are zero-width and cause false
+ * mismatches during exact-span verification.
+ *
+ * Stripped codepoints:
+ *  U+200B  ZERO WIDTH SPACE
+ *  U+200C  ZERO WIDTH NON-JOINER
+ *  U+200D  ZERO WIDTH JOINER
+ *  U+2060  WORD JOINER
+ *  U+FEFF  ZERO WIDTH NO-BREAK SPACE (BOM)
+ *  U+00AD  SOFT HYPHEN
+ */
+export function stripInvisibleChars(text: string): string {
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/g, "");
+}
+
+/**
  * Normalize whitespace in a text string:
  * - Collapse multiple spaces/tabs into a single space
  * - Preserve paragraph-level newlines
@@ -15,6 +33,18 @@ export function normalizeWhitespace(text: string): string {
     .replace(/\r\n/g, "\n")            // normalize line endings
     .replace(/\r/g, "\n")
     .replace(/\n{3,}/g, "\n\n")        // collapse 3+ newlines to 2
+    .trim();
+}
+
+/**
+ * Normalize whitespace within a single paragraph (no multi-line content expected).
+ * Converts ALL newlines and surrounding whitespace to a single space.
+ * Used after Readability extraction where HTML line-breaks inside a <p> are artifacts.
+ */
+export function normalizeParagraphWhitespace(text: string): string {
+  return text
+    .replace(/\r\n|\r|\n/g, " ")      // newlines → spaces (HTML layout artifact)
+    .replace(/[ \t]+/g, " ")          // collapse spaces/tabs
     .trim();
 }
 
@@ -48,10 +78,14 @@ export function decodeHtmlEntities(text: string): string {
 
 /**
  * Clean the text content of a single paragraph:
- * decode entities, strip residual tags, normalize whitespace.
+ * decode entities, strip residual tags, strip invisible Unicode chars,
+ * then normalize whitespace treating internal newlines as spaces
+ * (they are HTML layout artifacts within a single <p> element).
  */
 export function cleanParagraphText(raw: string): string {
-  return normalizeWhitespace(decodeHtmlEntities(stripHtmlTags(raw)));
+  const decoded = decodeHtmlEntities(stripHtmlTags(raw));
+  const stripped = stripInvisibleChars(decoded);
+  return normalizeParagraphWhitespace(stripped);
 }
 
 /**

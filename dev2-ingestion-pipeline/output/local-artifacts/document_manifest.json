@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xabc123000000000000000000000000000000000000000000000000000000002",
+  "requestId": "0xdef456000000000000000000000000000000000000000000000000000000002",
+  "sourceUrl": "https://www.reuters.com/world/middle-east/oman-nuclear-talks-article",
+  "publisher": "Global Wire",
+  "language": "en",
+  "observedAt": "2026-04-04T14:15:00Z",
+  "artifacts": {
+    "rawCapture": {
+      "fileName": "raw_capture.json",
+      "dataAddress": "mock://sha256:d0eddf15b0e1f6153bcba36c294b414a071a96494e199c13338e4b2e9731e07f/raw_capture.json"
+    },
+    "cleanArticle": {
+      "fileName": "clean_article.json",
+      "dataAddress": "mock://sha256:5a3556be578be810eb6d65d4be778807109a065fab10170497ac9d0394ea7d96/clean_article.json"
+    },
+    "statements": {
+      "fileName": "statements.json",
+      "dataAddress": "mock://sha256:78657bc6004c6c52a1476dca78ef1fa7aea53fc3285f613cc9439bdc75c2e5de/statements.json"
+    },
+    "retrievalChunks": {
+      "fileName": "retrieval_chunks.json",
+      "dataAddress": "mock://sha256:053dd76df2d3a6daab7eff4ca58a74eb5970577b460d4c8995ffadbb0f190d9f/retrieval_chunks.json"
+    },
+    "embeddings": {
+      "fileName": "embeddings.json",
+      "dataAddress": "mock://sha256:8ee0cc62444dd8ed36b102763e0ac3cc2c594539e47c82d8615a61c7f9358031/embeddings.json"
+    }
+  },
+  "processing": {
+    "dev2PipelineVersion": "1.0.0",
+    "status": "completed"
+  }
+}

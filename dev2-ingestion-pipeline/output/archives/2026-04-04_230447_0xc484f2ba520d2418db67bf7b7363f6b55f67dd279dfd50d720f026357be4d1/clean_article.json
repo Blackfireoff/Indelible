@@ -1,0 +1,425 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xc484f2ba520d2418db67bf7b7363f6b55f67dd279dfd50d720f026357be4d120",
+  "requestId": "0x46ffdbdbb06e4219d5ad4d8537d7fa2d44d31f2bd007af9d3b6599b25933c85f",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example5.html",
+  "publisher": "Reuters",
+  "language": "en",
+  "title": "Trump, Israel pressure Iran ahead of deadline as search continues for missing US airman",
+  "subtitle": null,
+  "publishedAt": "2026-04-04T22:13:22.171Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_a732cd5704ab132d",
+      "order": 1,
+      "text": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks",
+      "charStart": 0,
+      "charEnd": 69,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_d5c23ba484b10398",
+      "order": 2,
+      "text": "Israel says it is prepared to attack Iranian energy facilities, awaits US go-ahead",
+      "charStart": 71,
+      "charEnd": 153,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_4e87c5c11aceb026",
+      "order": 3,
+      "text": "Iran, US forces search for missing American pilot from downed warplane",
+      "charStart": 155,
+      "charEnd": 225,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_dea8e2737d16aecd",
+      "order": 4,
+      "text": "Iran touts new air-defence systems, claims success against US and Israel",
+      "charStart": 227,
+      "charEnd": 299,
+      "sourceHints": {
+        "tagName": "li",
+        "cssSelector": "li:nth-child(5)"
+      }
+    },
+    {
+      "paragraphId": "para_3cadec0f5ec2c807",
+      "order": 5,
+      "text": "CAIRO/WASHINGTON, April 5 (Reuters) - U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure, while Iranian and U.S. forces searched for a missing U.S. crew member from one of two downed warplanes.",
+      "charStart": 301,
+      "charEnd": 606,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(6)"
+      }
+    },
+    {
+      "paragraphId": "para_2ef5a09e1a2146b4",
+      "order": 6,
+      "text": "Trump, who has sent mixed messages since the conflict began with a joint U.S.-Israeli bombardment of Iran on February 28, told Tehran that his latest deadline for a deal to end the war was fast approaching.",
+      "charStart": 608,
+      "charEnd": 814,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_1642169b15715488",
+      "order": 7,
+      "text": "The Reuters Iran Briefing newsletter keeps you informed with the latest developments and analysis of the Iran war. Sign up here.",
+      "charStart": 816,
+      "charEnd": 944,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(8)"
+      }
+    },
+    {
+      "paragraphId": "para_a4772ed510afac11",
+      "order": 8,
+      "text": "\"Remember when I gave Iran ten days to MAKE A DEAL or OPEN UP THE HORMUZ STRAIT. Time is running out — 48 hours before all Hell will reign (sic) down on them. Glory be to GOD!\" he wrote in a post on Truth Social.",
+      "charStart": 946,
+      "charEnd": 1158,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    },
+    {
+      "paragraphId": "para_f451e38809bd5b4f",
+      "order": 9,
+      "text": "Trump's messaging has veered between hinting at diplomatic progress and making threats to bomb the Islamic Republic \"back to the Stone Ages.\"",
+      "charStart": 1160,
+      "charEnd": 1301,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(10)"
+      }
+    },
+    {
+      "paragraphId": "para_4a250413383ef850",
+      "order": 10,
+      "text": "In an apparent move to heap further pressure on Tehran following Trump's latest ultimatum, a senior Israeli defence official said Israel was preparing to attack Iranian energy facilities, and was awaiting approval from the U.S. The timeframe for such attacks would be within the next week, the official said. Trump has previously threatened to hit Iranian power plants if his demands were not met.",
+      "charStart": 1303,
+      "charEnd": 1700,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(11)"
+      }
+    },
+    {
+      "paragraphId": "para_6f540d5042efa951",
+      "order": 11,
+      "text": "Iran warned the U.S. and Israel that the \"entire region will become a hell for you\" if attacks escalated, according to Iranian media reports.",
+      "charStart": 1702,
+      "charEnd": 1843,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(13)"
+      }
+    },
+    {
+      "paragraphId": "para_8b7820d7152ce620",
+      "order": 12,
+      "text": "Washington faced heightened stakes as the conflict entered its sixth week, with the prospect of a U.S. service member alive and on the run in Iran, slim chances for peace talks and polls showing low public support for the war.",
+      "charStart": 1845,
+      "charEnd": 2071,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(14)"
+      }
+    },
+    {
+      "paragraphId": "para_c4ec397d5b573d9e",
+      "order": 13,
+      "text": "With Iran's leadership defiant since the start of the conflict, its foreign minister left the door open in principle for peace talks with the U.S. via mediation from Pakistan, but gave no sign of Tehran's willingness to bow to Trump's demands.",
+      "charStart": 2073,
+      "charEnd": 2316,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(15)"
+      }
+    },
+    {
+      "paragraphId": "para_623020030e41283b",
+      "order": 14,
+      "text": "\"We are deeply grateful to Pakistan for its efforts and have never refused to go to Islamabad. What we care about are the terms of a conclusive and lasting END to the illegal war that is imposed on us,\" Foreign Minister Abbas Araqchi said on X.",
+      "charStart": 2318,
+      "charEnd": 2562,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(16)"
+      }
+    },
+    {
+      "paragraphId": "para_3bcb728039871534",
+      "order": 15,
+      "text": "After a fourth attack near the Bushehr power plant on Saturday, Araqchi warned in a letter to the United Nations of an \"intolerable situation that poses a serious risk of radiological release,\" Iran's state media reported.",
+      "charStart": 2564,
+      "charEnd": 2786,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(17)"
+      }
+    },
+    {
+      "paragraphId": "para_997791d05d23d7b3",
+      "order": 16,
+      "text": "The war has killed thousands, sparked an energy crisis and threatened lasting damage to the world economy. Iran has virtually shut the Strait of Hormuz, which normally carries about a fifth of the world's oil and liquefied natural gas.",
+      "charStart": 2788,
+      "charEnd": 3023,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(18)"
+      }
+    },
+    {
+      "paragraphId": "para_4ec4c49947b8053c",
+      "order": 17,
+      "text": "Iran has rained drones and missiles down on Israel, and also aimed at Gulf countries allied to the U.S., which have held back from joining the war directly for fear of further escalation.",
+      "charStart": 3025,
+      "charEnd": 3212,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(19)"
+      }
+    },
+    {
+      "paragraphId": "para_02964408fe3261f9",
+      "order": 18,
+      "text": "Iranian state TV said its military had launched drones at U.S. radar installations and a U.S.-linked aluminium plant in the United Arab Emirates and U.S. military headquarters in Kuwait in retaliation for deadly attacks on Iranian industrial centres.",
+      "charStart": 3214,
+      "charEnd": 3464,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(20)"
+      }
+    },
+    {
+      "paragraphId": "para_d915af4fd15fab87",
+      "order": 19,
+      "text": "Iran earlier attacked an Israel-affiliated vessel with a drone in the strait, setting the ship on fire, state media said, citing the commander of the Revolutionary Guards' navy.",
+      "charStart": 3466,
+      "charEnd": 3643,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(21)"
+      }
+    },
+    {
+      "paragraphId": "para_ab0878530e4b0474",
+      "order": 20,
+      "text": "Yemen's Iran-aligned Houthis also said on Saturday they attacked Israel using a ballistic missile and drones, adding that the operation was conducted jointly with Iran's Revolutionary Guards, the Iranian army and Lebanon's Hezbollah. The group did not provide evidence of the damage caused.",
+      "charStart": 3645,
+      "charEnd": 3935,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(22)"
+      }
+    },
+    {
+      "paragraphId": "para_006adab98e856c2d",
+      "order": 21,
+      "text": "The downing of two U.S. warplanes shows the risks still facing U.S. and Israeli aircraft, despite assertions by Trump and his Defense Secretary Pete Hegseth that U.S. forces had total control of the skies over Iran.",
+      "charStart": 3937,
+      "charEnd": 4152,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(25)"
+      }
+    },
+    {
+      "paragraphId": "para_c34686a9ecf84444",
+      "order": 22,
+      "text": "Iranian fire brought down a two-seat U.S. F-15E jet, officials in both countries said on Friday, and a U.S. official said search-and-rescue efforts had recovered one of the crew.",
+      "charStart": 4154,
+      "charEnd": 4332,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(26)"
+      }
+    },
+    {
+      "paragraphId": "para_e86b6f7694c2fb10",
+      "order": 23,
+      "text": "Two Black Hawk helicopters engaged in the search for the missing crew member were hit by Iranian fire but made it out of Iranian airspace, the two U.S. officials told Reuters.",
+      "charStart": 4334,
+      "charEnd": 4509,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(27)"
+      }
+    },
+    {
+      "paragraphId": "para_e71aef621e44cf23",
+      "order": 24,
+      "text": "Iran's Islamic Revolutionary Guard Corps said it was combing a southwestern area near where the U.S. plane came down, while the regional governor promised a commendation for anyone who captured or killed \"forces of the hostile enemy.\"",
+      "charStart": 4511,
+      "charEnd": 4745,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(28)"
+      }
+    },
+    {
+      "paragraphId": "para_1e2e415d57c50664",
+      "order": 25,
+      "text": "In a separate incident, an A-10 Warthog fighter aircraft was hit and crashed over Kuwait, with the pilot ejecting, the U.S. officials said.",
+      "charStart": 4747,
+      "charEnd": 4886,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(29)"
+      }
+    },
+    {
+      "paragraphId": "para_fb521e8298729bd2",
+      "order": 26,
+      "text": "Iranians, pummelled by air power since the U.S. and Israel began their attacks, celebrated their success.",
+      "charStart": 4888,
+      "charEnd": 4993,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(30)"
+      }
+    },
+    {
+      "paragraphId": "para_940839872e41a938",
+      "order": 27,
+      "text": "The Khatam al-Anbiya joint military command said it used a new air-defence system on Friday, which targeted a U.S. fighter jet, three drones and two cruise missiles.",
+      "charStart": 4995,
+      "charEnd": 5160,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(31)"
+      }
+    },
+    {
+      "paragraphId": "para_8b9e6d379b854e82",
+      "order": 28,
+      "text": "\"The enemy should know that we rely on new air-defence systems built by the young, knowledgeable, and proud people of this country, unveiling them one after another in the field,\" a Khatam al-Anbiya spokesperson said, according to Iran's state media.",
+      "charStart": 5162,
+      "charEnd": 5412,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(32)"
+      }
+    },
+    {
+      "paragraphId": "para_7cdf8ea8107cf2f3",
+      "order": 29,
+      "text": "The Revolutionary Guards said they had targeted various areas in Israel in a wave of missiles and drones. Israeli media reported that two warheads from an Iranian cluster missile landed near Israel’s Kirya military headquarters in Tel Aviv.",
+      "charStart": 5414,
+      "charEnd": 5654,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(33)"
+      }
+    },
+    {
+      "paragraphId": "para_62a0a904547a53fd",
+      "order": 30,
+      "text": "Later on Saturday, the Israel Defense Forces said they had detected more missiles launched from Iran towards Israel.",
+      "charStart": 5656,
+      "charEnd": 5772,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(34)"
+      }
+    },
+    {
+      "paragraphId": "para_c80ee69e54b63c7f",
+      "order": 31,
+      "text": "Iranian state media reported airstrikes at a petrochemical zone in southwestern Iran, with five people reported injured. They later said a fire there had been extinguished.",
+      "charStart": 5774,
+      "charEnd": 5946,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(36)"
+      }
+    },
+    {
+      "paragraphId": "para_f72a77ae1e88bd70",
+      "order": 32,
+      "text": "Israeli Prime Minister Benjamin Netanyahu said Israel had struck the plant, which an Israeli military spokesperson said produced materials for explosives and missiles.",
+      "charStart": 5948,
+      "charEnd": 6115,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(37)"
+      }
+    },
+    {
+      "paragraphId": "para_03c65afef4d2a9c2",
+      "order": 33,
+      "text": "Israel has been waging a parallel campaign against Iran-backed Hezbollah in Lebanon after the militant group fired at Israel in support of Iran.",
+      "charStart": 6117,
+      "charEnd": 6261,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(38)"
+      }
+    },
+    {
+      "paragraphId": "para_21091698e90709a7",
+      "order": 34,
+      "text": "Early on Saturday, Israel's military said it was striking the militants' infrastructure sites in Beirut. It later said an Israeli soldier had been killed in combat in southern Lebanon.",
+      "charStart": 6263,
+      "charEnd": 6447,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(39)"
+      }
+    },
+    {
+      "paragraphId": "para_f5ffc66decc71f63",
+      "order": 35,
+      "text": "Reporting by Phil Stewart in Washington, Enas Alashray and Hatem Maher in Cairo, Jerusalem bureau and Reuters bureaux worldwide; Writing by David Morgan; Editing by Sergio Non, Rod Nickel and Cynthia Osterman",
+      "charStart": 6449,
+      "charEnd": 6657,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(40)"
+      }
+    },
+    {
+      "paragraphId": "para_aeea7fb275a94486",
+      "order": 36,
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "charStart": 6659,
+      "charEnd": 6726,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(41)"
+      }
+    },
+    {
+      "paragraphId": "para_bd125d551dfb3663",
+      "order": 37,
+      "text": "Phil Stewart has reported from more than 60 countries, including Afghanistan, Ukraine, Syria, Iraq, Pakistan, Russia, Saudi Arabia, China and South Sudan. An award-winning Washington-based national security reporter, Phil has appeared on NPR, PBS NewsHour, Fox News and other programs and moderated national security events, including at the Reagan National Defense Forum and the German Marshall Fund. He is a recipient of the Edwin M. Hood Award for Diplomatic Correspondence and the Joe Galloway Award.",
+      "charStart": 6728,
+      "charEnd": 7232,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(42)"
+      }
+    }
+  ],
+  "fullText": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks\n\nIsrael says it is prepared to attack Iranian energy facilities, awaits US go-ahead\n\nIran, US forces search for missing American pilot from downed warplane\n\nIran touts new air-defence systems, claims success against US and Israel\n\nCAIRO/WASHINGTON, April 5 (Reuters) - U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure, while Iranian and U.S. forces searched for a missing U.S. crew member from one of two downed warplanes.\n\nTrump, who has sent mixed messages since the conflict began with a joint U.S.-Israeli bombardment of Iran on February 28, told Tehran that his latest deadline for a deal to end the war was fast approaching.\n\nThe Reuters Iran Briefing newsletter keeps you informed with the latest developments and analysis of the Iran war. Sign up here.\n\n\"Remember when I gave Iran ten days to MAKE A DEAL or OPEN UP THE HORMUZ STRAIT. Time is running out — 48 hours before all Hell will reign (sic) down on them. Glory be to GOD!\" he wrote in a post on Truth Social.\n\nTrump's messaging has veered between hinting at diplomatic progress and making threats to bomb the Islamic Republic \"back to the Stone Ages.\"\n\nIn an apparent move to heap further pressure on Tehran following Trump's latest ultimatum, a senior Israeli defence official said Israel was preparing to attack Iranian energy facilities, and was awaiting approval from the U.S. The timeframe for such attacks would be within the next week, the official said. Trump has previously threatened to hit Iranian power plants if his demands were not met.\n\nIran warned the U.S. and Israel that the \"entire region will become a hell for you\" if attacks escalated, according to Iranian media reports.\n\nWashington faced heightened stakes as the conflict entered its sixth week, with the prospect of a U.S. service member alive and on the run in Iran, slim chances for peace talks and polls showing low public support for the war.\n\nWith Iran's leadership defiant since the start of the conflict, its foreign minister left the door open in principle for peace talks with the U.S. via mediation from Pakistan, but gave no sign of Tehran's willingness to bow to Trump's demands.\n\n\"We are deeply grateful to Pakistan for its efforts and have never refused to go to Islamabad. What we care about are the terms of a conclusive and lasting END to the illegal war that is imposed on us,\" Foreign Minister Abbas Araqchi said on X.\n\nAfter a fourth attack near the Bushehr power plant on Saturday, Araqchi warned in a letter to the United Nations of an \"intolerable situation that poses a serious risk of radiological release,\" Iran's state media reported.\n\nThe war has killed thousands, sparked an energy crisis and threatened lasting damage to the world economy. Iran has virtually shut the Strait of Hormuz, which normally carries about a fifth of the world's oil and liquefied natural gas.\n\nIran has rained drones and missiles down on Israel, and also aimed at Gulf countries allied to the U.S., which have held back from joining the war directly for fear of further escalation.\n\nIranian state TV said its military had launched drones at U.S. radar installations and a U.S.-linked aluminium plant in the United Arab Emirates and U.S. military headquarters in Kuwait in retaliation for deadly attacks on Iranian industrial centres.\n\nIran earlier attacked an Israel-affiliated vessel with a drone in the strait, setting the ship on fire, state media said, citing the commander of the Revolutionary Guards' navy.\n\nYemen's Iran-aligned Houthis also said on Saturday they attacked Israel using a ballistic missile and drones, adding that the operation was conducted jointly with Iran's Revolutionary Guards, the Iranian army and Lebanon's Hezbollah. The group did not provide evidence of the damage caused.\n\nThe downing of two U.S. warplanes shows the risks still facing U.S. and Israeli aircraft, despite assertions by Trump and his Defense Secretary Pete Hegseth that U.S. forces had total control of the skies over Iran.\n\nIranian fire brought down a two-seat U.S. F-15E jet, officials in both countries said on Friday, and a U.S. official said search-and-rescue efforts had recovered one of the crew.\n\nTwo Black Hawk helicopters engaged in the search for the missing crew member were hit by Iranian fire but made it out of Iranian airspace, the two U.S. officials told Reuters.\n\nIran's Islamic Revolutionary Guard Corps said it was combing a southwestern area near where the U.S. plane came down, while the regional governor promised a commendation for anyone who captured or killed \"forces of the hostile enemy.\"\n\nIn a separate incident, an A-10 Warthog fighter aircraft was hit and crashed over Kuwait, with the pilot ejecting, the U.S. officials said.\n\nIranians, pummelled by air power since the U.S. and Israel began their attacks, celebrated their success.\n\nThe Khatam al-Anbiya joint military command said it used a new air-defence system on Friday, which targeted a U.S. fighter jet, three drones and two cruise missiles.\n\n\"The enemy should know that we rely on new air-defence systems built by the young, knowledgeable, and proud people of this country, unveiling them one after another in the field,\" a Khatam al-Anbiya spokesperson said, according to Iran's state media.\n\nThe Revolutionary Guards said they had targeted various areas in Israel in a wave of missiles and drones. Israeli media reported that two warheads from an Iranian cluster missile landed near Israel’s Kirya military headquarters in Tel Aviv.\n\nLater on Saturday, the Israel Defense Forces said they had detected more missiles launched from Iran towards Israel.\n\nIranian state media reported airstrikes at a petrochemical zone in southwestern Iran, with five people reported injured. They later said a fire there had been extinguished.\n\nIsraeli Prime Minister Benjamin Netanyahu said Israel had struck the plant, which an Israeli military spokesperson said produced materials for explosives and missiles.\n\nIsrael has been waging a parallel campaign against Iran-backed Hezbollah in Lebanon after the militant group fired at Israel in support of Iran.\n\nEarly on Saturday, Israel's military said it was striking the militants' infrastructure sites in Beirut. It later said an Israeli soldier had been killed in combat in southern Lebanon.\n\nReporting by Phil Stewart in Washington, Enas Alashray and Hatem Maher in Cairo, Jerusalem bureau and Reuters bureaux worldwide; Writing by David Morgan; Editing by Sergio Non, Rod Nickel and Cynthia Osterman\n\nOur Standards: The Thomson Reuters Trust Principles., opens new tab\n\nPhil Stewart has reported from more than 60 countries, including Afghanistan, Ukraine, Syria, Iraq, Pakistan, Russia, Saudi Arabia, China and South Sudan. An award-winning Washington-based national security reporter, Phil has appeared on NPR, PBS NewsHour, Fox News and other programs and moderated national security events, including at the Reagan National Defense Forum and the German Marshall Fund. He is a recipient of the Edwin M. Hood Award for Diplomatic Correspondence and the Joe Galloway Award."
+}

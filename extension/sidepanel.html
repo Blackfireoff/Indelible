@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indelible</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="panel">
+
+    <!-- ═══════ Header ═══════ -->
+    <header class="panel-header">
+      <div class="header-left">
+        <div class="header-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.3"/>
+            <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="header-title">Indelible</span>
+      </div>
+      <div class="header-right">
+        <div class="wallet-badge" id="wallet-badge" style="display:none;">
+          <span class="wallet-dot"></span>
+          <span class="wallet-badge-text" id="wallet-badge-text">0x…</span>
+        </div>
+        <div class="balance-badge" id="balance-badge" style="display:none;">
+          <span class="balance-dot" id="balance-dot"></span>
+          <span id="balance-count">0</span> <span class="balance-label-text">Req</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════ Main Content ═══════ -->
+    <main class="panel-main" id="panel-main">
+
+      <!-- STATE: Loading -->
+      <div class="state" id="state-loading">
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <p class="loading-text">Connecting…</p>
+        </div>
+      </div>
+
+      <!-- STATE: Not Connected -->
+      <div class="state hidden" id="state-connect">
+        <div class="connect-card">
+          <div class="connect-icon-wrap">
+            <svg viewBox="0 0 48 48" fill="none">
+              <rect x="4" y="8" width="40" height="32" rx="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 16h40" stroke="currentColor" stroke-width="2"/>
+              <circle cx="24" cy="30" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M20 30h-6M30 30h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h2 class="connect-title">Connect to Indelible</h2>
+          <p class="connect-desc">Sign in through the main website to start searching political speeches from any page.</p>
+          <button class="btn btn-primary btn-lg" id="btn-open-site">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M11 3h6v6M17 3L9 11M8 3H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Open Indelible
+          </button>
+        </div>
+      </div>
+
+      <!-- STATE: Query (Connected) -->
+      <div class="state hidden" id="state-query">
+        <!-- Selection Preview -->
+        <div class="selection-preview hidden" id="selection-preview">
+          <div class="selection-header">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 2v12l3-2 2 3 2-3 3 2V2H3z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Selected text</span>
+            <button class="btn-icon" id="btn-clear-selection" title="Clear selection">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="selection-text" id="selection-text"></div>
+          <div class="selection-source" id="selection-source"></div>
+        </div>
+
+        <!-- Query Input -->
+        <div class="query-section">
+          <label class="input-label" for="query-input">Your question</label>
+          <div class="query-input-wrap">
+            <textarea id="query-input" placeholder="e.g. What did they say about climate change?" rows="2"></textarea>
+          </div>
+        </div>
+
+        <!-- Additional Details -->
+        <div class="details-section">
+          <button class="details-toggle" id="btn-toggle-details">
+            <svg viewBox="0 0 16 16" fill="none" class="chevron" id="details-chevron"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Add details
+          </button>
+          <div class="details-body hidden" id="details-body">
+            <textarea id="details-input" placeholder="Provide extra context, time period, specific politicians…" rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn btn-primary btn-search" id="btn-search" disabled>
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M14 14l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Search
+        </button>
+
+        <!-- Insufficient Balance Warning -->
+        <div class="balance-warning hidden" id="balance-warning">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1l7 13H1L8 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6v3M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div>
+            <p class="warning-title">Insufficient INDL balance</p>
+            <p class="warning-desc">Each search costs 1 INDL. <a href="#" id="link-get-token">Get more requests →</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE: Searching -->
+      <div class="state hidden" id="state-searching">
+        <div class="searching-container">
+          <div class="search-anim">
+            <div class="search-ring"></div>
+            <div class="search-ring ring-2"></div>
+            <div class="search-ring ring-3"></div>
+            <svg viewBox="0 0 24 24" fill="none" class="search-icon-center"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16 16l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <p class="searching-text" id="searching-text">Verifying transaction…</p>
+          <p class="searching-sub">This may take a moment</p>
+        </div>
+      </div>
+
+      <!-- STATE: Results -->
+      <div class="state hidden" id="state-results">
+        <!-- Back button -->
+        <button class="btn-back" id="btn-back">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          New search
+        </button>
+
+        <!-- AI Summary -->
+        <div class="result-summary" id="result-summary">
+          <div class="summary-header">
+            <div class="summary-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.09 4.26L17 7.27l-3.5 3.42.82 4.81L10 13.27l-4.32 2.23.82-4.81L3 7.27l4.91-1.01L10 2z" fill="currentColor"/></svg>
+            </div>
+            <div>
+              <h3 class="summary-title">AI Summary</h3>
+              <p class="summary-meta" id="summary-meta">0 sources</p>
+            </div>
+          </div>
+          <p class="summary-answer" id="summary-answer"></p>
+        </div>
+
+        <!-- Sources -->
+        <div class="sources-section" id="sources-section">
+          <div class="sources-header">
+            <h3>Source Documents</h3>
+            <span class="sources-count" id="sources-count">0</span>
+          </div>
+          <div class="sources-list" id="sources-list"></div>
+        </div>
+      </div>
+
+      <!-- STATE: Error -->
+      <div class="state hidden" id="state-error">
+        <div class="error-card">
+          <div class="error-icon-wrap">
+            <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 16v10M24 30v2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="error-title">Something went wrong</h3>
+          <p class="error-message" id="error-message">An unknown error occurred.</p>
+          <button class="btn btn-primary" id="btn-retry">Try again</button>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>
