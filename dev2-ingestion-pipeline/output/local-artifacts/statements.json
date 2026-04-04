@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+  "requestId": "0x7cbf777729bcfd61ee2a146c9d92fcff4ee4b9aaecb34ddc24bc29230dfc636c",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+  "extractionPolicy": {
+    "allowParaphrases": false,
+    "preserveExactText": true,
+    "speakerAttributionRequired": true
+  },
+  "statements": [
+    {
+      "statementId": "stmt_a40ebfae25aa3984",
+      "speaker": {
+        "name": "Trump",
+        "role": null,
+        "normalizedId": "donald_trump"
+      },
+      "quoteType": "direct",
+      "content": "They haven't been friends when we needed them,",
+      "cue": "\"They haven't been friends when we needed them,\" Trump said. \"We've never aske",
+      "sourceParagraphId": "para_ef65769ad7f0cc59",
+      "charStart": 1,
+      "charEnd": 47,
+      "contextWindow": {
+        "precedingText": "\"",
+        "followingText": "\" Trump said. \"We've never asked them for much ... it's a one-way street.\""
+      },
+      "confidence": 0.9,
+      "validation": {
+        "status": "auto_accepted",
+        "reviewRequired": false
+      }
+    },
+    {
+      "statementId": "stmt_7507751b25ed2af7",
+      "speaker": {
+        "name": "Trump",
+        "role": null,
+        "normalizedId": "donald_trump"
+      },
+      "quoteType": "direct",
+      "content": "We have had full regime change,",
+      "cue": "\"We have had full regime change,\" Trump said. \"I'm dealing with",
+      "sourceParagraphId": "para_dc2e956c8068d238",
+      "charStart": 1,
+      "charEnd": 32,
+      "contextWindow": {
+        "precedingText": "\"",
+        "followingText": "\" Trump said. \"I'm dealing with a very good chance that we'll make a deal because they don't want to be blasted anymore.\""
+      },
+      "confidence": 0.9,
+      "validation": {
+        "status": "auto_accepted",
+        "reviewRequired": false
+      }
+    }
+  ]
+}
