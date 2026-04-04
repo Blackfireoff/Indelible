@@ -71,8 +71,11 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       );
     }
 
+    // ── Pad to ≥ 2 KB (storage node preference, matches Dev 1 behaviour) ──
+    const padded = data.length < 2048 ? data.padEnd(2048, " ") : data;
+
     // ── Build MemData (no temp file needed) ──────────────────────────────
-    const bytes = new TextEncoder().encode(data);
+    const bytes = new TextEncoder().encode(padded);
     const memData = new MemData(bytes);
 
     const [tree, treeErr] = await memData.merkleTree();
@@ -81,7 +84,7 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     }
     const rootHash = tree.rootHash() as string;
 
-    console.log(`[ZeroGStorage] Uploading ${fileName} (${bytes.length} bytes)`);
+    console.log(`[ZeroGStorage] Uploading ${fileName} (${bytes.length} bytes, padded from ${data.length})`);
     console.log(`  root hash: ${rootHash}`);
     console.log(`  wallet:    ${address} (${ethers.formatEther(balance)} A0GI)`);
 
@@ -91,6 +94,12 @@ export class ZeroGStorageAdapter implements StorageAdapter {
 
     if (uploadErr !== null) {
       const msg = String(uploadErr);
+
+      if (msg.includes("already exists")) {
+        console.log(`[ZeroGStorage] File already exists on storage nodes — continuing.`);
+        return rootHash;
+      }
+
       const isFundsError =
         msg.includes("require(false)") ||
         msg.includes("insufficient funds") ||
@@ -126,11 +135,13 @@ export class ZeroGStorageAdapter implements StorageAdapter {
 
     try {
       const indexer = new Indexer(this.indexerUrl);
-      const err = await indexer.download(dataAddress, tmpPath, false);
+      // proof = true matches Dev 1 behaviour and enables Merkle proof verification
+      const err = await indexer.download(dataAddress, tmpPath, true);
       if (err !== null) {
         throw new Error(`0G download error: ${String(err)}`);
       }
-      return readFileSync(tmpPath, "utf-8");
+      // trimEnd() strips the padding spaces added during upload
+      return readFileSync(tmpPath, "utf-8").trimEnd();
     } finally {
       if (existsSync(tmpPath)) {
         try { unlinkSync(tmpPath); } catch { /* ignore */ }
