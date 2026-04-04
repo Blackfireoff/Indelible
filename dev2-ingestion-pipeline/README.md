@@ -343,9 +343,10 @@ The field `verification_method` records how each statement was matched:
 
 ## 0G Storage adapter
 
-The `ZeroGStorageAdapter` uses `@0glabs/0g-ts-sdk`:
-- Upload: `ZgFile.fromFilePath` → `indexer.upload` → returns root hash as `dataAddress`
+The `ZeroGStorageAdapter` uses `@0gfoundation/0g-ts-sdk`:
+- Upload: `MemData` (in-memory, no temp file) → `indexer.upload` → returns root hash as `dataAddress`
 - Download: `indexer.download` to temp file → read → delete
+- The Flow contract is auto-discovered from the indexer (no manual ABI patching needed)
 
 The `dataAddress` in `document_manifest.json` is the 0G Merkle root hash for each artifact.
 
