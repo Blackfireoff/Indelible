@@ -5,9 +5,12 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 // Import cleanly removed
 import { useWalletSync } from '@/hooks/useWalletSync'
+import { Tooltip } from '@heroui/react'
 import ConnectButton from './ConnectButton'
-import { useAccount, useReadContract } from 'wagmi'
+import { useAccount, useReadContract, useDisconnect } from 'wagmi'
 import { erc20Abi, formatUnits } from 'viem'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 
 // (Custom inline icons have been removed in favor of FontAwesome)
 
@@ -22,6 +25,7 @@ interface NavBarProps {
 export default function NavBar({ showWallet = false }: NavBarProps) {
   const pathname = usePathname()
   const { address, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
   const { data: balanceData } = useReadContract({
     address: INDL_TOKEN_ADDRESS,
     abi: erc20Abi,
@@ -91,7 +95,7 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
               <div
                 className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full"
               >
-                <span className={`w-2 h-2 rounded-full ${indlCount > 0 ? "bg-[var(--landing-success)]" : "bg-red-500"}`} />
+                <span className={`w-2 h-2 rounded-full ${indlCount > 5 ? "bg-[var(--landing-success)]" : indlCount > 0 ? "bg-orange-500" : "bg-red-500"}`} />
                 <span className="text-[14px] font-medium text-[var(--landing-text-primary)]">
                   {indlCount} Requests
                 </span>
@@ -102,6 +106,25 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
           {/* Wallet Connect */}
           {showWallet && (
             <ConnectButton text="Sign in" />
+          )}
+
+          {/* Disconnect Button */}
+          {isConnected && (
+            <div className="relative flex items-center justify-center group/tooltip">
+              <button
+                onClick={() => disconnect()}
+                className="h-10 w-10 flex items-center justify-center rounded-full border-[1.5px] border-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] hover:border-[var(--landing-primary-dark)] transition-all duration-200 cursor-pointer group relative"
+                aria-label="Disconnect wallet"
+              >
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="w-4 h-4 text-[var(--landing-primary-darker)] group-hover:text-white transition-colors duration-200"
+                />
+              </button>
+              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-[#1A1A1A] text-white text-[12px] font-medium rounded-lg opacity-0 invisible translate-y-1.5 scale-95 origin-top group-hover/tooltip:opacity-80 group-hover/tooltip:visible group-hover/tooltip:translate-y-0 group-hover/tooltip:scale-100 transition-all duration-300 ease-out whitespace-nowrap shadow-lg z-50 pointer-events-none">
+                Disconnect
+              </div>
+            </div>
           )}
         </div>
       </div>
