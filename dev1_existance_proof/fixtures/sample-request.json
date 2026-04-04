@@ -1,0 +1,7 @@
+{
+  "requestId": "0xabc123def456789012345678901234567890123456789012345678901234abcd",
+  "requester": "0x1234567890abcdef1234567890abcdef12345678",
+  "url": "https://lemonde.fr/article405",
+  "requestedAt": 1775304000,
+  "description": "Sample SourceAttestationRequested event payload for testing"
+}

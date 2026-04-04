@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+  "requestId": "0x7cbf777729bcfd61ee2a146c9d92fcff4ee4b9aaecb34ddc24bc29230dfc636c",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+  "llm_used": false,
+  "llm_model": "qwen/qwen-2.5-7b-instruct",
+  "statements": [
+    {
+      "statementId": "stmt_a40ebfae25aa3984",
+      "speaker": "Trump",
+      "speaker_role": null,
+      "statement_text": "They haven't been friends when we needed them,",
+      "statement_type": "direct_quote",
+      "attribution_text": "\"They haven't been friends when we needed them,\" Trump said. \"We've never aske",
+      "evidence_paragraph_ids": [
+        "para_ef65769ad7f0cc59"
+      ],
+      "confidence": 0.9,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_ef65769ad7f0cc59",
+          "charStart": 1,
+          "charEnd": 47,
+          "matchedText": "They haven't been friends when we needed them,"
+        }
+      ],
+      "extracted_by": "deterministic"
+    },
+    {
+      "statementId": "stmt_7507751b25ed2af7",
+      "speaker": "Trump",
+      "speaker_role": null,
+      "statement_text": "We have had full regime change,",
+      "statement_type": "direct_quote",
+      "attribution_text": "\"We have had full regime change,\" Trump said. \"I'm dealing with",
+      "evidence_paragraph_ids": [
+        "para_dc2e956c8068d238"
+      ],
+      "confidence": 0.9,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_dc2e956c8068d238",
+          "charStart": 1,
+          "charEnd": 32,
+          "matchedText": "We have had full regime change,"
+        }
+      ],
+      "extracted_by": "deterministic"
+    }
+  ],
+  "extraction_summary": {
+    "total": 2,
+    "verified": 2,
+    "unverified": 0
+  }
+}

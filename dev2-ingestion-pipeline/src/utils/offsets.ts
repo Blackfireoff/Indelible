@@ -52,6 +52,78 @@ export function extractContextWindow(
 }
 
 /**
+ * Find the span of `needle` in `haystack` after normalizing both strings
+ * (stripping invisible Unicode chars, collapsing internal whitespace).
+ *
+ * Returns [charStart, charEnd] in the ORIGINAL haystack, or null if not found.
+ * The offsets point to the first character of the matching region in the
+ * original string (pre-normalization), which may be approximate when
+ * invisible chars are present.
+ */
+export function findNormalizedSpan(
+  haystack: string,
+  needle: string
+): [number, number] | null {
+  const normalizeForSearch = (s: string) =>
+    s
+      .replace(/[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const normalHaystack = normalizeForSearch(haystack);
+  const normalNeedle = normalizeForSearch(needle);
+
+  if (!normalNeedle) return null;
+  const idx = normalHaystack.indexOf(normalNeedle);
+  if (idx === -1) return null;
+
+  // Map normalized idx back to original string:
+  // walk the original string, counting only non-invisible non-redundant-whitespace chars
+  let origIdx = 0;
+  let normCount = 0;
+  const invisRe = /[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/;
+  let lastWasSpace = false;
+
+  while (origIdx < haystack.length && normCount < idx) {
+    const ch = haystack[origIdx];
+    if (invisRe.test(ch)) {
+      origIdx++;
+      continue;
+    }
+    const isSpace = /\s/.test(ch);
+    if (isSpace) {
+      if (!lastWasSpace) { normCount++; lastWasSpace = true; }
+    } else {
+      normCount++;
+      lastWasSpace = false;
+    }
+    origIdx++;
+  }
+
+  const start = origIdx;
+  // Find end: advance origIdx by normalNeedle.length normalized chars
+  normCount = 0;
+  lastWasSpace = false;
+  while (origIdx < haystack.length && normCount < normalNeedle.length) {
+    const ch = haystack[origIdx];
+    if (invisRe.test(ch)) {
+      origIdx++;
+      continue;
+    }
+    const isSpace = /\s/.test(ch);
+    if (isSpace) {
+      if (!lastWasSpace) { normCount++; lastWasSpace = true; }
+    } else {
+      normCount++;
+      lastWasSpace = false;
+    }
+    origIdx++;
+  }
+
+  return [start, origIdx];
+}
+
+/**
  * Compute cumulative character offsets for an ordered list of paragraphs,
  * as they appear in the fullText (joined by "\n\n").
  *

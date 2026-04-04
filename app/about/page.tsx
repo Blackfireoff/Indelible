@@ -99,7 +99,7 @@ export default function AboutPage() {
         <div className="border border-[var(--landing-primary-light)] rounded-2xl p-8" style={{
           background: 'linear-gradient(167.8deg, var(--landing-primary-subtle) 0%, rgba(3, 105, 209, 0.05) 100%)'
         }}>
-          <h2 className="text-[24px] font-semibold leading-[32px] text-[var(--landing-text-primary)] mb-6">
+          <h2 className="text-[24px] font-semibold leading-[32px] text-[var(--landing-text-primary)] mb-6" style={{ textDecorationLine: 'underline', textDecorationColor: 'var(--accent-color-dark)', textDecorationThickness: '3px', textUnderlineOffset: '6px' }}>
             How It Works
           </h2>
 

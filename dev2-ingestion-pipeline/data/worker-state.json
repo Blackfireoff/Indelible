@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "jobs": {
+    "sample-fixture-article-1": {
+      "status": "failed",
+      "updatedAt": "2026-04-04T21:01:48.186Z",
+      "rawCaptureDataAddress": "REPLACE_WITH_0G_ROOT_HASH_AFTER_DEV1_UPLOAD",
+      "attemptCount": 2,
+      "lastError": "MockStorageAdapter: unrecognized dataAddress format \"REPLACE_WITH_0G_ROOT_HASH_AFTER_DEV1_UPLOAD\""
+    }
+  }
+}

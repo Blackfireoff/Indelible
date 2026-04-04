@@ -16,6 +16,7 @@ import type { Statement, QuoteType } from "../schemas/statements.js";
 import { statementId } from "../utils/ids.js";
 import { normalizeSpeaker } from "../utils/speakerNormalization.js";
 import { findExactSpan, extractContextWindow } from "../utils/offsets.js";
+import { isVagueSpeakerName } from "./conservativeAttribution.js";
 
 // ─────────────────────────────────────────────
 // Phase 1: Rules-based extraction
@@ -122,14 +123,14 @@ interface LlmExtractedStatement {
   cue: string | null;
 }
 
-const LLM_SYSTEM_PROMPT = `You are a political statement extractor.
+const LLM_SYSTEM_PROMPT = `You are a conservative statement extractor (precision over recall).
 
 RULES (non-negotiable):
-1. Only extract statements made by named political figures or officials.
-2. The "content" field MUST be an exact verbatim substring of the provided paragraph text – no paraphrasing, no summarizing.
-3. Only extract direct quotes (delimited by quotation marks) or clearly attributed indirect statements.
-4. If no attributable political statement exists, return an empty array.
-5. Output ONLY valid JSON – no markdown, no explanation.
+1. Extract ONLY if a named, identifiable speaker is explicitly tied to the words in THIS paragraph (no guessing, no "sources", "officials", "analysts", "experts" without a specific named entity).
+2. The "content" field MUST be an exact verbatim substring of the paragraph – no paraphrasing.
+3. Prefer direct quotes in quotation marks with clear attribution (e.g. Name said "…"). Reject "he/she said" unless the name appears in the same sentence as the quote.
+4. If attribution is ambiguous or weak, return an empty array [].
+5. Output ONLY valid JSON – no markdown.
 
 Output format:
 [
@@ -138,7 +139,7 @@ Output format:
     "role": "Title or role, or null",
     "content": "exact quote from paragraph",
     "quoteType": "direct | indirect",
-    "cue": "said | according to | null"
+    "cue": "short attribution phrase from text, or null"
   }
 ]`;
 
@@ -220,6 +221,9 @@ export async function extractStatements(
 
     // Build statements from rule matches
     for (const match of ruleMatches) {
+      if (isVagueSpeakerName(match.speaker)) {
+        continue;
+      }
       const stmt = buildStatement(
         attestationId,
         para,
@@ -236,6 +240,9 @@ export async function extractStatements(
     if (useLlmFallback && !hasRuleMatches) {
       const llmMatches = await extractWithLlm(text);
       for (const match of llmMatches) {
+        if (isVagueSpeakerName(match.speaker)) {
+          continue;
+        }
         if (!validateContent(text, match.content)) {
           // Content not verifiable as exact substring – mark needs_review
           const stmt = buildStatement(

@@ -1,0 +1,607 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+  "chunkingStrategy": {
+    "statementChunks": true,
+    "paragraphChunks": true,
+    "version": "1.0.0"
+  },
+  "chunks": [
+    {
+      "chunkId": "chunk_s_ac53c6135caef172",
+      "chunkType": "statement",
+      "text": "They haven't been friends when we needed them,",
+      "statementId": "stmt_a40ebfae25aa3984",
+      "paragraphId": "para_ef65769ad7f0cc59",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": "Trump",
+        "speakerNormalizedId": "donald_trump",
+        "quoteType": "direct",
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_s_63da65abbf792b9b",
+      "chunkType": "statement",
+      "text": "We have had full regime change,",
+      "statementId": "stmt_7507751b25ed2af7",
+      "paragraphId": "para_dc2e956c8068d238",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": "Trump",
+        "speakerNormalizedId": "donald_trump",
+        "quoteType": "direct",
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_8443034cfb2500b0",
+      "chunkType": "paragraph",
+      "text": "Trump criticizes NATO, considers US withdrawal from alliance",
+      "statementId": null,
+      "paragraphId": "para_ac73e50ff02c93f2",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_bcf81652efafcd52",
+      "chunkType": "paragraph",
+      "text": "He says Iran now incapable of developing nuclear weapons",
+      "statementId": null,
+      "paragraphId": "para_864cd95ed6403c90",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_9827791d8ca662ef",
+      "chunkType": "paragraph",
+      "text": "Change in Iran leadership offers deal possibilities, he says",
+      "statementId": null,
+      "paragraphId": "para_6a997fac3ea25a2c",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_5c9d469fecadbfb9",
+      "chunkType": "paragraph",
+      "text": "WASHINGTON, April 1 (Reuters) - The United States will be \"out of Iran pretty quickly\" and could return for \"spot hits\" if needed, President Donald Trump told Reuters on Wednesday, hours before he was scheduled to make a primetime address to the nation about the war.",
+      "statementId": null,
+      "paragraphId": "para_e77c736e22b03f4c",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_6f89b3ab6f3df7b2",
+      "chunkType": "paragraph",
+      "text": "With the conflict in its fifth week and Trump under pressure for an off-ramp amid rising gasoline prices, the president scheduled a 9 p.m. EDT (0100 GMT) speech to discuss the way forward. His address will end a day that began with Trump making a historic visit to the Supreme Court.",
+      "statementId": null,
+      "paragraphId": "para_e616aa6a05facce1",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_a7d6594b17005408",
+      "chunkType": "paragraph",
+      "text": "The Reuters Iran Briefing newsletter keeps you informed with the latest developments and analysis of the Iran war. Sign up here.",
+      "statementId": null,
+      "paragraphId": "para_b702c16674a94bae",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fd04064922da639e",
+      "chunkType": "paragraph",
+      "text": "Trump, in a phone interview with Reuters, said one element of his speech would be to express his disgust with NATO for what he considers the alliance's lack of support for U.S. objectives in Iran.",
+      "statementId": null,
+      "paragraphId": "para_fb3ec22657040639",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_b84e1ea28104b16c",
+      "chunkType": "paragraph",
+      "text": "A transatlantic rift in Trump's second term deepened after European allies rebuffed his request to help maintain safe passage for oil traffic through the Strait of Hormuz.",
+      "statementId": null,
+      "paragraphId": "para_3496a958afbaab94",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_026c9e8b394293b6",
+      "chunkType": "paragraph",
+      "text": "He said he was \"absolutely\" considering withdrawing the United States from NATO, a treaty organization ratified by the U.S. Senate in 1949. Trump has flirted with a withdrawal in the past and has successfully pressured NATO members to increase their defense spending.",
+      "statementId": null,
+      "paragraphId": "para_3c343ff6f349da17",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_2128fce2998fbde7",
+      "chunkType": "paragraph",
+      "text": "\"They haven't been friends when we needed them,\" Trump said. \"We've never asked them for much ... it's a one-way street.\"",
+      "statementId": null,
+      "paragraphId": "para_ef65769ad7f0cc59",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_a91694a653d917db",
+      "chunkType": "paragraph",
+      "text": "Trump and his top officials have offered a variety of timelines for ending the war. He said on Tuesday that the U.S. could end its military campaign against Iran within two to three weeks.",
+      "statementId": null,
+      "paragraphId": "para_13736b13ce5a09c7",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fbd7295532583604",
+      "chunkType": "paragraph",
+      "text": "In the Reuters interview, he declined to provide a timeline.",
+      "statementId": null,
+      "paragraphId": "para_933538c845809bd6",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_727fa08e2df076af",
+      "chunkType": "paragraph",
+      "text": "\"I can't tell you exactly ... we're going to be out pretty quickly,\" he said, adding that once a U.S. exit is achieved, \"we'll come back to do spot hits\" on Iranian targets as needed.",
+      "statementId": null,
+      "paragraphId": "para_bd7a1d3ef015a09b",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_4aa98ac5fd4be73d",
+      "chunkType": "paragraph",
+      "text": "The war has spread across the Middle East, killing thousands of people and causing soaring energy prices that have fueled global inflation fears.",
+      "statementId": null,
+      "paragraphId": "para_ffd34a9d97879208",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_63923970d46e10e9",
+      "chunkType": "paragraph",
+      "text": "Two-thirds of Americans believe that the U.S. should work to end its involvement in the Iran war quickly, even if that means not achieving the goals set out by the Trump administration, found a Reuters/Ipsos poll conducted from Friday to Sunday.",
+      "statementId": null,
+      "paragraphId": "para_6a67656389e94156",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_54aec656a010bf2e",
+      "chunkType": "paragraph",
+      "text": "Trump said he hoped for a deal with Iran after the first wave of airstrikes killed Supreme Leader Ayatollah Ali Khamenei. A number of other senior Iranian figures have also been killed.",
+      "statementId": null,
+      "paragraphId": "para_65271d21fffccd9b",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_51f9d7303c47c4b4",
+      "chunkType": "paragraph",
+      "text": "Mojtaba Khamenei has replaced his father as Iran's supreme leader; the U.S. has said it believes he is wounded and likely disfigured. The country's president and foreign minister remain the same as before the conflict.",
+      "statementId": null,
+      "paragraphId": "para_a6b099e80ae35b53",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_30be216b76c134cb",
+      "chunkType": "paragraph",
+      "text": "Trump said Iran's leadership was now \"totally different people.\"",
+      "statementId": null,
+      "paragraphId": "para_c8600ca97b6ec6bb",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fc80472a13255ac2",
+      "chunkType": "paragraph",
+      "text": "\"I didn't need regime change, but we got it because of the casualties of war. We got it. So we have regime change and the big thing we have is they're not going to have a nuclear weapon,\" said Trump, adding: \"Nor do they want one.\"",
+      "statementId": null,
+      "paragraphId": "para_ceebb8c561e3bbaa",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_c38da84495789c98",
+      "chunkType": "paragraph",
+      "text": "The White House has said behind-the-scenes negotiations are ongoing with Iran, a point that Tehran denies. A source briefed on the matter said Vice President JD Vance was talking to intermediaries from Pakistan about the conflict as recently as Tuesday.",
+      "statementId": null,
+      "paragraphId": "para_8c68d28a51ded5ef",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_d8c6818b791f6717",
+      "chunkType": "paragraph",
+      "text": "At Trump's direction, Vance signaled privately that Trump was open to a ceasefire as long as certain U.S. demands were met, the source told Reuters on Wednesday.",
+      "statementId": null,
+      "paragraphId": "para_755617823076ced6",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_707eaff0b4a77a2f",
+      "chunkType": "paragraph",
+      "text": "\"We have had full regime change,\" Trump said. \"I'm dealing with a very good chance that we'll make a deal because they don't want to be blasted anymore.\"",
+      "statementId": null,
+      "paragraphId": "para_dc2e956c8068d238",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_e11344c01c80a9e0",
+      "chunkType": "paragraph",
+      "text": "Trump has said a primary aim of launching the war was to prevent Iran from developing a nuclear weapon.",
+      "statementId": null,
+      "paragraphId": "para_89158ea70a7b3289",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_027d524fc0443d82",
+      "chunkType": "paragraph",
+      "text": "Almost half of Iran's uranium enriched to up to 60% purity, a short step from weapons-grade, was stored in a tunnel complex at Isfahan and is probably still there, the U.N. nuclear watchdog chief Rafael Grossi said earlier this month.",
+      "statementId": null,
+      "paragraphId": "para_226b72e4d5339ceb",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_0471eec477f3be66",
+      "chunkType": "paragraph",
+      "text": "The tunnel complex is the only target that appears not to have been badly damaged in attacks last June by Israel and the U.S. on Iran's nuclear facilities.",
+      "statementId": null,
+      "paragraphId": "para_d1a390babdf5b7cd",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_5952fd1fd4fc2f93",
+      "chunkType": "paragraph",
+      "text": "Trump said the objective of preventing a nuclear weapon has been achieved, however.",
+      "statementId": null,
+      "paragraphId": "para_c18ba0af26e652ae",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_49ac519a2b17cd45",
+      "chunkType": "paragraph",
+      "text": "Of the enriched uranium, Trump said: \"That's so far underground, I don't care about that.\"",
+      "statementId": null,
+      "paragraphId": "para_baede9fd603d3c0f",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_d9cd11b0c0087ba7",
+      "chunkType": "paragraph",
+      "text": "\"We'll always be watching it by satellite,\" he added.",
+      "statementId": null,
+      "paragraphId": "para_38430e84352d2d52",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_38f534d0baeefb3b",
+      "chunkType": "paragraph",
+      "text": "He said Iran was \"incapable\" of developing a weapon now.",
+      "statementId": null,
+      "paragraphId": "para_80e579a66c36d395",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_e2a053eb6101837c",
+      "chunkType": "paragraph",
+      "text": "Iran has long denied wanting to develop a nuclear weapon and says its nuclear program is peaceful.",
+      "statementId": null,
+      "paragraphId": "para_5a30e48ced4bfbc1",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_ba41c07767a4318f",
+      "chunkType": "paragraph",
+      "text": "The International Atomic Energy Agency estimates that when Israel launched its first attacks in June, Iran had 440.9 kg of 60% uranium. If enriched further, that would provide the explosive needed for 10 nuclear weapons, according to an IAEA yardstick.",
+      "statementId": null,
+      "paragraphId": "para_f961cb92445ca2ad",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_652559c610942b7d",
+      "chunkType": "paragraph",
+      "text": "Reporting by Steve Holland; Writing by Katharine Jackson and Steve Holland, editing by Michelle Nichols and Rosalba O'Brien",
+      "statementId": null,
+      "paragraphId": "para_41313be9aae657cd",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    },
+    {
+      "chunkId": "chunk_p_8f7eb0b56d244470",
+      "chunkType": "paragraph",
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "statementId": null,
+      "paragraphId": "para_624bb22defdc5909",
+      "metadata": {
+        "attestationId": "0xf648789c8251b83da19b21e92818423636d22171ab51817f2590bae16eaf6557",
+        "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example4.html",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "US to leave Iran 'pretty quickly' and return if needed, Trump tells Reuters"
+      }
+    }
+  ]
+}

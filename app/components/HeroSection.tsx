@@ -95,7 +95,7 @@ export default function HeroSection() {
           />
           <Button
             onPress={handleSearch}
-            className="bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] hover:bg-[var(--landing-primary)] font-medium h-12 rounded-xl px-6 cursor-pointer"
+            className="bg-[var(--landing-primary-darker)] text-[var(--landing-bg-white)] hover:bg-[var(--landing-primary-dark)] font-medium h-12 rounded-xl px-6 cursor-pointer"
           >
             Search
           </Button>

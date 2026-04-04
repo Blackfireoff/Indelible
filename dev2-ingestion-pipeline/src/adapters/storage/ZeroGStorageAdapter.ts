@@ -4,21 +4,27 @@
  * Target network: 0G-Galileo-Testnet (chainId 16602)
  *  - RPC:     https://evmrpc-testnet.0g.ai
  *  - Indexer: https://indexer-storage-testnet-turbo.0g.ai
- *  - Flow:    0x22E03a6A89B950F1c82ec5e74F8eCa321a105296
  *  - Faucet:  https://faucet.0g.ai
  *
- * NOTE ON ABI VERSION
- * The Galileo testnet Flow contract uses a NEW `submit` ABI (selector 0xbc8c11f8)
- * that wraps SubmissionData in a `Submission = {data: SubmissionData, submitter: address}`
- * struct. The SDK 0.3.3 still uses the OLD ABI (selector 0xef3e12dc). We monkey-patch
- * the Uploader's `submitTransaction` to use the correct ABI.
+ * Upload path follows 0g-storage-ts-starter-kit (`upload.ts` + `uploadData` in src/storage.ts):
+ * ZgFile.fromFilePath → indexer.upload(..., uploadOpts, retryOpts, txOpts).
+ * @see https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts
  */
 
-import { writeFileSync, readFileSync, unlinkSync } from "fs";
+import { Indexer, ZgFile } from "@0gfoundation/0g-ts-sdk";
+import { ethers } from "ethers";
+import { readFileSync, unlinkSync, existsSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomBytes } from "crypto";
 import type { StorageAdapter } from "./StorageAdapter.js";
+import {
+  buildRetryOptsFromEnv,
+  buildTxOptsFromEnv,
+  parseIndexerUrlCandidates,
+  waitUntilAnyIndexerHasLocations,
+} from "./zeroGStarterKitUpload.js";
+import { prepareStringForZeroGUpload } from "./zeroGUploadPayload.js";
 
 export interface ZeroGConfig {
   rpcUrl?: string;
@@ -26,260 +32,222 @@ export interface ZeroGConfig {
   privateKey?: string;
 }
 
+const DEFAULT_RPC_URL = "https://evmrpc-testnet.0g.ai";
+const DEFAULT_INDEXER_URL = "https://indexer-storage-testnet-turbo.0g.ai";
+
 /** Minimum balance considered safe for at least one upload (~0.001 A0GI). */
 const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
 
-/** ABI for the NEW Flow contract submit function on Galileo (selector 0xbc8c11f8). */
-const FLOW_SUBMIT_ABI_NEW = [
-  {
-    name: "market",
-    type: "function",
-    stateMutability: "view",
-    inputs: [],
-    outputs: [{ type: "address" }],
-  },
-  {
-    name: "submit",
-    type: "function",
-    stateMutability: "payable",
-    inputs: [
-      {
-        name: "submission",
-        type: "tuple",
-        components: [
-          {
-            name: "data",
-            type: "tuple",
-            components: [
-              { name: "length", type: "uint256" },
-              { name: "tags", type: "bytes" },
-              {
-                name: "nodes",
-                type: "tuple[]",
-                components: [
-                  { name: "root", type: "bytes32" },
-                  { name: "height", type: "uint256" },
-                ],
-              },
-            ],
-          },
-          { name: "submitter", type: "address" },
-        ],
-      },
-    ],
-    outputs: [
-      { type: "uint256" },
-      { type: "bytes32" },
-      { type: "uint256" },
-      { type: "uint256" },
-    ],
-  },
-];
-
-const MARKET_ABI = [
-  "function pricePerSector() view returns (uint256)",
-];
-
 export class ZeroGStorageAdapter implements StorageAdapter {
   private readonly rpcUrl: string;
+  /** First entry of `indexerUrlCandidates` — used for `indexer.upload`. */
   private readonly indexerUrl: string;
+  /** Turbo + optional standard (or any fallbacks) — used for location polling + download. */
+  private readonly indexerUrlCandidates: string[];
   private readonly privateKey: string;
 
   constructor(config: ZeroGConfig = {}) {
-    this.rpcUrl =
-      config.rpcUrl ??
-      process.env.ZEROG_RPC_URL ??
-      "https://evmrpc-testnet.0g.ai";
-
-    this.indexerUrl =
-      config.indexerUrl ??
-      process.env.ZEROG_INDEXER_URL ??
-      "https://indexer-storage-testnet-turbo.0g.ai";
+    this.rpcUrl = config.rpcUrl ?? process.env.ZEROG_RPC_URL ?? DEFAULT_RPC_URL;
+    const primary = config.indexerUrl ?? process.env.ZEROG_INDEXER_URL ?? DEFAULT_INDEXER_URL;
+    this.indexerUrlCandidates = parseIndexerUrlCandidates(primary);
+    this.indexerUrl = this.indexerUrlCandidates[0] ?? primary;
 
     const key = config.privateKey ?? process.env.ZEROG_PRIVATE_KEY;
     if (!key) {
       throw new Error(
         "ZeroGStorageAdapter: ZEROG_PRIVATE_KEY is required. " +
-        "Set it in .env or as an environment variable."
+        "Set it in .env or as an environment variable.",
       );
     }
     this.privateKey = key;
   }
 
   async uploadArtifact(fileName: string, data: string): Promise<string> {
-    const { ZgFile, Indexer } = await import("@0glabs/0g-ts-sdk");
-    const { ethers } = await import("ethers");
-
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
-    const address = await signer.getAddress();
 
-    // ── Balance pre-flight check ──────────────────────────────────────────
-    const balance = await provider.getBalance(address);
-    if (balance < MIN_SAFE_BALANCE_WEI) {
-      const balanceEth = ethers.formatEther(balance);
-      throw new Error(
-        `[ZeroGStorage] Insufficient A0GI balance on Galileo testnet.\n` +
-        `  Wallet:  ${address}\n` +
-        `  Balance: ${balanceEth} A0GI (need at least 0.001 A0GI)\n` +
-        `  Faucet:  https://faucet.0g.ai\n` +
-        `  Explorer: https://chainscan-galileo.0g.ai/address/${address}`
+    // Flow contract is auto-discovered by the Indexer in the new SDK (first candidate only)
+    const indexer = new Indexer(this.indexerUrl);
+    if (this.indexerUrlCandidates.length > 1) {
+      console.log(
+        `[0G] Indexer candidates for location polling: ${this.indexerUrlCandidates.join(" | ")} (upload uses first)`,
       );
     }
 
-    const indexer = new Indexer(this.indexerUrl);
+    // ── Balance pre-flight check ──────────────────────────────────────────
+    const address = await signer.getAddress();
+    const balance = await provider.getBalance(address);
+    if (balance < MIN_SAFE_BALANCE_WEI) {
+      throw new Error(
+        `[ZeroGStorage] Insufficient A0GI balance on Galileo testnet.\n` +
+        `  Wallet:  ${address}\n` +
+        `  Balance: ${ethers.formatEther(balance)} A0GI (need at least 0.001 A0GI)\n` +
+        `  Faucet:  https://faucet.0g.ai\n` +
+        `  Explorer: https://chainscan-galileo.0g.ai/address/${address}`,
+      );
+    }
 
-    // Write content to a temp file (ZgFile requires a file path)
-    const tmpPath = join(tmpdir(), `indelible_${randomBytes(8).toString("hex")}_${fileName}`);
-    writeFileSync(tmpPath, data, "utf-8");
+    // ── Optional JSON minify + pad (see zeroGUploadPayload.ts) ─────────────
+    const { payload: padded, minified } = prepareStringForZeroGUpload(data);
+    if (minified) {
+      console.log(`[0G] JSON minified for upload: ${fileName} (ZEROG_UPLOAD_MINIFY_JSON=true)`);
+    }
+
+    const safeBase = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const tmpPath = join(
+      tmpdir(),
+      `indelible_zg_${randomBytes(8).toString("hex")}_${safeBase}`,
+    );
+
+    const retryOpts = buildRetryOptsFromEnv();
+    const txOpts = buildTxOptsFromEnv();
+
+    console.log(
+      `[0G] Uploading ${fileName} (${padded.length} bytes after prepare, ${data.length} bytes raw input)`,
+    );
+    console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
+    console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
+    if (retryOpts) {
+      console.log(`  retryOpts: Retries=${retryOpts.Retries}, Interval=${retryOpts.Interval}s`);
+    }
+
+    let zgFile: Awaited<ReturnType<typeof ZgFile.fromFilePath>> | null = null;
 
     try {
-      const file = await ZgFile.fromFilePath(tmpPath);
+      writeFileSync(tmpPath, padded, "utf-8");
 
-      const [tree, treeErr] = await file.merkleTree();
-      if (treeErr !== null || !tree) {
-        throw new Error(`0G merkle tree error: ${treeErr}`);
+      // Same as starter kit uploadFile(): ZgFile.fromFilePath → merkleTree → indexer.upload(…6 args)
+      zgFile = await ZgFile.fromFilePath(tmpPath);
+
+      const [tree, treeErr] = await zgFile.merkleTree();
+      if (treeErr !== null) {
+        throw new Error(`Merkle tree error: ${treeErr}`);
       }
 
-      const rootHash = tree.rootHash() as string;
-      const balanceEth = ethers.formatEther(balance);
-      console.log(`[ZeroGStorage] Uploading ${fileName}`);
-      console.log(`  root hash: ${rootHash}`);
-      console.log(`  wallet:    ${address} (${balanceEth} A0GI)`);
+      const rootHash = tree!.rootHash() as string;
+      console.log(`[0G] Attempting on-chain submission for root: ${rootHash}…`);
 
-      // ── Get Uploader and patch submitTransaction for new ABI ─────────────
-      const [uploader, uploaderErr] = await indexer.newUploaderFromIndexerNodes(
+      const [tx, uploadErr] = await indexer.upload(
+        zgFile,
         this.rpcUrl,
         signer,
-        1,
+        undefined,
+        retryOpts,
+        txOpts,
       );
-      if (uploaderErr !== null || uploader === null) {
-        throw new Error(`Failed to initialize 0G uploader: ${uploaderErr}`);
-      }
-
-      // The Galileo Flow contract uses a NEW submit() ABI (selector 0xbc8c11f8)
-      // that wraps SubmissionData in {data, submitter}. The SDK still uses the old
-      // ABI. We patch submitTransaction to send the correct format.
-      const uploaderAny = uploader as unknown as Record<string, unknown>;
-      const originalFlow = uploaderAny.flow as { getAddress(): Promise<string>; market(): Promise<string> };
-      const flowAddr = await originalFlow.getAddress();
-      const newFlow = new ethers.Contract(flowAddr, FLOW_SUBMIT_ABI_NEW, signer);
-
-      uploaderAny.submitTransaction = async function (
-        this: { flow: typeof originalFlow; provider: typeof provider },
-        submission: { nodes: Array<{ height: number | bigint }> },
-        opts: { nonce?: number; fee?: bigint },
-        _retryOpts: unknown,
-      ): Promise<[unknown, Error | null]> {
-        const marketAddr = await this.flow.market();
-        const market = new ethers.Contract(marketAddr, MARKET_ABI, this.provider);
-        const pricePerSector: bigint = await (market.pricePerSector as () => Promise<bigint>)();
-
-        let sectors = BigInt(0);
-        for (const node of submission.nodes) {
-          sectors += BigInt(1) << BigInt(String(node.height));
-        }
-        const fee = opts?.fee && opts.fee > 0n ? opts.fee : sectors * pricePerSector;
-
-        const feeData = await this.provider.getFeeData();
-        const txOpts: Record<string, unknown> = {
-          value: fee,
-          gasPrice: feeData.gasPrice ?? BigInt(4_000_000_000),
-          gasLimit: BigInt(500_000),
-        };
-        if (opts?.nonce !== undefined) txOpts.nonce = opts.nonce;
-
-        console.log(`Submitting transaction with storage fee: ${fee}n  (new ABI, submitter=${address})`);
-
-        const wrappedSubmission = { data: submission, submitter: address };
-
-        try {
-          const fn = newFlow.getFunction("submit");
-          const resp = await (fn as (s: unknown, o: unknown) => Promise<{ wait(): Promise<{ hash: string } | null> }>)(
-            wrappedSubmission,
-            txOpts,
-          );
-          const tx = await resp.wait();
-          if (!tx) return [null, new Error("Transaction timeout – no receipt")];
-          const receipt = await this.provider.getTransactionReceipt(tx.hash);
-          if (!receipt) return [null, new Error("Receipt timeout")];
-          return [receipt, null];
-        } catch (e: unknown) {
-          return [null, e instanceof Error ? e : new Error(String(e))];
-        }
-      };
-
-      // ── Run the standard upload pipeline ─────────────────────────────────
-      const uploadOpts = {
-        tags: "0x",
-        finalityRequired: true,
-        taskSize: 10,
-        expectedReplica: 1,
-        skipTx: false,
-        fee: BigInt("0"),
-      };
-
-      const [result, uploadErr] = await (uploader.uploadFile as (
-        f: typeof file, o: typeof uploadOpts, r?: unknown
-      ) => Promise<[{ txHash: string; rootHash: string }, Error | null]>)(
-        file,
-        uploadOpts,
-      );
-      await file.close();
 
       if (uploadErr !== null) {
-        const msg = String(uploadErr);
-        const isFundsError =
-          msg.includes("require(false)") ||
-          msg.includes("insufficient funds") ||
-          msg.includes("CALL_EXCEPTION") ||
-          msg.includes("NotEnoughFee");
-
-        if (isFundsError) {
-          const balanceAfter = await provider.getBalance(address);
-          throw new Error(
-            `[ZeroGStorage] Transaction reverted on Galileo (chainId 16602).\n` +
-            `  Wallet:  ${address}\n` +
-            `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
-            `  This usually means the wallet ran out of A0GI mid-upload.\n` +
-            `  Faucet:  https://faucet.0g.ai\n` +
-            `  Original error: ${uploadErr}`
-          );
+        const errMsg = String(uploadErr);
+        if (!errMsg.includes("already exists")) {
+          throw new Error(`Upload failed: ${errMsg}`);
         }
-        throw new Error(`0G upload error: ${uploadErr}`);
+        console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
+        await waitUntilAnyIndexerHasLocations(
+          this.indexerUrlCandidates,
+          rootHash,
+          "post-upload (dedup)",
+        );
+        return rootHash;
       }
 
-      const finalRootHash = result?.rootHash ?? rootHash;
-      console.log(`[ZeroGStorage] ✓ Uploaded ${fileName} → ${finalRootHash}`);
-      return finalRootHash;
+      const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
+      const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
+      console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
+      await waitUntilAnyIndexerHasLocations(
+        this.indexerUrlCandidates,
+        returnedRoot,
+        "post-upload",
+      );
+      return returnedRoot;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+
+      const isFundsError =
+        msg.includes("require(false)") ||
+        msg.includes("insufficient funds") ||
+        msg.includes("CALL_EXCEPTION") ||
+        msg.includes("NotEnoughFee");
+
+      if (isFundsError) {
+        const balanceAfter = await provider.getBalance(address);
+        throw new Error(
+          `[0G] Transaction reverted on Galileo (chainId 16602).\n` +
+          `  Wallet:  ${address}\n` +
+          `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
+          `  This usually means the wallet ran out of A0GI mid-upload.\n` +
+          `  Faucet:  https://faucet.0g.ai\n` +
+          `  Original error: ${msg}`,
+        );
+      }
+
+      throw err;
     } finally {
-      try { unlinkSync(tmpPath); } catch { /* ignore */ }
+      if (zgFile !== null) {
+        try {
+          await zgFile.close();
+        } catch {
+          /* ignore */
+        }
+      }
+      if (existsSync(tmpPath)) {
+        try {
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
+        }
+      }
     }
   }
 
   async downloadArtifact(dataAddress: string): Promise<string> {
-    const { Indexer } = await import("@0glabs/0g-ts-sdk");
-    const indexer = new Indexer(this.indexerUrl);
+    const rootHash = dataAddress.replace("0g://", "");
+
+    const indexer = await waitUntilAnyIndexerHasLocations(
+      this.indexerUrlCandidates,
+      rootHash,
+      "pre-download",
+    );
 
     const tmpPath = join(
       tmpdir(),
-      `indelible_dl_${randomBytes(8).toString("hex")}.json`
+      `indelible-download-${randomBytes(8).toString("hex")}.json`,
     );
 
     try {
-      const err = await indexer.download(dataAddress, tmpPath, true);
+      const err = await indexer.download(rootHash, tmpPath, true);
       if (err !== null) {
         throw new Error(`0G download error: ${err}`);
       }
-      return readFileSync(tmpPath, "utf-8");
+
+      const content = readFileSync(tmpPath, "utf-8").trimEnd();
+
+      try {
+        const parsed = JSON.parse(content) as Record<string, unknown>;
+        if (typeof parsed.code === "number" && typeof parsed.message === "string") {
+          throw new Error(
+            `Storage node returned error: ${parsed.message} (code ${parsed.code})`,
+          );
+        }
+      } catch (parseErr) {
+        if (!(parseErr instanceof SyntaxError)) {
+          throw parseErr;
+        }
+      }
+
+      return content;
     } finally {
-      try { unlinkSync(tmpPath); } catch { /* ignore */ }
+      if (existsSync(tmpPath)) {
+        try {
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
+        }
+      }
     }
   }
 
   /** Check and display the wallet balance without uploading anything. */
   async checkBalance(): Promise<void> {
-    const { ethers } = await import("ethers");
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
     const address = await signer.getAddress();
