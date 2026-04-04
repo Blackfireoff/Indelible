@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation'
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react'
+import Image from 'next/image'
 
 const suggestions = [
   "Biden on climate change",
@@ -49,10 +50,15 @@ export default function HeroSection() {
     <div className="bg-[var(--landing-bg)] flex flex-col items-center justify-center pb-[340px] pt-[260px]">
       <div className="max-w-[768px] w-full px-6">
         {/* Heading */}
-        <div className="mb-8">
-          <h1 className="text-[36px] font-semibold leading-[40px] text-center text-[var(--landing-text-primary)]">
-            Analyze Political Speeches
-          </h1>
+        <div className="mb-8 flex justify-center">
+          <Image
+            src="/logo/med.svg"
+            alt="Indelible Logo"
+            width={300}
+            height={60}
+            className="h-26 w-auto object-contain"
+            priority
+          />
         </div>
 
         {/* Subheading */}

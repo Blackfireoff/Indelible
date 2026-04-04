@@ -38,8 +38,8 @@ body {
   --landing-text-muted: #a1a1aa;
 
   /* Brand Colors */
-  --landing-primary: #0485f7;
-  --landing-primary-dark: #0369d1;
+  --landing-primary: #b87c4c;
+  --landing-primary-dark: #b87c4c;
   --landing-primary-light: rgba(4, 133, 247, 0.2);
   --landing-primary-subtle: rgba(4, 133, 247, 0.05);
 

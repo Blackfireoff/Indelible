@@ -18,8 +18,7 @@ if (!globalAny.__appkit_modal__) {
     metadata,
     themeMode: 'light',
     themeVariables: {
-      '--w3m-accent': '#0485f7',
-      '--w3m-border-radius-master': '9999px',
+      '--w3m-accent': '#b87c4c',
     },
     features: {
       email: true,
