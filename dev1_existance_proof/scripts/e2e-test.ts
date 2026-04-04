@@ -38,7 +38,7 @@ async function main() {
 
   // 1. User requests a proof
   console.log("👉 1. [USER] Sending SourceAttestationRequested transaction...");
-  const targetUrl = "https://www.lemonde.fr/international/article/2026/04/02/donald-trump-se-moque-du-couple-macron-lors-d-un-dejeuner-prive-le-president-francais-denonce-des-propos-ni-elegants-ni-a-la-hauteur_6676093_3211.html";
+  const targetUrl = "https://www.leparisien.fr/sports/rugby/toulouse-bristol-59-26-antoine-dupont-et-les-toulousains-deroulent-et-attendent-bordeaux-begles-de-pied-ferme-04-04-2026-4FX4IHTRINGP3DSK2HL3L6CDBI.php";
 
   const hash = await walletClient.writeContract({
     address: reqAddr as `0x${string}`,
