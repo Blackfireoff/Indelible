@@ -1,0 +1,19 @@
+{
+  "chunkId": "doc-001-chunk-0001",
+  "documentId": "doc-001",
+  "seq": 1,
+  "text": "Interviewer: Thank you for joining us today. Let's discuss the new tariff framework.",
+  "charStart": 0,
+  "charEnd": 82,
+  "tokenCount": 18,
+  "sectionPath": ["Introduction"],
+  "speaker": "Interviewer",
+  "sourceUrl": "https://example.com/interview-2026-04-04",
+  "observedAt": "2026-04-04T08:45:00Z",
+  "rawContentHash": "0xabc123",
+  "canonicalTextHash": "0xdef456",
+  "storagePointer": "0g://chunks/doc-001/chunk-0001.json",
+  "prevChunkId": null,
+  "nextChunkId": "doc-001-chunk-0002",
+  "chunkType": "paragraph"
+}

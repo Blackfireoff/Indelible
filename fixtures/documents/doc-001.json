@@ -1,0 +1,20 @@
+{
+  "documentId": "doc-001",
+  "attestationId": "att-001",
+  "title": "Official Interview Transcript",
+  "speaker": "Donald Trump",
+  "sourceUrl": "https://example.com/interview-2026-04-04",
+  "sourceType": "official_webpage",
+  "observedAt": "2026-04-04T08:45:00Z",
+  "language": "en",
+  "rawContentHash": "0xabc123",
+  "canonicalTextHash": "0xdef456",
+  "storagePointer": "0g://documents/doc-001.json",
+  "chunkManifestPointer": "0g://chunks/doc-001/manifest.json",
+  "embeddingsPointer": "0g://embeddings/doc-001/embeddings.json",
+  "chunks": [
+    { "chunkId": "doc-001-chunk-0001", "storagePointer": "0g://chunks/doc-001/chunk-0001.json" },
+    { "chunkId": "doc-001-chunk-0002", "storagePointer": "0g://chunks/doc-001/chunk-0002.json" },
+    { "chunkId": "doc-001-chunk-0003", "storagePointer": "0g://chunks/doc-001/chunk-0003.json" }
+  ]
+}
