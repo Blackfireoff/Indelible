@@ -14,7 +14,10 @@ createAppKit({
   projectId,
   metadata,
   features: {
-    analytics: true
+    email: true,
+    socials: ['google', 'x', 'github', 'discord', 'apple', 'facebook', 'farcaster'],
+    emailShowWallets: true,
+    analytics: false
   }
 })
 

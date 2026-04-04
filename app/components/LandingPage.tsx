@@ -1,6 +1,8 @@
 'use client'
 
 import { Button } from '@heroui/react'
+import { AppKitButton } from '@reown/appkit/react'
+import { useWalletSync } from '@/hooks/useWalletSync'
 
 // Quote data from Figma
 const quotes = [
@@ -106,6 +108,9 @@ function ExternalLinkIcon({ className }) {
 }
 
 export default function LandingPage() {
+  // Sync wallet state to localStorage for extension access
+  useWalletSync()
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       {/* Header */}
@@ -147,14 +152,11 @@ export default function LandingPage() {
               <ChevronDownIcon className="w-4 h-4 text-[#71717a]" />
             </div>
 
-            {/* Sign In */}
-            <Button
-              variant="outline"
-              className="h-10 px-4 rounded-full border border-[#e4e4e7] text-[14px] font-medium text-[#18181b]"
-            >
-              <UserIcon className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
+            {/* Wallet Connect */}
+            <AppKitButton
+              balance="show"
+              className="h-10 px-4 rounded-full border border-[#e4e4e7] text-[14px] font-medium bg-white"
+            />
           </div>
         </div>
       </header>
