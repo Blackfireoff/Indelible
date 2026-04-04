@@ -14,7 +14,7 @@ export default function ConnectButton({ text = 'Sign in' }: ConnectButtonProps) 
   return (
     <button
       onClick={() => open()}
-      className="h-10 px-6 rounded-xl bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium text-[14px] cursor-pointer"
+      className="h-10 px-6 rounded-xl bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium text-[14px] cursor-pointer"
     >
       {isFullyConnected ? 'Profil' : text}
     </button>

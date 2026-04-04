@@ -38,7 +38,7 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
   const navLinks = [
     { href: '/', label: 'Search' },
     { href: '/about', label: 'About' },
-    { href: '/get-token', label: 'Get token' },
+    { href: '/get-token', label: 'Get requests' },
   ]
 
   return (
@@ -60,18 +60,25 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-[14px] font-medium transition-colors ${pathname === link.href
-                  ? 'text-[var(--landing-primary)]'
-                  : 'text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)]'
-                  }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`group relative text-[14px] font-medium transition-colors pb-0.5 ${isActive
+                    ? 'text-[var(--landing-primary)]'
+                    : 'text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)]'
+                    }`}
+                >
+                  {link.label}
+                  <span
+                    className={`absolute left-0 bottom-0 h-[3px] bg-[var(--accent-color)] transition-all duration-300 ease-out ${isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      }`}
+                  />
+                </Link>
+              )
+            })}
           </nav>
         </div>
 
@@ -83,7 +90,7 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
             return (
               <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">
                 <span className={`w-2 h-2 rounded-full ${indlCount > 0 ? "bg-[var(--landing-success)]" : "bg-red-500"}`} />
-                <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">
+                <span className="text-[14px] font-medium text-[var(--landing-text-primary)]">
                   {indlCount} Requests
                 </span>
               </div>
