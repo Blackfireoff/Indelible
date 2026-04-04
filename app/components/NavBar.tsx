@@ -61,7 +61,7 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href
+              const isActive = pathname === link.href || (link.href === '/' && pathname === '/search')
               return (
                 <Link
                   key={link.href}

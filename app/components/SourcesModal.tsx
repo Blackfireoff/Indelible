@@ -83,7 +83,7 @@ export default function SourcesModal({ isOpen, onClose, document }: SourcesModal
         {/* ── Modal Top Bar ── */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--landing-border)] shrink-0 bg-[var(--landing-bg-light)] rounded-t-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[var(--landing-primary-darker)] flex items-center justify-center">
               <FontAwesomeIcon icon={faNewspaper} className="w-4 h-4 text-white" />
             </div>
             <div>
