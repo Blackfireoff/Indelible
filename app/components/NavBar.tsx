@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
+// Import cleanly removed
 import { useWalletSync } from '@/hooks/useWalletSync'
+import ConnectButton from './ConnectButton'
 
 // Icon components
 function GlobeIcon({ className }) {
@@ -30,8 +31,6 @@ interface NavBarProps {
 
 export default function NavBar({ showWallet = false, showFreeTier = false }: NavBarProps) {
   const pathname = usePathname()
-  const { open } = useAppKit()
-  const { isConnected } = useAppKitAccount()
 
   // Sync wallet state for extensions
   useWalletSync()
@@ -88,12 +87,7 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
 
           {/* Wallet Connect */}
           {showWallet && (
-            <button
-              onClick={() => open()}
-              className="h-10 px-6 rounded-xl bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium text-[14px] cursor-pointer"
-            >
-              {isConnected ? 'Profil' : 'Sign in'}
-            </button>
+            <ConnectButton text="Sign in" />
           )}
         </div>
       </div>
