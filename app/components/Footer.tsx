@@ -9,11 +9,11 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-            <span className="text-[14px] text-[var(--landing-text-secondary)]">Real-time data</span>
+            <span className="text-[14px] text-[var(--landing-text-secondary)]">Immutable data</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-[var(--landing-primary)] rounded-full" />
-            <span className="text-[14px] text-[var(--landing-text-secondary)]">Fact-checked</span>
+            <span className="text-[14px] text-[var(--landing-text-secondary)]">Transparent</span>
           </div>
         </div>
       </div>

@@ -56,7 +56,7 @@ export default function HeroSection() {
             alt="Indelible Logo"
             width={300}
             height={60}
-            className="h-26 w-auto object-contain"
+            className="h-28 w-auto object-contain"
             priority
           />
         </div>
@@ -81,7 +81,7 @@ export default function HeroSection() {
           />
           <Button
             onPress={handleSearch}
-            className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-12 rounded-xl px-6 cursor-pointer"
+            className="bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] hover:bg-[var(--landing-primary)] font-medium h-12 rounded-xl px-6 cursor-pointer"
           >
             Search
           </Button>
