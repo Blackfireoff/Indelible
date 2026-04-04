@@ -8,6 +8,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "pipeline": "tsx src/index.ts",
+    "worker": "tsx src/worker/workerEntry.ts",
     "check-balance": "tsx src/scripts/checkBalance.ts",
     "debug-upload": "tsx src/scripts/debugUpload.ts",
     "generate-reuters-example": "tsx src/scripts/generateReutersExample.ts",
