@@ -5,24 +5,10 @@ import { usePathname } from 'next/navigation'
 // Import cleanly removed
 import { useWalletSync } from '@/hooks/useWalletSync'
 import ConnectButton from './ConnectButton'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGlobe, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
-// Icon components
-function GlobeIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  )
-}
-
-function ChevronDownIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+// (Custom inline icons have been removed in favor of FontAwesome)
 
 interface NavBarProps {
   showWallet?: boolean
@@ -49,7 +35,7 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
-              <GlobeIcon className="w-5 h-5 text-[var(--landing-bg-white)]" />
+              <FontAwesomeIcon icon={faGlobe} className="w-5 h-5 text-[var(--landing-bg-white)]" />
             </div>
             <span className="text-[20px] font-semibold text-[var(--landing-text-primary)]">
               Indelible.
@@ -81,7 +67,7 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
               <span className="w-2 h-2 bg-[var(--landing-success)] rounded-full" />
               <span className="text-[14px] font-medium text-[var(--landing-text-secondary)]">Free Tier:</span>
               <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">2/3 left</span>
-              <ChevronDownIcon className="w-4 h-4 text-[var(--landing-text-secondary)]" />
+              <FontAwesomeIcon icon={faChevronDown} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
             </div>
           )}
 

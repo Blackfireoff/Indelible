@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Button } from '@heroui/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation'
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react'
 
@@ -12,14 +14,7 @@ const suggestions = [
 ]
 
 // Icon component
-function SearchIcon({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
+// (Custom inline icons have been removed in favor of FontAwesome)
 
 export default function HeroSection() {
   const [query, setQuery] = useState('')
@@ -69,7 +64,7 @@ export default function HeroSection() {
 
         {/* Search Input */}
         <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] h-16 flex items-center px-6 gap-4 mb-4">
-          <SearchIcon className="w-6 h-6 text-[var(--landing-text-secondary)]" />
+          <FontAwesomeIcon icon={faMagnifyingGlass} className="w-5 h-5 text-[var(--landing-text-secondary)]" />
           <input
             type="text"
             value={query}
