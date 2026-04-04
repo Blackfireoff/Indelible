@@ -1,11 +1,11 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { mainnet, arbitrum, base } from '@reown/appkit/networks'
+import { sepolia, mainnet } from '@reown/appkit/networks'
 import type { AppKitNetwork } from '@reown/appkit/networks'
 
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'b56e18d47c72ab683b10814fe9495694'
 
 export const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
-  mainnet, arbitrum, base
+  sepolia, mainnet
 ]
 
 const globalAny = globalThis as any;
