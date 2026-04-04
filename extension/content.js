@@ -1,29 +1,30 @@
-// Content Script - Bridges wallet state between main site and extension
+// ══════════════════════════════════════════════════
+// Indelible Content Script
+// Bridges wallet state + detects text selection
+// ══════════════════════════════════════════════════
 
 const WALLET_STORAGE_KEY = 'indelible_wallet_state';
 
-// Listen for wallet state changes from the main site
+// ═══════════════════════════════
+// 1. Wallet State Bridging
+// ═══════════════════════════════
+
+// Listen for wallet state changes from the main Indelible site
 window.addEventListener('wallet-state-changed', function(event) {
   const state = event.detail;
   if (state && state.account) {
-    // Forward to extension storage
     chrome.storage.local.set({
       walletState: {
         account: state.account,
         chainId: state.chainId
       }
     });
-
-    // Notify popup if it's open
     chrome.runtime.sendMessage({
       type: 'WALLET_STATE_UPDATE',
       account: state.account,
       chainId: state.chainId
-    }).catch(() => {
-      // Popup might not be open, that's fine
-    });
+    }).catch(() => {});
   } else {
-    // Wallet disconnected
     chrome.storage.local.remove(['walletState']);
     chrome.runtime.sendMessage({
       type: 'WALLET_STATE_UPDATE',
@@ -33,10 +34,9 @@ window.addEventListener('wallet-state-changed', function(event) {
   }
 });
 
-// Handle messages from popup
+// Handle messages from popup/side panel
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_WALLET_STATE') {
-    // Read from localStorage (content script has access to page's localStorage)
     const stored = localStorage.getItem(WALLET_STORAGE_KEY);
     if (stored) {
       try {
@@ -52,56 +52,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'DISCONNECT_WALLET') {
-    // Clear wallet state from localStorage
     localStorage.removeItem(WALLET_STORAGE_KEY);
-    // Dispatch event to notify the page
     window.dispatchEvent(new CustomEvent('wallet-state-changed', { detail: null }));
-    sendResponse({ success: true });
-    return true;
-  }
-
-  if (message.type === 'TRACK_DAPP') {
-    // Track a connected dapp
-    trackConnectedDapp(message.origin);
     sendResponse({ success: true });
     return true;
   }
 });
 
-async function trackConnectedDapp(origin) {
-  const stored = await chrome.storage.local.get(['connectedDapps']);
-  let dapps = stored.connectedDapps || [];
+// ═══════════════════════════════
+// 2. Ethereum Provider Detection
+// ═══════════════════════════════
 
-  // Parse hostname for name
-  let hostname;
-  try {
-    const url = new URL(origin);
-    hostname = url.hostname.replace('www.', '');
-    const parts = hostname.split('.');
-    const name = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-    hostname = name;
-  } catch (e) {
-    hostname = origin;
-  }
-
-  // Check if already exists
-  const exists = dapps.some(function(d) { return d.origin === origin; });
-  if (!exists) {
-    dapps.push({ origin: origin, name: hostname });
-    await chrome.storage.local.set({ connectedDapps: dapps });
-  }
-}
-
-// Detect when a wallet connects on this page
 if (typeof window.ethereum !== 'undefined') {
   let lastAccounts = null;
 
-  // Poll for account changes (EIP-1193)
   setInterval(async function() {
     try {
       const accounts = await window.ethereum.request({ method: 'eth_accounts' });
       if (accounts && accounts.length > 0 && accounts[0] !== lastAccounts) {
-        lastAccounts = accounts;
+        lastAccounts = accounts[0];
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         const state = {
           account: accounts[0],
@@ -114,23 +83,17 @@ if (typeof window.ethereum !== 'undefined') {
         localStorage.removeItem(WALLET_STORAGE_KEY);
         window.dispatchEvent(new CustomEvent('wallet-state-changed', { detail: null }));
       }
-    } catch (e) {
-      // Wallet might not be available
-    }
-  }, 1000);
+    } catch (e) {}
+  }, 2000);
 
-  // Also listen for events
   if (window.ethereum.on) {
     window.ethereum.on('accountsChanged', function(accounts) {
       if (accounts && accounts.length > 0) {
         lastAccounts = accounts[0];
-        // We don't have chainId here, use existing
         const stored = localStorage.getItem(WALLET_STORAGE_KEY);
         let chainId = 1;
         if (stored) {
-          try {
-            chainId = JSON.parse(stored).chainId || 1;
-          } catch (e) {}
+          try { chainId = JSON.parse(stored).chainId || 1; } catch (e) {}
         }
         const state = { account: accounts[0], chainId };
         localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(state));
@@ -143,7 +106,6 @@ if (typeof window.ethereum !== 'undefined') {
     });
 
     window.ethereum.on('chainChanged', function(chainId) {
-      // Reload the state with new chainId
       const stored = localStorage.getItem(WALLET_STORAGE_KEY);
       if (stored) {
         try {
@@ -156,3 +118,143 @@ if (typeof window.ethereum !== 'undefined') {
     });
   }
 }
+
+// ═══════════════════════════════
+// 3. Text Selection + FAB
+// ═══════════════════════════════
+
+let fabElement = null;
+let hideTimeout = null;
+
+function createFAB() {
+  if (fabElement) return fabElement;
+
+  const fab = document.createElement('div');
+  fab.id = 'indelible-fab';
+  fab.setAttribute('role', 'button');
+  fab.setAttribute('tabindex', '0');
+  fab.innerHTML = `
+    <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+      <circle cx="9" cy="9" r="6" stroke="white" stroke-width="1.5"/>
+      <path d="M14 14l4 4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span>Search with Indelible</span>
+  `;
+
+  fab.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sendSelectionToPanel();
+    hideFAB();
+  });
+
+  fab.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      sendSelectionToPanel();
+      hideFAB();
+    }
+  });
+
+  document.documentElement.appendChild(fab);
+  fabElement = fab;
+  return fab;
+}
+
+function showFAB(x, y) {
+  const fab = createFAB();
+
+  // Position near the selection end
+  const vw = window.innerWidth;
+  const fabWidth = 200;
+  let left = x;
+  let top = y + 10;
+
+  // Keep within viewport
+  if (left + fabWidth > vw - 16) {
+    left = vw - fabWidth - 16;
+  }
+  if (left < 16) left = 16;
+
+  fab.style.left = left + 'px';
+  fab.style.top = (top + window.scrollY) + 'px';
+  fab.classList.add('indelible-fab-visible');
+
+  if (hideTimeout) clearTimeout(hideTimeout);
+  hideTimeout = setTimeout(hideFAB, 8000);
+}
+
+function hideFAB() {
+  if (fabElement) {
+    fabElement.classList.remove('indelible-fab-visible');
+  }
+  if (hideTimeout) {
+    clearTimeout(hideTimeout);
+    hideTimeout = null;
+  }
+}
+
+function sendSelectionToPanel() {
+  const selection = window.getSelection();
+  const text = selection ? selection.toString().trim() : '';
+  if (!text) return;
+
+  const source = window.location.hostname + window.location.pathname;
+
+  // Send to side panel via background
+  chrome.runtime.sendMessage({
+    type: 'TEXT_SELECTED',
+    text: text,
+    source: source
+  }).catch(() => {});
+
+  // Also open the side panel
+  chrome.runtime.sendMessage({
+    type: 'OPEN_SIDE_PANEL'
+  }).catch(() => {});
+}
+
+// Listen for text selection
+document.addEventListener('mouseup', (e) => {
+  // Ignore clicks on our own FAB
+  if (e.target && e.target.closest && e.target.closest('#indelible-fab')) return;
+
+  // Small delay to let the selection finalize
+  setTimeout(() => {
+    const selection = window.getSelection();
+    const text = selection ? selection.toString().trim() : '';
+
+    if (text && text.length >= 3 && text.length <= 5000) {
+      // Get selection coordinates
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      showFAB(rect.right, rect.bottom);
+    } else {
+      hideFAB();
+    }
+  }, 10);
+});
+
+// Hide FAB on scroll or click elsewhere
+document.addEventListener('mousedown', (e) => {
+  if (e.target && e.target.closest && e.target.closest('#indelible-fab')) return;
+  // Don't hide immediately — let mouseup handle new selections
+});
+
+document.addEventListener('scroll', () => {
+  hideFAB();
+}, { passive: true });
+
+// Listen for context menu search requests from background
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CONTEXT_MENU_SEARCH') {
+    const text = message.text || '';
+    if (text) {
+      chrome.runtime.sendMessage({
+        type: 'TEXT_SELECTED',
+        text: text,
+        source: window.location.hostname + window.location.pathname
+      }).catch(() => {});
+    }
+  }
+});

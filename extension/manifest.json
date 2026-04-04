@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Indelible Wallet",
-  "version": "1.0.0",
-  "description": "Chrome extension for Indelible wallet management",
-  "permissions": ["storage", "activeTab"],
+  "name": "Indelible",
+  "version": "2.0.0",
+  "description": "Search political speeches with AI — select text on any page and get instant insights.",
+  "permissions": ["storage", "activeTab", "sidePanel", "contextMenus"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_popup": "popup.html",
+    "default_title": "Open Indelible",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -14,11 +14,15 @@
       "128": "icons/icon-128.png"
     }
   },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "content_scripts": [
     {
       "matches": ["https://*/*", "http://localhost/*"],
       "js": ["content.js"],
-      "run_at": "document_start"
+      "css": ["content.css"],
+      "run_at": "document_end"
     }
   ],
   "background": {

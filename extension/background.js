@@ -1,52 +1,91 @@
-// Background Service Worker for Chrome Extension
-// Handles communication between popup, content scripts, and dapp connections
+// ══════════════════════════════════════════════════
+// Indelible — Background Service Worker
+// Side panel toggle, context menu, message relay
+// ══════════════════════════════════════════════════
 
-// Listen for messages from popup and content scripts
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'WALLET_CONNECTED') {
-    // Store the connected dapp
-    storeConnectedDapp(message.origin, message.account);
-  } else if (message.type === 'GET_WALLET_STATE') {
-    // Return current wallet state
-    chrome.storage.local.get(['walletState'], (result) => {
-      sendResponse(result.walletState || null);
-    });
-    return true; // Will respond asynchronously
+// ── Side Panel Setup ──
+// Enable side panel to open on action button click
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((err) => console.error('sidePanel.setPanelBehavior error:', err));
+
+// ── Context Menu ──
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'indelible-search',
+    title: 'Search with Indelible',
+    contexts: ['selection']
+  });
+});
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'indelible-search' && info.selectionText) {
+    // Open the side panel first
+    try {
+      await chrome.sidePanel.open({ tabId: tab.id });
+    } catch (e) {
+      console.error('Could not open side panel:', e);
+    }
+
+    // Small delay to let the panel initialize
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        type: 'TEXT_SELECTED',
+        text: info.selectionText,
+        source: tab.url ? new URL(tab.url).hostname + new URL(tab.url).pathname : ''
+      }).catch(() => {});
+    }, 500);
   }
 });
 
-// Store connected dapp info
-async function storeConnectedDapp(origin, account) {
-  const stored = await chrome.storage.local.get(['connectedDapps']);
-  let dapps = stored.connectedDapps || [];
-
-  // Parse hostname for dapp name
-  let hostname;
-  try {
-    const url = new URL(origin);
-    hostname = url.hostname.replace('www.', '');
-    const parts = hostname.split('.');
-    const name = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-  } catch (e) {
-    hostname = origin;
+// ── Message Relay ──
+// Relay messages between content scripts and side panel
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'OPEN_SIDE_PANEL') {
+    // Open side panel on the sender's tab
+    if (sender.tab) {
+      chrome.sidePanel.open({ tabId: sender.tab.id })
+        .catch((e) => console.error('Could not open side panel:', e));
+    }
+    return;
   }
 
-  // Check if already exists
-  const exists = dapps.some(function(d) { return d.origin === origin; });
-  if (!exists) {
-    dapps.push({ origin: origin, name: hostname });
-    await chrome.storage.local.set({ connectedDapps: dapps });
+  if (message.type === 'WALLET_STATE_UPDATE') {
+    // Store in extension storage
+    if (message.account) {
+      chrome.storage.local.set({
+        walletState: { account: message.account, chainId: message.chainId }
+      });
+    } else {
+      chrome.storage.local.remove(['walletState']);
+    }
+    // Relay to side panel (it may or may not be open)
+    // The side panel will also read from storage on init
+    return;
   }
-}
 
-// Listen for tab updates to detect dapp connections
+  if (message.type === 'GET_WALLET_STATE') {
+    chrome.storage.local.get(['walletState'], (result) => {
+      sendResponse(result.walletState || null);
+    });
+    return true; // Async response
+  }
+
+  if (message.type === 'TEXT_SELECTED') {
+    // The content script sent selected text — relay to side panel
+    // Side panel is also a chrome.runtime listener, so this will reach it
+    return;
+  }
+});
+
+// ── Tab Update Listener ──
+// Track when user navigates to the main site (for wallet state sync)
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url) {
     try {
       const url = new URL(tab.url);
-      // Store the origin for potential wallet connections
+      // If the user visits the main Indelible site, try to get wallet state
       if (url.protocol === 'http:' || url.protocol === 'https:') {
-        // Content script will handle the actual detection
+        // Content script handles the actual detection
       }
     } catch (e) {
       // Not a valid URL
