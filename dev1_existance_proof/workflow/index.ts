@@ -55,34 +55,35 @@ const SOURCE_ATTESTATION_REQUESTED_SIG = keccak256(
 );
 
 // ──────────────────────────────────────────────
-//  Storage adapter (swap to Real0GStorageAdapter for production)
-// ──────────────────────────────────────────────
-
-const storageAdapter: StorageAdapter = process.env.USE_REAL_0G_STORAGE === "true" 
-  ? new Sdk0GStorageAdapter({
-      privateKey: process.env.PRIVATE_KEY!,
-      rpcUrl: process.env.ZG_RPC_URL,
-      indexerUrl: process.env.ZG_INDEXER_URL
-    }) 
-  : new Mock0GStorageAdapter();
-
-
-// ──────────────────────────────────────────────
 //  CRE Workflow Handler
 // ──────────────────────────────────────────────
 
 const onLogTrigger = async (runtime: Runtime<Config>, log: EVMLog): Promise<string> => {
   runtime.log(`[Indelible] Log received from ${bytesToHex(log.address)}`);
 
+  // Fetch secrets asynchronously from the CRE runtime/vault
+  const [pkRes, rpcRes, idxRes] = await Promise.all([
+    runtime.getSecret({ id: "ZG_PRIVATE_KEY" }),
+    runtime.getSecret({ id: "ZG_RPC_URL" }),
+    runtime.getSecret({ id: "ZG_INDEXER_URL" }),
+  ]);
+
+  // Initialize storage adapter using the decrypted secrets
+  const storageAdapter: StorageAdapter = new Sdk0GStorageAdapter({
+    privateKey: pkRes.result().value || "",
+    rpcUrl: rpcRes.result().value,
+    indexerUrl: idxRes.result().value,
+  });
+
   // Decode the event
   const event = decodeRequestEvent(log);
   runtime.log(`[Indelible] Request ID: ${event.requestId}`);
   runtime.log(`[Indelible] URL: ${event.url}`);
 
-  // Run the full attestation pipeline
+  // Run the full attestation pipeline (fetching -> hashing -> 0G)
   const attestation = await handleSourceRequested(event, storageAdapter, runtime);
 
-  // Encode the onchain write calldata
+  // Encode the onchain write calldata for the Attestation Registry
   const calldata = encodeFunctionData({
     abi: attestationRegistryAbi,
     functionName: "recordAttestation",
@@ -97,11 +98,10 @@ const onLogTrigger = async (runtime: Runtime<Config>, log: EVMLog): Promise<stri
     ],
   });
 
-  runtime.log(`[Indelible] Attestation calldata ready (${calldata.length} chars)`);
-  runtime.log(`[Indelible] Target: ${runtime.config.attestationRegistryAddress}`);
+  runtime.log(`[Indelible] Attestation calldata ready (${calldata.length} bytes)`);
+  runtime.log(`[Indelible] Attestation ID: ${attestation.attestationId}`);
 
-  // In a real CRE deployment, this calldata would be submitted as a
-  // contract write action. For now, we return it as the handler result.
+  // Return the calldata. In a real deployment, the CRE forwarder handles the write.
   return JSON.stringify({
     attestationId: attestation.attestationId,
     target: runtime.config.attestationRegistryAddress,

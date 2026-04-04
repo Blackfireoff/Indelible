@@ -1,0 +1,36 @@
+name: source-attestation
+version: 0.1.0
+
+# ──────────────────────────────────────────────
+#  Workflow Entry Point
+# ──────────────────────────────────────────────
+# Relative path to the TypeScript/JavaScript entry point
+workflow-path: ./index.ts
+
+# ──────────────────────────────────────────────
+#  Capabilities & Permissions
+# ──────────────────────────────────────────────
+# This workflow is authorized to:
+# 1. Listen for events on the registry
+# 2. Write proofs back onchain
+capabilities:
+  - evm
+  - http
+  - storage
+
+# ──────────────────────────────────────────────
+#  Configuration & Secrets
+# ──────────────────────────────────────────────
+# Mapping the global "Restriction Fortress" to this workflow's config
+attestation-registry-address: ${attestation-registry-address}
+contractAddress: "0x74e9dc5fe1172fb7223cab77b4a5119cf014d0e1"
+chainSelectorName: "galileo"
+
+# ──────────────────────────────────────────────
+#  Secrets Configuration
+# ──────────────────────────────────────────────
+# This workflow needs these secrets decrypted in the sandbox
+secrets:
+  - ZG_PRIVATE_KEY
+  - ZG_RPC_URL
+  - ZG_INDEXER_URL

@@ -1,0 +1,28 @@
+name: indelible-existence-proof
+version: 0.1.0
+
+# ──────────────────────────────────────────────
+#  Global Network Targets
+# ──────────────────────────────────────────────
+targets:
+  galileo-testnet:
+    rpc-url: "https://evmrpc-testnet.0g.ai"
+    chain-id: 16602
+    # This is the "Restriction Fortress" address 
+    attestation-registry-address: "0x1ad563232c3d9d5feafe61f9fcdceadd1c2d3941"
+    chain-selector-name: "galileo"
+
+
+staging-settings:
+  rpcs:
+    - chain-name: ethereum-testnet-sepolia
+      url: https://ethereum-sepolia-rpc.publicnode.com
+      
+
+# ──────────────────────────────────────────────
+#  Global Capabilities
+# ──────────────────────────────────────────────
+capabilities:
+  - evm
+  - http
+  - storage
