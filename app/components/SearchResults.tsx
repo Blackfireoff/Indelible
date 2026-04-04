@@ -2,8 +2,15 @@
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
-import { useAppKitAccount } from '@reown/appkit/react'
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
+import { parseUnits, encodeFunctionData, erc20Abi, createPublicClient, http } from 'viem'
+import { sepolia } from 'viem/chains'
 import { Button } from '@heroui/react'
+
+const publicClient = createPublicClient({
+  chain: sepolia,
+  transport: http()
+})
 import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
@@ -54,7 +61,8 @@ export default function SearchResults() {
   const pathname = usePathname()
   const router = useRouter()
   const query = searchParams.get('q') || ''
-  const { isConnected, status } = useAppKitAccount()
+  const { isConnected, status, address } = useAppKitAccount()
+  const { walletProvider } = useAppKitProvider('eip155')
   const [selectedDocument, setSelectedDocument] = useState<SourceDocument | null>(null)
   const [searchQuery, setSearchQuery] = useState(query)
   const [result, setResult] = useState<ApiResponse | null>(null)
@@ -80,17 +88,63 @@ export default function SearchResults() {
 
   const performSearch = async (q: string) => {
     if (!q.trim()) return
+    if (!publicClient || !address || !walletProvider) {
+      setError("Please connect your wallet to search.")
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     try {
+      // 1. Check Balance
+      const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f' as `0x${string}`
+      const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD' as `0x${string}`
+      const INDL_REQUIRED = parseUnits('1', 18)
+
+      const balance = (await publicClient.readContract({
+        address: INDL_TOKEN_ADDRESS,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [address as `0x${string}`],
+      } as any)) as bigint
+
+      if (balance < INDL_REQUIRED) {
+        // Redirect if they don't have enough INDL
+        router.push('/get-token')
+        return
+      }
+
+      // 2. Consume 1 INDL Token
+      const txData = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [BURN_ADDRESS, INDL_REQUIRED]
+      })
+
+      setError("Please check your wallet to approve the 1 INDL request fee...")
+
+      const txHashStr = await (walletProvider as any).request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: address,
+          to: INDL_TOKEN_ADDRESS,
+          data: txData
+        }]
+      })
+      
+      const txHash = txHashStr as string
+
+      setError("Verifying transaction and searching...")
+
+      // 3. Perform the Search
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q }),
+        body: JSON.stringify({ query: q, txHash }),
       })
       if (!res.ok) throw new Error('Query failed')
-      const data: ApiResponse = await res.json()
-      setResult(data)
+      const apiData: ApiResponse = await res.json()
+      setResult(apiData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed')
     } finally {
@@ -185,7 +239,7 @@ export default function SearchResults() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          <div className="mb-6 p-4 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-xl text-[var(--landing-text-secondary)] text-sm">
             {error}
           </div>
         )}
