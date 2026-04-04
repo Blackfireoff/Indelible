@@ -150,7 +150,7 @@ export default function SearchResults() {
                 </div>
 
                 <Button
-                  className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex gap-2"
+                  className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Read Original Document
                   <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />
