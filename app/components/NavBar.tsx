@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 // Import cleanly removed
 import { useWalletSync } from '@/hooks/useWalletSync'
@@ -34,13 +35,15 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
         {/* Logo & Nav */}
         <div className="flex items-center gap-12">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
-              <FontAwesomeIcon icon={faGlobe} className="w-5 h-5 text-[var(--landing-bg-white)]" />
-            </div>
-            <span className="text-[20px] font-semibold text-[var(--landing-text-primary)]">
-              Indelible.
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo/med.svg"
+              alt="Indelible Logo"
+              width={300}
+              height={60}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Navigation */}
