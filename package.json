@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@base-org/account": "^2.5.3",
+    "@chainlink/contracts": "^1.5.0",
     "@coinbase/wallet-sdk": "^4.3.7",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
