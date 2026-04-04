@@ -107,7 +107,7 @@ export default function GetTokenClient() {
             address: '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f',
             symbol: 'INDL',
             decimals: 18,
-            image: window.location.origin + '/logo/small.svg',
+            image: window.location.origin + '/logo/circle.svg',
           },
         },
       })
@@ -126,8 +126,8 @@ export default function GetTokenClient() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)]">Get requests to use <em className="italic">INDELIBLE.</em></h1>
-        <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package to top up your account. Conversions are calculated automatically from live rates.</p>
+        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)] mb-4">Get requests to use <em className="italic" style={{ textDecorationLine: 'underline', textDecorationColor: 'var(--accent-color)', textDecorationThickness: '3px', textUnderlineOffset: '6px' }}>INDELIBLE.</em></h1>
+        <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package below. Don&apos;t have ETH yet? No worries — we&apos;ll help you purchase some first, then you can use it to buy your requests.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -228,8 +228,8 @@ export default function GetTokenClient() {
           onClick={isConnected ? handleAddToken : undefined}
           disabled={!isConnected}
           className={`w-full py-2.5 rounded-xl border font-medium text-[14px] transition-colors
-            ${isConnected 
-              ? 'bg-[var(--landing-bg-white)] border-[var(--landing-border)] text-[var(--landing-text-primary)] hover:bg-[var(--landing-bg-light)] cursor-pointer shadow-sm' 
+            ${isConnected
+              ? 'bg-[var(--landing-bg-white)] border-[var(--landing-border)] text-[var(--landing-text-primary)] hover:bg-[var(--landing-bg-light)] cursor-pointer shadow-sm'
               : 'bg-[var(--landing-bg-light)] border-[var(--landing-border)] text-[var(--landing-text-muted)] cursor-not-allowed'
             }
           `}

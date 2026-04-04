@@ -91,7 +91,7 @@ export default function HeroSection() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask about a politician..."
-            className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-secondary)] placeholder:text-[var(--landing-text-muted)] outline-none"
+            className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-primary)] placeholder:text-[var(--landing-text-muted)] outline-none"
           />
           <Button
             onPress={handleSearch}
