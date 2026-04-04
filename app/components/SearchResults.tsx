@@ -8,7 +8,7 @@ import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface Citation {
   chunkId: string
@@ -197,8 +197,8 @@ export default function SearchResults() {
               }}
             >
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
-                  <FontAwesomeIcon icon={faStar} className="w-4 h-4 text-[var(--landing-bg-white)]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--accent-color-dark)] flex items-center justify-center shrink-0">
+                  <FontAwesomeIcon icon={faMagicWandSparkles} className="w-4 h-4 text-[var(--landing-bg-white)]" />
                 </div>
                 <div>
                   <h3 className="text-[18px] font-semibold text-[var(--landing-text-primary)]">AI Summary</h3>

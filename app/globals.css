@@ -60,6 +60,9 @@ body {
   --landing-quote-mark: rgba(4, 133, 247, 0.2);
 
   --accent-color: #ffd321;
-  --accent-color-dark: #ebad1c;
+  --accent-color-smooth: #ffcb21;
+  --accent-color-dark: #ecbd21;
+  --accent-color-darker: #d48819;
   --accent-color-light: rgba(255, 211, 33, 0.1);
+  --accent-color-lighter: rgba(255, 211, 33, 0.05);
 }
