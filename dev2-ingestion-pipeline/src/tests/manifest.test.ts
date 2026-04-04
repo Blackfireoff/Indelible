@@ -43,10 +43,7 @@ describe("buildDocumentManifest", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-    const embeddings = await generateEmbeddings(chunks.chunks, sampleCapture.attestationId);
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
+    const embeddings = await generateEmbeddings(chunks.chunks, sampleCapture.attestationId, { provider: "stub" });
 
     const statementsArtifact: StatementsArtifact = {
       schemaVersion: "1.0",
@@ -101,10 +98,7 @@ describe("buildDocumentManifest", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-    const embeddings = await generateEmbeddings(chunks.chunks, sampleCapture.attestationId);
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
+    const embeddings = await generateEmbeddings(chunks.chunks, sampleCapture.attestationId, { provider: "stub" });
 
     const statementsArtifact: StatementsArtifact = {
       schemaVersion: "1.0",

@@ -1,5 +1,8 @@
 /**
- * Tests for embeddings generation (stub mode – no API key required).
+ * Tests for embeddings generation (stub mode – no model loading, no API key required).
+ *
+ * Tests always pass provider: "stub" explicitly to avoid loading the local ONNX model,
+ * which is incompatible with Jest's patched Float32Array environment.
  */
 
 import { describe, it, expect } from "@jest/globals";
@@ -37,16 +40,11 @@ describe("generateEmbeddings (stub mode)", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    // Force stub mode by ensuring no API key
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-
     const embeddings = await generateEmbeddings(
       chunks.chunks,
-      sampleCapture.attestationId
+      sampleCapture.attestationId,
+      { provider: "stub" }
     );
-
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
 
     expect(embeddings.vectors).toHaveLength(chunks.chunks.length);
   });
@@ -56,15 +54,11 @@ describe("generateEmbeddings (stub mode)", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-
     const embeddings = await generateEmbeddings(
       chunks.chunks,
-      sampleCapture.attestationId
+      sampleCapture.attestationId,
+      { provider: "stub" }
     );
-
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
 
     const expectedDim = embeddings.embeddingModel.dimension;
     for (const vec of embeddings.vectors) {
@@ -77,15 +71,11 @@ describe("generateEmbeddings (stub mode)", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-
     const embeddings = await generateEmbeddings(
       chunks.chunks,
-      sampleCapture.attestationId
+      sampleCapture.attestationId,
+      { provider: "stub" }
     );
-
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
 
     const chunkIds = new Set(chunks.chunks.map((c) => c.chunkId));
     for (const vec of embeddings.vectors) {
@@ -98,15 +88,11 @@ describe("generateEmbeddings (stub mode)", () => {
     const clean = buildCleanArticle(sampleCapture, extracted);
     const chunks = buildRetrievalChunks(clean, []);
 
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-
     const embeddings = await generateEmbeddings(
       chunks.chunks,
-      sampleCapture.attestationId
+      sampleCapture.attestationId,
+      { provider: "stub" }
     );
-
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
 
     expect(embeddings.schemaVersion).toBe("1.0");
     expect(embeddings.attestationId).toBe(sampleCapture.attestationId);

@@ -92,14 +92,12 @@ describe("End-to-end pipeline", () => {
       validatedStatements.length + cleanArticle.paragraphs.length
     );
 
-    // Step 5: Generate embeddings (stub mode)
-    const originalKey = process.env.OPENAI_API_KEY;
-    delete process.env.OPENAI_API_KEY;
+    // Step 5: Generate embeddings (stub mode – local ONNX model incompatible with Jest)
     const embeddings = await generateEmbeddings(
       retrievalChunks.chunks,
-      sampleCapture.attestationId
+      sampleCapture.attestationId,
+      { provider: "stub" }
     );
-    if (originalKey) process.env.OPENAI_API_KEY = originalKey;
 
     expect(embeddings.vectors).toHaveLength(retrievalChunks.chunks.length);
 

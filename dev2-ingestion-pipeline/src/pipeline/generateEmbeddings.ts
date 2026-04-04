@@ -1,17 +1,24 @@
 /**
  * Embedding generation for all retrieval chunks.
  *
- * Primary provider: OpenAI text-embedding-3-small (1536 dimensions).
- * Fallback: deterministic zero-vector stub when no API key is configured
- *           (useful for local testing without API costs).
+ * Provider selection (via EMBEDDING_PROVIDER env var):
+ *   "local"  → Transformers.js on-device model, no API key required (default when no OpenAI key)
+ *   "openai" → OpenAI API (requires OPENAI_API_KEY)
+ *   "stub"   → zero-vector stub for tests (forced when EMBEDDING_PROVIDER=stub)
  *
- * Embeddings are generated in batches to respect rate limits.
+ * Priority order when EMBEDDING_PROVIDER is not set:
+ *   1. openai  – if OPENAI_API_KEY is present
+ *   2. local   – always available, no key needed
  */
 
 import type { EmbeddingsArtifact, EmbeddingVector, EmbeddingModel } from "../schemas/embeddings.js";
 import type { RetrievalChunk } from "../schemas/retrievalChunks.js";
+import {
+  embedWithLocalModel,
+  LOCAL_EMBEDDING_DEFAULTS,
+} from "../adapters/embedding/LocalEmbeddingAdapter.js";
 
-const DEFAULT_MODEL = "text-embedding-3-small";
+const DEFAULT_OPENAI_MODEL = "text-embedding-3-small";
 const DEFAULT_DIMENSION = 1536;
 const BATCH_SIZE = 100;
 const EMBEDDING_VERSION = "1.0.0";
@@ -19,6 +26,8 @@ const EMBEDDING_VERSION = "1.0.0";
 export interface EmbeddingOptions {
   model?: string;
   batchSize?: number;
+  /** Force provider: "openai" | "local" | "stub" */
+  provider?: "openai" | "local" | "stub";
 }
 
 /**
@@ -33,26 +42,43 @@ export async function generateEmbeddings(
   attestationId: string,
   options: EmbeddingOptions = {}
 ): Promise<EmbeddingsArtifact> {
-  const model = options.model ?? (process.env.OPENAI_EMBEDDING_MODEL ?? DEFAULT_MODEL);
-  const batchSize = options.batchSize ?? BATCH_SIZE;
   const apiKey = process.env.OPENAI_API_KEY;
+  const envProvider = process.env.EMBEDDING_PROVIDER as EmbeddingOptions["provider"] | undefined;
+
+  const provider =
+    options.provider ??
+    envProvider ??
+    (apiKey ? "openai" : "local");
+
+  const batchSize = options.batchSize ?? BATCH_SIZE;
 
   let vectors: EmbeddingVector[];
   let embeddingModel: EmbeddingModel;
 
-  if (apiKey) {
-    const { vectors: v, embeddingModel: m } = await embedWithOpenAI(
-      chunks,
-      model,
-      batchSize,
-      apiKey
-    );
-    vectors = v;
-    embeddingModel = m;
+  if (provider === "openai") {
+    if (!apiKey) {
+      throw new Error(
+        "[generateEmbeddings] EMBEDDING_PROVIDER=openai but OPENAI_API_KEY is not set."
+      );
+    }
+    const model = options.model ?? (process.env.OPENAI_EMBEDDING_MODEL ?? DEFAULT_OPENAI_MODEL);
+    const result = await embedWithOpenAI(chunks, model, batchSize, apiKey);
+    vectors = result.vectors;
+    embeddingModel = result.embeddingModel;
+
+  } else if (provider === "local") {
+    const model =
+      options.model ??
+      (process.env.LOCAL_EMBEDDING_MODEL ?? LOCAL_EMBEDDING_DEFAULTS.model);
+    console.log(`[generateEmbeddings] Using local model: ${model}`);
+    const result = await embedWithLocalModel(chunks, model, batchSize);
+    vectors = result.vectors;
+    embeddingModel = result.embeddingModel;
+
   } else {
+    // stub
     console.warn(
-      "[generateEmbeddings] No OPENAI_API_KEY – using zero-vector stub. " +
-      "Set OPENAI_API_KEY for real embeddings."
+      "[generateEmbeddings] Using zero-vector stub. Set EMBEDDING_PROVIDER=local for real on-device embeddings."
     );
     vectors = stubVectors(chunks, attestationId, DEFAULT_DIMENSION);
     embeddingModel = {
