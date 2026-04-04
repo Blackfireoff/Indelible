@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const receipt = await publicClient.getTransactionReceipt({ hash: txHash as `0x${string}` });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
       if (receipt.status !== 'success') {
         return NextResponse.json({ error: "Transaction failed on-chain." }, { status: 400 });
       }
