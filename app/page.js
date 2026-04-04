@@ -1,5 +1,5 @@
-import LandingPage from './components/LandingPage'
+import HeroSection from './components/HeroSection'
 
 export default function Home() {
-  return <LandingPage />
+  return <HeroSection />
 }

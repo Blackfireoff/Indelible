@@ -35,6 +35,7 @@ body {
   /* Text Colors */
   --landing-text-primary: #18181b;
   --landing-text-secondary: #71717a;
+  --landing-text-muted: #a1a1aa;
 
   /* Brand Colors */
   --landing-primary: #0485f7;

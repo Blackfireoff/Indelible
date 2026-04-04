@@ -1,7 +1,8 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import { Button } from '@heroui/react'
-import HeroSection from './HeroSection'
+import Link from 'next/link'
 
 // Quote data from Figma
 const quotes = [
@@ -97,7 +98,19 @@ function ExternalLinkIcon({ className }) {
   )
 }
 
-export default function LandingPage() {
+function SearchIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+export default function SearchResults() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get('q') || ''
+
   return (
     <div className="min-h-screen bg-[var(--landing-bg)]">
       {/* Header */}
@@ -106,20 +119,20 @@ export default function LandingPage() {
           {/* Logo & Nav */}
           <div className="flex items-center gap-12">
             {/* Logo */}
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
                 <GlobeIcon className="w-5 h-5 text-[var(--landing-bg-white)]" />
               </div>
               <span className="text-[20px] font-semibold text-[var(--landing-text-primary)]">
                 Political Speech Analyzer
               </span>
-            </div>
+            </Link>
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-[14px] font-medium text-[var(--landing-primary)]">
+              <Link href="/" className="text-[14px] font-medium text-[var(--landing-primary)]">
                 Search
-              </a>
+              </Link>
               <a href="#" className="text-[14px] font-medium text-[var(--landing-text-secondary)] hover:text-[var(--landing-text-primary)] transition-colors">
                 About
               </a>
@@ -152,9 +165,24 @@ export default function LandingPage() {
       </header>
 
       {/* Main Content */}
-      <main>
-        {/* Hero Section */}
-        <HeroSection />
+      <main className="max-w-4xl mx-auto px-6 py-8">
+        {/* Search Input */}
+        <div className="relative mb-6">
+          <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm h-14 flex items-center px-4 gap-3">
+            <SearchIcon className="w-5 h-5 text-[var(--landing-text-secondary)]" />
+            <input
+              type="text"
+              defaultValue={query}
+              placeholder="Search political speeches..."
+              className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-primary)] placeholder:text-[var(--landing-text-secondary)] outline-none"
+            />
+            <Button
+              className="h-10 bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium rounded-xl px-6"
+            >
+              Search
+            </Button>
+          </div>
+        </div>
 
         {/* AI Summary Card */}
         <div className="relative mb-8 p-6 rounded-2xl border border-[var(--landing-primary-light)] shadow-sm overflow-hidden"
