@@ -88,7 +88,9 @@ export default function NavBar({ showWallet = false }: NavBarProps) {
           {isConnected && (() => {
             const indlCount = balanceData !== undefined ? Math.floor(Number(formatUnits(balanceData, 18))) : 0;
             return (
-              <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">
+              <div
+                className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full"
+              >
                 <span className={`w-2 h-2 rounded-full ${indlCount > 0 ? "bg-[var(--landing-success)]" : "bg-red-500"}`} />
                 <span className="text-[14px] font-medium text-[var(--landing-text-primary)]">
                   {indlCount} Requests
