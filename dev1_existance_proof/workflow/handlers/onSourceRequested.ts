@@ -35,7 +35,7 @@ export function decodeRequestEvent(log: EVMLog): SourceRequestEvent {
     abi: requestEventAbi,
     data,
     topics,
-  });
+  }) as any;
 
   const { requestId, requester, url, requestedAt } = decoded.args as {
     requestId: Hex;
