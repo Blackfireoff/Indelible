@@ -10,14 +10,10 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< HEAD
 import { query, initialize0GProvider, configureAgent, listProviders, setStorageAdapter } from "../../../dev3-AI-RAG/agent/agent";
 import { ZeroGStorageAdapter } from "../../../dev3-AI-RAG/storage/0g-adapter";
-=======
-import { query, initialize0GProvider, configureAgent, listProviders } from "../../../dev3-AI-RAG/agent/agent";
 import { createPublicClient, http, parseAbiItem, parseUnits } from 'viem';
 import { sepolia } from 'viem/chains';
->>>>>>> 78bdec450ffd8c5ff622e96c28fe633df785c356
 
 let initialized = false;
 const usedTxHashes = new Set<string>();
@@ -107,31 +103,31 @@ export async function POST(request: NextRequest) {
       }
 
       const tx = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
-      
+
       const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f'.toLowerCase();
       if (!tx.to || tx.to.toLowerCase() !== INDL_TOKEN_ADDRESS) {
-         return NextResponse.json({ error: "Transaction did not target INDL token." }, { status: 400 });
+        return NextResponse.json({ error: "Transaction did not target INDL token." }, { status: 400 });
       }
 
       // Check if it's a transfer to burn address
       // MethodID for transfer(address,uint256) is 0xa9059cbb
       // Data structure: 0xa9059cbb + 32 bytes (address) + 32 bytes (amount)
       if (!tx.input.startsWith('0xa9059cbb')) {
-         return NextResponse.json({ error: "Transaction was not a standard transfer." }, { status: 400 });
+        return NextResponse.json({ error: "Transaction was not a standard transfer." }, { status: 400 });
       }
 
       const rawToAddress = '0x' + tx.input.substring(34, 74);
       const BURN_ADDRESS = '0x000000000000000000000000000000000000dead';
       if (rawToAddress.toLowerCase() !== BURN_ADDRESS) {
-         return NextResponse.json({ error: "Tokens must be transferred to the burn address." }, { status: 400 });
+        return NextResponse.json({ error: "Tokens must be transferred to the burn address." }, { status: 400 });
       }
 
       const amountHex = '0x' + tx.input.substring(74);
       const amount = BigInt(amountHex);
       if (amount < parseUnits('1', 18)) {
-         return NextResponse.json({ error: "Insufficient INDL amount paid." }, { status: 400 });
+        return NextResponse.json({ error: "Insufficient INDL amount paid." }, { status: 400 });
       }
-      
+
       usedTxHashes.add(txHash);
     } catch (err) {
       console.error("Tx verification error:", err);
