@@ -1,10 +1,36 @@
 /**
  * Dev 2 Ingestion Pipeline – Entry Point
  *
- * Usage:
- *   RAW_CAPTURE_PATH=./src/fixtures/sample-raw-capture.json npm run pipeline
- *   STORAGE_ADAPTER=zerog RAW_CAPTURE_DATA_ADDRESS=0xabc123 npm run pipeline
+ * Usage (PowerShell):
+ *   npm run pipeline                              ← uses .env
+ *   $env:STORAGE_ADAPTER="zerog"; npm run pipeline  ← env var overrides .env
  */
+
+// Load .env file before anything else.
+// Environment variables set by the shell always take precedence over .env values.
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
+
+function loadDotEnv(): void {
+  const envPath = resolve(process.cwd(), ".env");
+  if (!existsSync(envPath)) return;
+
+  const lines = readFileSync(envPath, "utf-8").split("\n");
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eqIdx = line.indexOf("=");
+    if (eqIdx === -1) continue;
+    const key = line.slice(0, eqIdx).trim();
+    const value = line.slice(eqIdx + 1).trim();
+    // Shell-set variables are never overwritten
+    if (!(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadDotEnv();
 
 import { loadRawCaptureFromFile, loadRawCaptureFromStorage } from "./pipeline/loadRawCapture.js";
 import { extractMainArticle } from "./pipeline/extractMainArticle.js";
