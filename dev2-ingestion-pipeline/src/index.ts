@@ -236,7 +236,35 @@ async function main() {
     JSON.stringify(manifest, null, 2)
   );
 
-  // ── 10. Summary ──────────────────────────────────────────────────────────
+  // ── 10. Download verification (0G only) ─────────────────────────────────
+  if (adapterType === "zerog") {
+    console.log("\n[verify] Downloading artifacts from 0G to verify round-trip …");
+    const toVerify: Array<{ label: string; address: string }> = [
+      { label: "clean_article.json",       address: addresses.cleanArticle },
+      { label: "statements.json",           address: addresses.statements },
+      { label: "retrieval_chunks.json",     address: addresses.retrievalChunks },
+      { label: "document_manifest.json",    address: manifestAddress },
+    ];
+    if (addresses.refinedStatements) {
+      toVerify.push({ label: "verified_statements.json", address: addresses.refinedStatements });
+    }
+
+    let allOk = true;
+    for (const { label, address } of toVerify) {
+      try {
+        const raw = await adapter.downloadArtifact(address);
+        const parsed = JSON.parse(raw) as Record<string, unknown>;
+        const keys = Object.keys(parsed).length;
+        console.log(`[verify] ✓ ${label} (${raw.length} bytes, ${keys} top-level keys)`);
+      } catch (err) {
+        console.error(`[verify] ✗ ${label}: ${(err as Error).message}`);
+        allOk = false;
+      }
+    }
+    console.log(allOk ? "[verify] All artifacts verified successfully.\n" : "[verify] Some artifacts failed verification.\n");
+  }
+
+  // ── 11. Summary ──────────────────────────────────────────────────────────
   console.log("\n=== Pipeline Complete ===");
   console.log(`Attestation:         ${rawCapture.attestationId}`);
   console.log(`Paragraphs:          ${cleanArticle.paragraphs.length}`);
