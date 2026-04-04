@@ -3,6 +3,8 @@
  * These match the data contracts from Dev 2.
  */
 
+export type ChunkType = "statement" | "paragraph" | "section";
+
 export interface Chunk {
   chunkId: string;
   documentId: string;
@@ -20,11 +22,42 @@ export interface Chunk {
   storagePointer: string;
   prevChunkId: string | null;
   nextChunkId: string | null;
+  chunkType: ChunkType;
 }
 
 export interface ChunkManifest {
   chunkId: string;
   storagePointer: string;
+}
+
+// ---------------------------------------------------------------------------
+// Embeddings (precomputed by Dev 2)
+// ---------------------------------------------------------------------------
+
+export interface EmbeddingModel {
+  provider: string;
+  model: string;
+  dimension: number;
+  version: string;
+}
+
+export interface EmbeddingVector {
+  chunkId: string;
+  chunkType: ChunkType;
+  vector: number[];
+  metadata: {
+    statementId?: string;
+    paragraphId?: string;
+    speakerNormalizedId?: string;
+    attestationId: string;
+  };
+}
+
+export interface EmbeddingsFile {
+  schemaVersion: string;
+  attestationId: string;
+  embeddingModel: EmbeddingModel;
+  vectors: EmbeddingVector[];
 }
 
 export interface DocumentManifest {
@@ -40,6 +73,7 @@ export interface DocumentManifest {
   canonicalTextHash: string;
   storagePointer: string;
   chunkManifestPointer: string;
+  embeddingsPointer: string;
   chunks: ChunkManifest[];
 }
 

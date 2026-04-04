@@ -1,5 +1,5 @@
 /**
- * System prompt template for citation-first RAG agent.
+ * System prompt template for citation-first, contradiction-aware RAG agent.
  */
 
 import type { RetrievedChunk } from "../storage/types";
@@ -23,6 +23,7 @@ function chunksToContext(chunks: RetrievedChunk[]): string {
         `\nsourceUrl: ${chunk.sourceUrl}` +
         `\nobservedAt: ${chunk.observedAt}` +
         `\nspeaker: ${chunk.speaker ?? "unknown"}` +
+        `\nchunkType: ${chunk.chunkType ?? "paragraph"}` +
         `\nsectionPath: ${chunk.sectionPath.join(" > ")}` +
         `\ntext: ${chunk.text}` +
         `\n`;
@@ -46,9 +47,9 @@ export function buildSystemPrompt(): string {
 CRITICAL RULES:
 1. Answer ONLY from the provided chunks. Do NOT use internal knowledge.
 2. Every factual claim must cite a specific chunkId and storagePointer.
-3. If chunks disagree, surface the contradiction explicitly.
+3. If chunks disagree or make conflicting claims, surface them explicitly in the "contradictions" array.
 4. If no chunks are provided or evidence is insufficient, say "Insufficient evidence" and return empty citations.
-5. Always respond with valid JSON matching the AgentOutput schema.
+5. Always respond with valid JSON matching the AgentOutput schema. The "contradictions" field is required (empty array if none detected).
 
 OUTPUT SCHEMA:
 {
@@ -64,7 +65,13 @@ OUTPUT SCHEMA:
   ],
   "confidence": 0.0-1.0,
   "evidence": ["doc-001-chunk-0001"],
-  "limitations": "Any gaps or uncertainties in the evidence."
+  "limitations": "Any gaps or uncertainties in the evidence.",
+  "contradictions": [
+    {
+      "description": "Short description of the contradiction",
+      "chunkIds": ["doc-001-chunk-0002", "doc-002-chunk-0001"]
+    }
+  ]
 }`;
 }
 

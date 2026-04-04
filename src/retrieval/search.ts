@@ -1,14 +1,25 @@
 /**
  * Retrieval module: cosine similarity search over chunk embeddings.
+ *
+ * Supports two modes:
+ * 1. Precomputed vectors (production) — vectors loaded from 0G via EmbeddingsLoader,
+ *    keyed by chunkId for O(1) lookup. Query is still embedded via IEmbedder.
+ * 2. Live-computed vectors (dev fallback) — uses KeywordEmbedder when no vectorStore
+ *    is provided, matching the original hackathon behavior.
  */
 
 import type { Chunk, RetrievedChunk } from "../storage/types";
-import type { Embedding } from "./embedder";
+import type { IVectorStore } from "../storage/embeddings-loader";
+import type { IEmbedder } from "./embedder";
 import { getEmbedder } from "./embedder";
 
 export interface SearchOptions {
   topK?: number;
   minScore?: number;
+  /** Precomputed vector store (from EmbeddingsLoader). If provided, chunk vectors come from here. */
+  vectorStore?: IVectorStore;
+  /** Embedder for the query. Defaults to KeywordEmbedder. */
+  embedder?: IEmbedder;
 }
 
 const DEFAULT_TOP_K = 5;
@@ -33,6 +44,9 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 
 /**
  * Search chunks by embedding similarity to a query.
+ *
+ * If `options.vectorStore` is provided, chunk vectors are loaded from the precomputed
+ * store (production path via 0G). Otherwise the embedder computes them live (dev fallback).
  */
 export async function searchChunks(
   query: string,
@@ -41,18 +55,34 @@ export async function searchChunks(
 ): Promise<RetrievedChunk[]> {
   const topK = options.topK ?? DEFAULT_TOP_K;
   const minScore = options.minScore ?? DEFAULT_MIN_SCORE;
+  const embedder = options.embedder ?? getEmbedder();
 
   if (chunks.length === 0) return [];
 
-  const embedder = getEmbedder();
   const queryVector = await embedder.embed(query);
-  const chunkEmbeddings = await embedder.embedChunks(chunks);
 
-  const scored = chunkEmbeddings.map((emb): RetrievedChunk => {
-    const score = cosineSimilarity(queryVector, emb.vector);
-    const chunk = chunks.find((c) => c.chunkId === emb.chunkId)!;
-    return { ...chunk, score };
-  });
+  let scored: RetrievedChunk[];
+
+  if (options.vectorStore) {
+    // Production path: use precomputed vectors from 0G
+    scored = chunks
+      .map((chunk): RetrievedChunk | null => {
+        const stored = options.vectorStore!.getVector(chunk.chunkId);
+        if (!stored) return null;
+        const score = cosineSimilarity(queryVector, stored.vector);
+        return { ...chunk, score };
+      })
+      .filter((r): r is RetrievedChunk => r !== null);
+  } else {
+    // Dev fallback: compute vectors on the fly via embedder
+    const { embedChunks } = embedder as IEmbedder & { embedChunks: (chunks: Chunk[]) => Promise<Array<{ chunkId: string; vector: number[] }>> };
+    const chunkEmbeddings = await embedChunks(chunks);
+    scored = chunkEmbeddings.map((emb): RetrievedChunk => {
+      const score = cosineSimilarity(queryVector, emb.vector);
+      const chunk = chunks.find((c) => c.chunkId === emb.chunkId)!;
+      return { ...chunk, score };
+    });
+  }
 
   const filtered = scored
     .filter((r) => r.score >= minScore)

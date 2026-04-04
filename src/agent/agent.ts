@@ -14,9 +14,10 @@ import { buildSystemPrompt, buildUserPrompt, buildCitations } from "./prompt-tem
 import {
   validateRetrieval,
   validateCitations,
-  detectContradictions,
   RETRY_LIMIT,
 } from "./guardrails";
+import { detectContradictions } from "../analysis/contradictions";
+import type { Contradiction } from "../../schemas/agent-output";
 
 // ---------------------------------------------------------------------------
 // 0G Compute broker (initialized via initialize0GProvider)
@@ -53,7 +54,7 @@ export interface QueryResult {
   output: AgentOutput;
   retrievedChunks: RetrievedChunk[];
   retrievalPassed: boolean;
-  contradictions: string[];
+  contradictions: Contradiction[];
 }
 
 let _config: AgentConfig = { ...DEFAULT_CONFIG };
@@ -205,9 +206,10 @@ export async function query(
   // Append contradiction warning if any
   let limitations = output.limitations;
   if (contradictions.length > 0) {
+    const descs = contradictions.map((c) => c.description);
     limitations = limitations
-      ? limitations + " Contradictions detected: " + contradictions.join("; ")
-      : "Contradictions detected: " + contradictions.join("; ");
+      ? limitations + " Contradictions detected: " + descs.join("; ")
+      : "Contradictions detected: " + descs.join("; ");
   }
 
   return {
@@ -351,5 +353,6 @@ async function mockLLMResponse(userPrompt: string): Promise<AgentOutput> {
     confidence: 0.85,
     evidence,
     limitations: "",
+    contradictions: [],
   };
 }

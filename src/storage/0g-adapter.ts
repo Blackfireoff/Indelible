@@ -6,12 +6,14 @@
  * implementations to connect to real 0G.
  */
 
-import type { Chunk, DocumentManifest } from "./types";
+import type { Chunk, DocumentManifest, EmbeddingsFile } from "./types";
 
 export interface IStorageAdapter {
   getManifest(documentId: string): Promise<DocumentManifest | null>;
   getChunk(chunkId: string, storagePointer: string): Promise<Chunk | null>;
   listChunksForDocument(documentId: string): Promise<Chunk[]>;
+  /** Load the precomputed embeddings file for a document from 0G Storage. */
+  getEmbeddings(documentId: string): Promise<EmbeddingsFile | null>;
 }
 
 // ---------------------------------------------------------------------------
@@ -32,6 +34,7 @@ const MOCK_MANIFESTS: Record<string, DocumentManifest> = {
     canonicalTextHash: "0xdef456",
     storagePointer: "0g://documents/doc-001.json",
     chunkManifestPointer: "0g://chunks/doc-001/manifest.json",
+    embeddingsPointer: "0g://embeddings/doc-001/embeddings.json",
     chunks: [
       { chunkId: "doc-001-chunk-0001", storagePointer: "0g://chunks/doc-001/chunk-0001.json" },
       { chunkId: "doc-001-chunk-0002", storagePointer: "0g://chunks/doc-001/chunk-0002.json" },
@@ -51,6 +54,7 @@ const MOCK_MANIFESTS: Record<string, DocumentManifest> = {
     canonicalTextHash: "0x012def",
     storagePointer: "0g://documents/doc-002.json",
     chunkManifestPointer: "0g://chunks/doc-002/manifest.json",
+    embeddingsPointer: "0g://embeddings/doc-002/embeddings.json",
     chunks: [
       { chunkId: "doc-002-chunk-0001", storagePointer: "0g://chunks/doc-002/chunk-0001.json" },
       { chunkId: "doc-002-chunk-0002", storagePointer: "0g://chunks/doc-002/chunk-0002.json" },
@@ -76,6 +80,7 @@ const MOCK_CHUNKS: Record<string, Chunk> = {
     storagePointer: "0g://chunks/doc-001/chunk-0001.json",
     prevChunkId: null,
     nextChunkId: "doc-001-chunk-0002",
+    chunkType: "paragraph",
   },
   "doc-001-chunk-0002": {
     chunkId: "doc-001-chunk-0002",
@@ -94,6 +99,7 @@ const MOCK_CHUNKS: Record<string, Chunk> = {
     storagePointer: "0g://chunks/doc-001/chunk-0002.json",
     prevChunkId: "doc-001-chunk-0001",
     nextChunkId: "doc-001-chunk-0003",
+    chunkType: "statement",
   },
   "doc-001-chunk-0003": {
     chunkId: "doc-001-chunk-0003",
@@ -112,6 +118,7 @@ const MOCK_CHUNKS: Record<string, Chunk> = {
     storagePointer: "0g://chunks/doc-001/chunk-0003.json",
     prevChunkId: "doc-001-chunk-0002",
     nextChunkId: null,
+    chunkType: "paragraph",
   },
   "doc-002-chunk-0001": {
     chunkId: "doc-002-chunk-0001",
@@ -130,6 +137,7 @@ const MOCK_CHUNKS: Record<string, Chunk> = {
     storagePointer: "0g://chunks/doc-002/chunk-0001.json",
     prevChunkId: null,
     nextChunkId: "doc-002-chunk-0002",
+    chunkType: "statement",
   },
   "doc-002-chunk-0002": {
     chunkId: "doc-002-chunk-0002",
@@ -148,6 +156,70 @@ const MOCK_CHUNKS: Record<string, Chunk> = {
     storagePointer: "0g://chunks/doc-002/chunk-0002.json",
     prevChunkId: "doc-002-chunk-0001",
     nextChunkId: null,
+    chunkType: "paragraph",
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Mock embeddings (precomputed by Dev 2, stored on 0G)
+// ---------------------------------------------------------------------------
+
+const MOCK_EMBEDDINGS: Record<string, import("./types").EmbeddingsFile> = {
+  "doc-001": {
+    schemaVersion: "1.0",
+    attestationId: "att-001",
+    embeddingModel: {
+      provider: "example-provider",
+      model: "text-embedding-model",
+      dimension: 1024,
+      version: "1.0",
+    },
+    vectors: [
+      {
+        chunkId: "doc-001-chunk-0001",
+        chunkType: "paragraph",
+        vector: Array.from({ length: 1024 }, (_, i) => Math.sin(i * 0.01) * 0.3),
+        metadata: { paragraphId: "p_0001", attestationId: "att-001" },
+      },
+      {
+        chunkId: "doc-001-chunk-0002",
+        chunkType: "statement",
+        // Tariff-heavy vector — higher values in tariff-related dimensions
+        vector: Array.from({ length: 1024 }, (_, i) => Math.cos(i * 0.02) * 0.5 + (i % 7 === 0 ? 0.4 : 0)),
+        metadata: { statementId: "s_0001", speakerNormalizedId: "donald_trump", attestationId: "att-001" },
+      },
+      {
+        chunkId: "doc-001-chunk-0003",
+        chunkType: "paragraph",
+        vector: Array.from({ length: 1024 }, (_, i) => Math.sin(i * 0.015) * 0.2),
+        metadata: { paragraphId: "p_0002", attestationId: "att-001" },
+      },
+    ],
+  },
+  "doc-002": {
+    schemaVersion: "1.0",
+    attestationId: "att-002",
+    embeddingModel: {
+      provider: "example-provider",
+      model: "text-embedding-model",
+      dimension: 1024,
+      version: "1.0",
+    },
+    vectors: [
+      {
+        chunkId: "doc-002-chunk-0001",
+        chunkType: "statement",
+        // Trade-deficit-heavy vector — similar topic to doc-001 tariffs
+        vector: Array.from({ length: 1024 }, (_, i) => Math.cos(i * 0.02) * 0.5 + (i % 5 === 0 ? 0.3 : 0)),
+        metadata: { statementId: "s_0010", speakerNormalizedId: "white_house_press_secretary", attestationId: "att-002" },
+      },
+      {
+        chunkId: "doc-002-chunk-0002",
+        chunkType: "paragraph",
+        vector: Array.from({ length: 1024 }, (_, i) => Math.sin(i * 0.01 + 1) * 0.25),
+        metadata: { paragraphId: "p_0010", attestationId: "att-002" },
+      },
+    ],
   },
 };
 
@@ -171,6 +243,10 @@ export class MockStorageAdapter implements IStorageAdapter {
       if (chunk) chunks.push(chunk);
     }
     return chunks;
+  }
+
+  async getEmbeddings(documentId: string): Promise<import("./types").EmbeddingsFile | null> {
+    return MOCK_EMBEDDINGS[documentId] ?? null;
   }
 }
 
