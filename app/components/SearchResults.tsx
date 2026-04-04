@@ -8,7 +8,7 @@ import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft } from '@fortawesome/free-solid-svg-icons'
 
 interface Citation {
   chunkId: string
@@ -149,7 +149,21 @@ export default function SearchResults() {
         {/* Search Input */}
         <div className="relative mb-6">
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm h-14 flex items-center px-4 gap-3">
-            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-5 h-5 text-[var(--landing-text-secondary)]" />
+            <button
+              onClick={() => setSearchQuery('')}
+              className="group relative w-10 h-10 flex items-center justify-center shrink-0 cursor-pointer"
+              type="button"
+              aria-label="Clear search"
+            >
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="w-5 h-5 text-[var(--landing-text-secondary)] transition-all duration-200 group-hover:opacity-0 group-hover:rotate-90 group-hover:scale-75"
+              />
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="w-5 h-5 text-[var(--landing-text-secondary)] absolute transition-all duration-200 opacity-0 -rotate-90 scale-75 group-hover:opacity-100 group-hover:rotate-0 group-hover:scale-100"
+              />
+            </button>
             <input
               type="text"
               value={searchQuery}
@@ -161,7 +175,7 @@ export default function SearchResults() {
             <Button
               onPress={handleSearch}
               isDisabled={isLoading || !searchQuery.trim()}
-              className="h-10 bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium rounded-xl px-6"
+              className="h-10 bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium rounded-xl px-6 cursor-pointer"
             >
               {isLoading ? 'Searching...' : 'Search'}
             </Button>
@@ -183,7 +197,7 @@ export default function SearchResults() {
               }}
             >
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
                   <FontAwesomeIcon icon={faStar} className="w-4 h-4 text-[var(--landing-bg-white)]" />
                 </div>
                 <div>
@@ -221,18 +235,20 @@ export default function SearchResults() {
                     className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm p-6"
                   >
                     {/* Quote */}
-                    <div className="relative mb-4">
-                      <span className="absolute -left-1 -top-2 text-[36px] text-[var(--landing-quote-mark)] font-normal">"</span>
-                      <p className="text-[16px] leading-[26px] text-[var(--landing-text-primary)] pl-5">
-                        {quote.text}
-                      </p>
+                    <div className="mb-4 p-4 rounded-xl bg-[var(--landing-bg)] border-l-[3px] border-[var(--landing-primary)]">
+                      <div className="flex gap-2 items-start">
+                        <FontAwesomeIcon icon={faQuoteLeft} className="w-3.5 h-3.5 text-[var(--landing-primary)] mt-1 shrink-0 opacity-50" />
+                        <p className="text-[14px] leading-[22px] text-[var(--landing-text-secondary)] italic">
+                          {quote.text}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Author & Source */}
                     <div className="flex items-start justify-between pt-4 border-t border-[var(--landing-border)]">
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center">
                             <span className="text-[14px] font-semibold text-[var(--landing-bg-white)]">{quote.initials}</span>
                           </div>
                           <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">{quote.author}</span>
@@ -251,7 +267,7 @@ export default function SearchResults() {
 
                       <Button
                         onPress={() => setSelectedDocument(quote)}
-                        className="bg-[var(--landing-primary)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer"
+                        className="bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer"
                       >
                         Read Original Document
                         <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />

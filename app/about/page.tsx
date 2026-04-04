@@ -32,11 +32,11 @@ export default function AboutPage() {
 
         {/* Our Mission Card */}
         <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl p-8 mb-12 shadow-sm">
-          <h2 className="text-[24px] font-semibold leading-[32px] text-[var(--landing-text-primary)] mb-4">
+          <h2 className="text-[24px] font-semibold leading-[32px] text-[var(--landing-text-primary)] mb-4" style={{ textDecorationLine: 'underline', textDecorationColor: 'var(--accent-color)', textDecorationThickness: '3px', textUnderlineOffset: '6px' }}>
             Our Mission
           </h2>
           <p className="text-[16px] leading-[26px] text-[var(--landing-text-secondary)]">
-            Our mission is to create a permanent, incorruptible record of political discourse. We believe that a transparent society requires a perfect memory. By leveraging decentralized technology and artificial intelligence, <em className="italic">Indelible.</em> eliminates the 'memory hole'—ensuring that statements, promises, and declarations can never be quietly erased or altered by those in power. We exist to provide citizens, journalists, and researchers with a strictly neutral, publicly accessible source of truth.
+            Our mission is to create a permanent, incorruptible record of political discourse. We believe that a transparent society requires a perfect memory. By leveraging decentralized technology and artificial intelligence, <em className="italic">INDELIBLE.</em> eliminates the 'memory hole'—ensuring that statements, promises, and declarations can never be quietly erased or altered by those in power. We exist to provide citizens, journalists, and researchers with a strictly neutral, publicly accessible source of truth.
           </p>
         </div>
 
@@ -44,7 +44,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-2 gap-6 mb-12">
           {/* AI-Powered Analysis */}
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl p-6 shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary-darker)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
               <FontAwesomeIcon icon={faWandMagicSparkles} className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-[18px] font-semibold leading-[28px] text-[var(--landing-text-primary)] mb-2">
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
           {/* Verified Sources */}
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl p-6 shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary-darker)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
               <FontAwesomeIcon icon={faShieldHalved} className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-[18px] font-semibold leading-[28px] text-[var(--landing-text-primary)] mb-2">
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
           {/* Global Coverage */}
           <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl p-6 shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--landing-primary-darker)] to-[var(--landing-primary-dark)] flex items-center justify-center mb-4">
               <FontAwesomeIcon icon={faGlobe} className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-[18px] font-semibold leading-[28px] text-[var(--landing-text-primary)] mb-2">
@@ -96,7 +96,9 @@ export default function AboutPage() {
         </div>
 
         {/* How It Works */}
-        <div className="border border-[var(--landing-border-primary)] rounded-2xl p-8" style={{ background: 'linear-gradient(161.64deg, var(--landing-primary-subtle) 0%, var(--landing-primary-subtle) 100%)' }}>
+        <div className="border border-[var(--landing-primary-light)] rounded-2xl p-8" style={{
+          background: 'linear-gradient(167.8deg, var(--landing-primary-subtle) 0%, rgba(3, 105, 209, 0.05) 100%)'
+        }}>
           <h2 className="text-[24px] font-semibold leading-[32px] text-[var(--landing-text-primary)] mb-6">
             How It Works
           </h2>
@@ -104,7 +106,7 @@ export default function AboutPage() {
           <div className="flex flex-col gap-4">
             {/* Step 1 */}
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary)] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
                 <span className="text-[16px] font-semibold text-white">1</span>
               </div>
               <div className="flex-1">
@@ -119,7 +121,7 @@ export default function AboutPage() {
 
             {/* Step 2 */}
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary)] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
                 <span className="text-[16px] font-semibold text-white">2</span>
               </div>
               <div className="flex-1">
@@ -134,7 +136,7 @@ export default function AboutPage() {
 
             {/* Step 3 */}
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary)] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
                 <span className="text-[16px] font-semibold text-white">3</span>
               </div>
               <div className="flex-1">

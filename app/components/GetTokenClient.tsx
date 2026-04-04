@@ -32,7 +32,7 @@ export default function GetTokenClient() {
   const { walletProvider } = useAppKitProvider('eip155')
   const { open } = useAppKit()
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
-  
+
   const [customHash, setCustomHash] = useState<`0x${string}` | undefined>(undefined)
   const [isPending, setIsPending] = useState(false)
   const [errorObj, setErrorObj] = useState<Error | null>(null)
@@ -106,7 +106,7 @@ export default function GetTokenClient() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)]">Get INDL Tokens</h1>
+        <h1 className="text-3xl font-bold text-[var(--landing-text-primary)]">Get requests to use <em className="italic">INDELIBLE.</em></h1>
         <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package to top up your account. Conversions are calculated automatically from live rates.</p>
       </div>
 
@@ -120,20 +120,20 @@ export default function GetTokenClient() {
             <button
               key={pkg.id}
               onClick={() => setSelectedPackage(pkg.id)}
-              className={`relative flex flex-col items-center p-6 rounded-2xl border-2 transition-all text-left ${isSelected
-                ? 'border-[var(--landing-primary)] bg-[var(--landing-primary-subtle)] shadow-md'
+              className={`cursor-pointer relative flex flex-col items-center p-6 rounded-2xl border-2 transition-all text-left ${isSelected
+                ? 'border-[var(--accent-color)] bg-[var(--accent-color-light)] shadow-[0_0_20px_rgba(255,211,33,0.35),0_0_40px_rgba(255,211,33,0.15)]'
                 : 'border-[var(--landing-border)] bg-[var(--landing-bg-white)] hover:border-gray-300'
                 }`}
             >
               {isSelected && (
-                <div className="absolute -top-3 bg-[var(--landing-primary)] text-white text-[11px] font-bold px-3 py-1 rounded-full">
+                <div className="absolute -top-3 bg-[var(--accent-color-dark)] text-white text-[11px] font-bold px-3 py-1 rounded-full">
                   SELECTED
                 </div>
               )}
               <h3 className="text-xl font-bold text-[var(--landing-text-primary)]">{pkg.name}</h3>
               <div className="flex items-baseline gap-1 mt-2">
                 <span className="text-4xl font-extrabold text-[var(--landing-text-primary)]">{pkg.indl.toString()}</span>
-                <span className="text-lg font-semibold text-[var(--landing-text-secondary)]">INDL</span>
+                <span className="text-lg font-semibold text-[var(--landing-text-secondary)]">REQUESTS</span>
               </div>
               <p className="text-[13px] text-[var(--landing-text-muted)] mt-2 text-center h-10">{pkg.desc}</p>
 
@@ -171,7 +171,7 @@ export default function GetTokenClient() {
             <Button
               onPress={handleBuy}
               isDisabled={isLoading || ethPrice === BigInt(0) || isConfirmed}
-              className={`w-full h-12 rounded-xl bg-[var(--landing-primary)] text-white font-semibold text-[16px] shadow-sm
+              className={`w-full h-12 rounded-xl bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-white font-semibold text-[16px] shadow-sm
                 ${(isLoading || ethPrice === BigInt(0)) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[var(--landing-primary-dark)] cursor-pointer'} 
               `}
             >
