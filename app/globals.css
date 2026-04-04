@@ -45,6 +45,11 @@ body {
 
   /* Border Colors */
   --landing-border: #e4e4e7;
+  --landing-border-primary: rgba(184, 124, 76, 0.2);
+
+  /* Primary Light/Subtle */
+  --landing-primary-light: rgba(184, 124, 76, 0.2);
+  --landing-primary-subtle: rgba(184, 124, 76, 0.05);
 
   /* Status Colors */
   --landing-success: #22c55e;
