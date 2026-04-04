@@ -24,3 +24,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Landing Page Color Variables */
+:root {
+  /* Page Background */
+  --landing-bg: #f5f5f5;
+  --landing-bg-white: #ffffff;
+  --landing-bg-light: #fafafa;
+
+  /* Text Colors */
+  --landing-text-primary: #18181b;
+  --landing-text-secondary: #71717a;
+
+  /* Brand Colors */
+  --landing-primary: #0485f7;
+  --landing-primary-dark: #0369d1;
+  --landing-primary-light: rgba(4, 133, 247, 0.2);
+  --landing-primary-subtle: rgba(4, 133, 247, 0.05);
+
+  /* Border Colors */
+  --landing-border: #e4e4e7;
+
+  /* Status Colors */
+  --landing-success: #22c55e;
+
+  /* Component Specific */
+  --landing-quote-mark: rgba(4, 133, 247, 0.2);
+}
