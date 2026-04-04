@@ -15,7 +15,6 @@ export interface GuardrailResult {
 
 const MIN_CHUNKS = 1;
 const MIN_AVG_SCORE = 0.1;
-const RETRY_LIMIT = 1;
 
 /**
  * Check if retrieved chunks meet minimum quality thresholds.
@@ -101,37 +100,3 @@ export function validateCitations(output: AgentOutput): GuardrailResult {
 
   return { allowed: true, output };
 }
-
-/**
- * Detect contradictions across retrieved chunks.
- */
-export function detectContradictions(chunks: RetrievedChunk[]): string[] {
-  const contradictions: string[] = [];
-  const speakers = new Map<string, string[]>();
-
-  for (const chunk of chunks) {
-    if (chunk.speaker) {
-      const existing = speakers.get(chunk.speaker) ?? [];
-      speakers.set(chunk.speaker, [...existing, chunk.text]);
-    }
-  }
-
-  // Simple contradiction detection: if same speaker has very different claims
-  // This is a basic heuristic - proper contradiction detection needs NLP
-  for (const [speaker, texts] of speakers) {
-    if (texts.length > 1) {
-      // Check for negation keywords (simplified)
-      const negPatterns = ["not", "never", "no", "doesn't", "doesn't", "won't", "can't"];
-      const hasNeg = texts.map((t) => negPatterns.some((p) => t.toLowerCase().includes(p)));
-      if (hasNeg.some((n) => n) && hasNeg.some((n) => !n)) {
-        contradictions.push(
-          `Speaker "${speaker}" has conflicting statements across chunks.`
-        );
-      }
-    }
-  }
-
-  return contradictions;
-}
-
-export { RETRY_LIMIT };
