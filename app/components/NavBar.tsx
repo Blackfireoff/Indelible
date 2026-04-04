@@ -15,15 +15,14 @@ import { erc20Abi, formatUnits } from 'viem'
 // (Custom inline icons have been removed in favor of FontAwesome)
 
 // TODO: Replace with the actual deployed INDL token contract address
-const INDL_TOKEN_ADDRESS = '0x4625ab479D4645A4d96D18A5DAe05b0537c247D3' as `0x${string}`
+const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f' as `0x${string}`
 
 
 interface NavBarProps {
   showWallet?: boolean
-  showFreeTier?: boolean
 }
 
-export default function NavBar({ showWallet = false, showFreeTier = false }: NavBarProps) {
+export default function NavBar({ showWallet = false }: NavBarProps) {
   const pathname = usePathname()
   const { address, isConnected } = useAccount()
   const { data: balanceData } = useReadContract({
@@ -81,8 +80,8 @@ export default function NavBar({ showWallet = false, showFreeTier = false }: Nav
 
         {/* User Area */}
         <div className="flex items-center gap-3">
-          {/* Free Tier Badge replacement (INDL Balance) */}
-          {isConnected && showFreeTier && (() => {
+          {/* INDL Balance Badge */}
+          {isConnected && (() => {
             const indlCount = balanceData !== undefined ? Math.floor(Number(formatUnits(balanceData, 18))) : 0;
             return (
               <div className="hidden sm:flex items-center gap-3 h-10 px-4 py-2 bg-[var(--landing-bg-light)] border border-[var(--landing-border)] rounded-full">

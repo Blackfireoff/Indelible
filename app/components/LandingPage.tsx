@@ -10,8 +10,8 @@ import Footer from './Footer'
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--landing-bg)] flex flex-col">
-      {/* NavBar with wallet and free tier */}
-      <NavBar showWallet showFreeTier />
+      {/* NavBar with wallet */}
+      <NavBar showWallet />
 
       {/* Main Content */}
       <main className="flex-1">

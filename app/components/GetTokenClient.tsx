@@ -84,11 +84,6 @@ export default function GetTokenClient() {
       <div className="text-center">
         <h1 className="text-3xl font-bold text-[var(--landing-text-primary)]">Get INDL Tokens</h1>
         <p className="text-[var(--landing-text-secondary)] mt-2 text-lg">Choose a package to top up your account. Conversions are calculated automatically from live rates.</p>
-
-        {/* Placeholder alert to user */}
-        <div className="mt-4 inline-block bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-[13px] border border-blue-200">
-          <strong>Note:</strong> Transaction will fail unless `TOKEN_SALE_ADDRESS` in <code>GetTokenClient.tsx</code> is set to the actual deployed <strong>TokenSale</strong> contract. Current address is a placeholder.
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -102,8 +97,8 @@ export default function GetTokenClient() {
               key={pkg.id}
               onClick={() => setSelectedPackage(pkg.id)}
               className={`relative flex flex-col items-center p-6 rounded-2xl border-2 transition-all text-left ${isSelected
-                  ? 'border-[var(--landing-primary)] bg-[var(--landing-primary-subtle)] shadow-md'
-                  : 'border-[var(--landing-border)] bg-[var(--landing-bg-white)] hover:border-gray-300'
+                ? 'border-[var(--landing-primary)] bg-[var(--landing-primary-subtle)] shadow-md'
+                : 'border-[var(--landing-border)] bg-[var(--landing-bg-white)] hover:border-gray-300'
                 }`}
             >
               {isSelected && (
@@ -121,7 +116,14 @@ export default function GetTokenClient() {
               <div className="w-full mt-4 pt-4 border-t border-[var(--landing-border)]">
                 <div className="flex justify-between items-center w-full">
                   <span className="text-[14px] text-[var(--landing-text-secondary)]">Cost</span>
-                  <span className="text-[16px] font-bold text-[var(--landing-primary)]">~ {displayEth} ETH</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[16px] font-bold text-[var(--landing-primary)]">
+                      ${ethPrice > BigInt(0) && ethReq > BigInt(0) ? (Number(formatEther(ethReq)) * (Number(ethPrice) / 1e8)).toFixed(2) : '0.00'} USD
+                    </span>
+                    <span className="text-[12px] font-medium text-[var(--landing-text-muted)]">
+                      ~ {displayEth} ETH
+                    </span>
+                  </div>
                 </div>
               </div>
             </button>
