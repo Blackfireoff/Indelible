@@ -130,25 +130,71 @@ export class ZeroGStorageAdapter implements StorageAdapter {
   async downloadArtifact(dataAddress: string): Promise<string> {
     const indexer = new Indexer(this.indexerUrl);
     const rootHash = dataAddress.replace("0g://", "");
-    const tmpPath = join(
-      tmpdir(),
-      `indelible-download-${randomBytes(8).toString("hex")}.json`,
-    );
 
-    // 0G indexer SDK uses fs.appendFileSync internally, so we need a path
-    const err = await indexer.download(rootHash, tmpPath, true);
-    if (err !== null) {
-      throw new Error(`0G download error: ${err}`);
-    }
+    const MAX_RETRIES = 4;
+    const RETRY_DELAY_MS = 4000;
+    let lastError: Error = new Error("Download did not start");
 
-    try {
-      // trimEnd() strips the padding spaces added during upload
-      return readFileSync(tmpPath, "utf-8").trimEnd();
-    } finally {
-      if (existsSync(tmpPath)) {
-        try { unlinkSync(tmpPath); } catch { /* ignore */ }
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      const tmpPath = join(
+        tmpdir(),
+        `indelible-download-${randomBytes(8).toString("hex")}.json`,
+      );
+
+      try {
+        // Pre-check locations to avoid SDK null crash when indexer hasn't synced yet
+        const locations = await indexer.getFileLocations(rootHash).catch(() => null);
+        if (!locations || locations.length === 0) {
+          throw new Error(
+            `Indexer returned no locations for ${rootHash} — file may not be indexed yet`,
+          );
+        }
+
+        // 0G indexer SDK uses fs.appendFileSync internally, so we need a path
+        const err = await indexer.download(rootHash, tmpPath, true);
+        if (err !== null) {
+          throw new Error(`0G download error: ${err}`);
+        }
+
+        // trimEnd() strips the padding spaces added during upload
+        const content = readFileSync(tmpPath, "utf-8").trimEnd();
+
+        // Detect JSON-RPC error responses written to the file by the storage node
+        // e.g. {"code":101,"message":"File not found","data":null}
+        try {
+          const parsed = JSON.parse(content) as Record<string, unknown>;
+          if (typeof parsed.code === "number" && typeof parsed.message === "string") {
+            throw new Error(
+              `Storage node returned error: ${parsed.message} (code ${parsed.code})`,
+            );
+          }
+        } catch (parseErr) {
+          if (!(parseErr instanceof SyntaxError)) {
+            throw parseErr; // re-throw our own error
+          }
+          // SyntaxError → content is not a JSON error, proceed normally
+        }
+
+        return content;
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        if (attempt < MAX_RETRIES) {
+          console.warn(
+            `[0G] Download attempt ${attempt}/${MAX_RETRIES} failed: ${lastError.message}. ` +
+            `Retrying in ${RETRY_DELAY_MS / 1000}s…`,
+          );
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        }
+      } finally {
+        if (existsSync(tmpPath)) {
+          try { unlinkSync(tmpPath); } catch { /* ignore */ }
+        }
       }
     }
+
+    throw new Error(
+      `0G download failed after ${MAX_RETRIES} attempts for ${rootHash}: ${lastError.message}`,
+    );
   }
 
   /** Check and display the wallet balance without uploading anything. */
