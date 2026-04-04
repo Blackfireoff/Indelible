@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@heroui/react'
-import HeroSection from './HeroSection'
+import { AppKitButton } from '@reown/appkit/react'
+import { useWalletSync } from '@/hooks/useWalletSync'
 
 // Quote data from Figma
 const quotes = [
@@ -36,10 +37,19 @@ const quotes = [
 ]
 
 // Icon components
+function SearchIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none">
+      <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function StarIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M8 1.333l1.84 3.727 4.16.6-3 2.92.72 4.153L8 9.778l-3.72 1.955.72-4.153-3-2.92 4.16-.6L8 1.333z" fill="currentColor"/>
+      <path d="M8 1.333l1.84 3.727 4.16.6-3 2.92.72 4.153L8 9.778l-3.72 1.955.72-4.153-3-2.92 4.16-.6L8 1.333z" fill="currentColor" />
     </svg>
   )
 }
@@ -47,9 +57,9 @@ function StarIcon({ className }) {
 function FileTextIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M9 1H3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L9 1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M9 1v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M5 10h6M5 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M9 1H3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L9 1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 1v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 10h6M5 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
@@ -57,8 +67,8 @@ function FileTextIcon({ className }) {
 function CalendarIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M1 7h14M5 1v4M11 1v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M1 7h14M5 1v4M11 1v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
@@ -66,7 +76,7 @@ function CalendarIcon({ className }) {
 function ChevronDownIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -74,8 +84,8 @@ function ChevronDownIcon({ className }) {
 function GlobeIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2 10h16M10 2c-2.5 2.5-4 5.5-4 8s1.5 5.5 4 8c2.5-2.5 4-5.5 4-8s-1.5-5.5-4-8z" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   )
 }
@@ -83,8 +93,8 @@ function GlobeIcon({ className }) {
 function UserIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="5.333" r="3.333" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M2.667 14c0-2.947 2.347-5.333 5.333-5.333s5.333 2.386 5.333 5.333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="8" cy="5.333" r="3.333" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2.667 14c0-2.947 2.347-5.333 5.333-5.333s5.333 2.386 5.333 5.333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
@@ -92,12 +102,15 @@ function UserIcon({ className }) {
 function ExternalLinkIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none">
-      <path d="M12 9.333v2.667a1.333 1.333 0 01-1.333 1.333H3.333A1.333 1.333 0 012 12V5.333A1.333 1.333 0 013.333 4h2.667M9.333 2h4.667v4.667M14 2L8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 9.333v2.667a1.333 1.333 0 01-1.333 1.333H3.333A1.333 1.333 0 012 12V5.333A1.333 1.333 0 013.333 4h2.667M9.333 2h4.667v4.667M14 2L8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
 
 export default function LandingPage() {
+  // Sync wallet state to localStorage for extension access
+  useWalletSync()
+
   return (
     <div className="min-h-screen bg-[var(--landing-bg)]">
       {/* Header */}
@@ -139,14 +152,11 @@ export default function LandingPage() {
               <ChevronDownIcon className="w-4 h-4 text-[var(--landing-text-secondary)]" />
             </div>
 
-            {/* Sign In */}
-            <Button
-              variant="outline"
-              className="h-10 px-4 rounded-full border border-[var(--landing-border)] text-[14px] font-medium text-[var(--landing-text-primary)]"
-            >
-              <UserIcon className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
+            {/* Wallet Connect */}
+            <AppKitButton
+              balance="show"
+              className="h-10 px-4 rounded-full border border-[#e4e4e7] text-[14px] font-medium bg-white"
+            />
           </div>
         </div>
       </header>
