@@ -65,4 +65,7 @@ body {
   --accent-color-darker: #d48819;
   --accent-color-light: rgba(255, 211, 33, 0.1);
   --accent-color-lighter: rgba(255, 211, 33, 0.05);
+
+  --red-500: #e13b3b;
+  --red-500-hover: #c43434;
 }
