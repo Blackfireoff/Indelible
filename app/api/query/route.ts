@@ -10,14 +10,10 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< HEAD
 import { query, initialize0GProvider, configureAgent, listProviders, setStorageAdapter } from "../../../dev3-AI-RAG/agent/agent";
 import { ZeroGStorageAdapter } from "../../../dev3-AI-RAG/storage/0g-adapter";
-=======
-import { query, initialize0GProvider, configureAgent, listProviders } from "../../../dev3-AI-RAG/agent/agent";
-import { createPublicClient, http, parseAbiItem, parseUnits } from 'viem';
+import { createPublicClient, http, parseUnits } from 'viem';
 import { sepolia } from 'viem/chains';
->>>>>>> 78bdec450ffd8c5ff622e96c28fe633df785c356
 
 let initialized = false;
 const usedTxHashes = new Set<string>();

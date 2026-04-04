@@ -1,52 +1,93 @@
 /**
  * Local Vector Store - Loads pre-stored embeddings from local JSON files.
  *
- * Dev 2 stores embeddings as JSON files in data/ directory.
- * This module provides a simple interface to load and query them.
- *
- * Directory structure:
- *   data/
- *     embeddings/
- *       doc-001.json    ← EmbeddingsFile format
- *       doc-002.json
- *       ...
+ * Dev 2 outputs artifacts in directories named by attestation ID:
+ *   data/embeddings/
+ *     {attestationId}/
+ *       embeddings.json       ← vector data
+ *       retrieval_chunks.json ← actual chunk text content
+ *     ...
  *
  * Usage:
  *   const store = await LocalVectorStore.create("data/embeddings");
  *   const topChunks = await store.searchBySimilarity(queryEmbedding, 5);
- *   const docIds = [...new Set(topChunks.map(c => c.documentId))];
+ *   // topChunks contains chunkId, attestationId, text, speaker, etc.
  */
 
-import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, basename } from "path";
-import type { EmbeddingsFile, EmbeddingVector } from "./types";
-import { EmbeddingsLoader } from "./embeddings-loader";
+import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { join } from "path";
+import type { EmbeddingVector, ChunkType } from "./types";
 
 export interface ScoredChunk {
   chunkId: string;
-  documentId: string;
+  attestationId: string;
+  chunkType: string;
+  text: string;
+  speaker: string | null;
+  speakerNormalizedId: string | null;
+  sourceUrl: string;
   vector: number[];
   score: number;
+}
+
+export interface ChunkMetadata {
+  chunkId: string;
+  chunkType: string;
+  text: string;
+  statementId: string | null;
+  paragraphId: string | null;
+  speaker: string | null;
+  speakerNormalizedId: string | null;
+  sourceUrl: string;
+  attestationId: string;
 }
 
 export interface LocalVectorStoreConfig {
   /** Directory containing embeddings JSON files */
   embeddingsDir?: string;
-  /** File pattern to match (default: *.json) */
-  pattern?: string;
+}
+
+interface EmbeddingEntry {
+  chunkId: string;
+  chunkType: string;
+  vector: number[];
+}
+
+interface EmbeddingsData {
+  schemaVersion: string;
+  attestationId: string;
+  embeddingModel: {
+    provider: string;
+    model: string;
+    dimension: number;
+    version: string;
+  };
+  vectors: EmbeddingEntry[];
+}
+
+interface RetrievalChunksData {
+  schemaVersion: string;
+  attestationId: string;
+  sourceUrl: string;
+  chunkingStrategy: {
+    statementChunks: boolean;
+    paragraphChunks: boolean;
+    version: string;
+  };
+  chunks: ChunkMetadata[];
 }
 
 export class LocalVectorStore {
   private readonly embeddingsDir: string;
-  private readonly loadersByDocumentId: Map<string, EmbeddingsLoader>;
-  private readonly allVectors: Map<string, EmbeddingVector>;
-  private readonly chunkToDocument: Map<string, string>;
+  private readonly allVectors: Map<string, EmbeddingEntry>;
+  private readonly chunkMetadata: Map<string, ChunkMetadata>;
+  private readonly attestationIds: Set<string>;
 
   private constructor(embeddingsDir: string) {
     this.embeddingsDir = embeddingsDir;
-    this.loadersByDocumentId = new Map();
     this.allVectors = new Map();
-    this.chunkToDocument = new Map();
+    this.chunkMetadata = new Map();
+    this.attestationIds = new Set();
   }
 
   /**
@@ -60,7 +101,8 @@ export class LocalVectorStore {
   }
 
   /**
-   * Load all embeddings files from the directory.
+   * Load all embeddings from directories.
+   * Each directory contains embeddings.json and retrieval_chunks.json
    */
   private async loadAll(): Promise<void> {
     if (!existsSync(this.embeddingsDir)) {
@@ -69,59 +111,99 @@ export class LocalVectorStore {
       return;
     }
 
-    const files = readdirSync(this.embeddingsDir).filter(f => f.endsWith(".json"));
-    console.log(`[LocalVectorStore] Found ${files.length} embeddings files`);
+    const entries = readdirSync(this.embeddingsDir);
 
-    for (const file of files) {
-      await this.loadFile(file);
+    for (const entry of entries) {
+      const fullPath = join(this.embeddingsDir, entry);
+
+      // Skip files, only process directories
+      if (!statSync(fullPath).isDirectory()) {
+        // Legacy support: skip old doc-001.json style files
+        if (entry.endsWith(".json")) {
+          console.log(`[LocalVectorStore] Skipping legacy file: ${entry}`);
+        }
+        continue;
+      }
+
+      await this.loadDirectory(entry, fullPath);
     }
 
-    console.log(`[LocalVectorStore] Loaded ${this.allVectors.size} total vectors for ${this.loadersByDocumentId.size} documents`);
+    console.log(`[LocalVectorStore] Loaded ${this.allVectors.size} vectors for ${this.attestationIds.size} documents`);
   }
 
   /**
-   * Load a single embeddings file.
+   * Load embeddings and chunks from a single directory.
    */
-  private async loadFile(filename: string): Promise<void> {
-    const filePath = join(this.embeddingsDir, filename);
+  private async loadDirectory(dirName: string, dirPath: string): Promise<void> {
+    const embeddingsPath = join(dirPath, "embeddings.json");
+    const chunksPath = join(dirPath, "retrieval_chunks.json");
+
+    if (!existsSync(embeddingsPath)) {
+      console.warn(`[LocalVectorStore] No embeddings.json in ${dirName}`);
+      return;
+    }
+
+    if (!existsSync(chunksPath)) {
+      console.warn(`[LocalVectorStore] No retrieval_chunks.json in ${dirName}`);
+      return;
+    }
 
     try {
-      const content = readFileSync(filePath, "utf-8");
-      const embeddings: EmbeddingsFile = JSON.parse(content);
+      // Load embeddings
+      const embeddingsContent = readFileSync(embeddingsPath, "utf-8");
+      const embeddingsData: EmbeddingsData = JSON.parse(embeddingsContent);
 
-      // Extract document ID from filename (without extension)
-      const documentId = basename(filename, ".json");
+      // Load chunks for text content
+      const chunksContent = readFileSync(chunksPath, "utf-8");
+      const chunksData: RetrievalChunksData = JSON.parse(chunksContent);
 
-      // Create loader and store
-      const loader = EmbeddingsLoader.fromVectors(embeddings.vectors);
-      this.loadersByDocumentId.set(documentId, loader);
-
-      // Index all vectors and build chunk -> document mapping
-      for (const vector of embeddings.vectors) {
-        this.allVectors.set(vector.chunkId, vector);
-        this.chunkToDocument.set(vector.chunkId, documentId);
+      // Verify attestation IDs match
+      if (embeddingsData.attestationId !== chunksData.attestationId) {
+        console.warn(`[LocalVectorStore] Attestation ID mismatch in ${dirName}: ${embeddingsData.attestationId} vs ${chunksData.attestationId}`);
       }
 
-      console.log(`[LocalVectorStore] Loaded ${embeddings.vectors.length} vectors from ${filename}`);
+      const attestationId = embeddingsData.attestationId;
+      this.attestationIds.add(attestationId);
+
+      // Index embeddings
+      for (const vector of embeddingsData.vectors) {
+        this.allVectors.set(vector.chunkId, vector);
+      }
+
+      // Index chunk metadata (text, speaker, etc.)
+      for (const chunk of chunksData.chunks) {
+        this.chunkMetadata.set(chunk.chunkId, {
+          ...chunk,
+          attestationId,
+        });
+      }
+
+      console.log(`[LocalVectorStore] Loaded ${embeddingsData.vectors.length} vectors from ${dirName}`);
     } catch (error) {
-      console.warn(`[LocalVectorStore] Failed to load ${filename}:`, error);
+      console.warn(`[LocalVectorStore] Failed to load ${dirName}:`, error);
     }
   }
 
   /**
    * Search all embeddings by cosine similarity to a query vector.
    * Returns top-K chunks sorted by score (descending).
+   * Includes text content from retrieval_chunks.json.
    */
   searchBySimilarity(queryVector: number[], topK: number = 10): ScoredChunk[] {
     const results: ScoredChunk[] = [];
 
     for (const [chunkId, embedding] of this.allVectors) {
       const score = this.cosineSimilarity(queryVector, embedding.vector);
-      const documentId = this.chunkToDocument.get(chunkId) ?? this.extractDocumentId(chunkId);
+      const metadata = this.chunkMetadata.get(chunkId);
 
       results.push({
         chunkId,
-        documentId,
+        attestationId: metadata?.attestationId ?? embedding.chunkId.split("_")[0],
+        chunkType: embedding.chunkType,
+        text: metadata?.text ?? "",
+        speaker: metadata?.speaker ?? null,
+        speakerNormalizedId: metadata?.speakerNormalizedId ?? null,
+        sourceUrl: metadata?.sourceUrl ?? "",
         vector: embedding.vector,
         score,
       });
@@ -149,25 +231,17 @@ export class LocalVectorStore {
   }
 
   /**
-   * Extract document ID from chunk ID (e.g., "doc-001-chunk-0001" -> "doc-001")
+   * Get metadata for a specific chunk (includes text, speaker, etc.)
    */
-  private extractDocumentId(chunkId: string): string {
-    const match = chunkId.match(/^(doc-\d+)/);
-    return match ? match[1] : chunkId.split("-chunk-")[0];
+  getChunkMetadata(chunkId: string): ChunkMetadata | undefined {
+    return this.chunkMetadata.get(chunkId);
   }
 
   /**
-   * Get the embeddings loader for a specific document.
+   * Get text for a specific chunk.
    */
-  getLoader(documentId: string): EmbeddingsLoader | null {
-    return this.loadersByDocumentId.get(documentId) ?? null;
-  }
-
-  /**
-   * Get a specific vector by chunk ID.
-   */
-  getVector(chunkId: string): EmbeddingVector | undefined {
-    return this.allVectors.get(chunkId);
+  getChunkText(chunkId: string): string | undefined {
+    return this.chunkMetadata.get(chunkId)?.text;
   }
 
   /**
@@ -178,18 +252,43 @@ export class LocalVectorStore {
   }
 
   /**
-   * Get all vectors for a document.
+   * Get all attestation IDs we have embeddings for.
    */
-  getVectorsForDocument(documentId: string): EmbeddingVector[] {
-    const loader = this.loadersByDocumentId.get(documentId);
-    return loader?.getAllVectors() ?? [];
+  getAttestationIds(): string[] {
+    return Array.from(this.attestationIds);
   }
 
   /**
-   * Get all document IDs we have embeddings for.
+   * Get all chunks for an attestation ID.
    */
-  getDocumentIds(): string[] {
-    return Array.from(this.loadersByDocumentId.keys());
+  getChunksForAttestation(attestationId: string): ChunkMetadata[] {
+    const chunks: ChunkMetadata[] = [];
+    for (const metadata of this.chunkMetadata.values()) {
+      if (metadata.attestationId === attestationId) {
+        chunks.push(metadata);
+      }
+    }
+    return chunks;
+  }
+
+  /**
+   * Get all vectors for a document (by attestationId).
+   * Used by EmbeddingsLoader for backwards compatibility.
+   */
+  getVectorsForDocument(attestationId: string): { chunkId: string; chunkType: ChunkType; vector: number[]; metadata: { attestationId: string } }[] {
+    const vectors: { chunkId: string; chunkType: ChunkType; vector: number[]; metadata: { attestationId: string } }[] = [];
+    for (const [chunkId, embedding] of this.allVectors) {
+      const metadata = this.chunkMetadata.get(chunkId);
+      if (metadata && metadata.attestationId === attestationId) {
+        vectors.push({
+          chunkId,
+          chunkType: embedding.chunkType as ChunkType,
+          vector: embedding.vector,
+          metadata: { attestationId },
+        });
+      }
+    }
+    return vectors;
   }
 
   /**
@@ -203,9 +302,9 @@ export class LocalVectorStore {
    * Reload embeddings from disk (useful when new files are added).
    */
   async reload(): Promise<void> {
-    this.loadersByDocumentId.clear();
     this.allVectors.clear();
-    this.chunkToDocument.clear();
+    this.chunkMetadata.clear();
+    this.attestationIds.clear();
     await this.loadAll();
   }
 }
