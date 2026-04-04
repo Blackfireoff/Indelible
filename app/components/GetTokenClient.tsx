@@ -180,13 +180,18 @@ export default function GetTokenClient() {
       <div className="max-w-lg w-full mx-auto bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl p-6 shadow-sm">
         <h3 className="text-[16px] font-semibold text-[var(--landing-text-primary)] text-center mb-4">Checkout</h3>
 
-        {!isConnected ? (
-          <div className="text-center p-3 text-[14px] font-medium text-orange-600 bg-orange-50 rounded-xl border border-orange-200">
-            Please connect your wallet from the navigation bar to purchase tokens.
-          </div>
-        ) : !selectedPackage ? (
+        {!selectedPackage ? (
           <div className="text-center p-3 text-[14px] font-medium text-[var(--landing-text-secondary)] bg-gray-50 rounded-xl border border-gray-200">
             Select a package above to continue.
+          </div>
+        ) : !isConnected ? (
+          <div className="flex flex-col gap-2">
+            <Button
+              onPress={() => open()}
+              className="w-full h-12 rounded-xl bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-white font-semibold text-[16px] shadow-sm cursor-pointer"
+            >
+              Connect Wallet
+            </Button>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
