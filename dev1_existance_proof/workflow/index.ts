@@ -48,13 +48,23 @@ export async function main(url: string) {
   }
 }
 
+import { fileURLToPath } from "node:url";
+
 // If executed directly from the command line
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMain = process.argv[1] && (
+  process.argv[1] === fileURLToPath(import.meta.url) ||
+  process.argv[1].endsWith('index.ts')
+);
+
+if (isMain) {
   const urlArg = process.argv[2];
   if (!urlArg) {
-    console.error("Usage: tsx workflow/index.ts <url>");
+    console.error("Usage: npx tsx workflow/index.ts <url>");
     process.exit(1);
   }
-  main(urlArg).catch(() => process.exit(1));
+  main(urlArg).catch((err) => {
+    console.error("Workflow failed:", err);
+    process.exit(1);
+  });
 }
 
