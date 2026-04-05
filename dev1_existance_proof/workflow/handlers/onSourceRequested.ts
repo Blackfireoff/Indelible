@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { RawArtifact } from "../types/RawArtifact";
 import type { OnchainAttestation } from "../types/OnchainAttestation";
 import type { StorageAdapter } from "../adapters/storage/StorageAdapter";
@@ -56,6 +58,23 @@ export async function processUrl(
     raw_hash: rawHash,
     data_brut: fetchResult.body,
   };
+
+  // Step 6.b: Store locally in the ../data folder
+  try {
+    const dataDir = path.join(process.cwd(), "..", "data");
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    const timestampFilename = new Date().toISOString()
+      .replace(/T/, '_')
+      .replace(/:/g, '-')
+      .split('.')[0]; // YYYY-MM-DD_HH-mm-ss
+    const filePath = path.join(dataDir, `${timestampFilename}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(rawArtifact, null, 2), "utf-8");
+    console.log(`[Workflow] Local backup saved to: ${filePath}`);
+  } catch (err) {
+    console.error(`[Workflow] Failed to save local backup:`, err);
+  }
 
   // Step 7: Store in 0G
   console.log(`[Workflow] Storing raw artifact in 0G...`);
