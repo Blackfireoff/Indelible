@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Mock0GStorageAdapter } from "../workflow/adapters/storage/Mock0GStorageAdapter";
-import type { RawArtifact } from "../workflow/types";
+import type { RawArtifact } from "../workflow/types/RawArtifact";
 
 const sampleArtifact: RawArtifact = {
   attestationId: "0xaaa111",
@@ -26,7 +26,7 @@ describe("Mock0GStorageAdapter", () => {
   it("returns a 0g://mock/ prefixed address", async () => {
     const adapter = new Mock0GStorageAdapter();
     const address = await adapter.putRawArtifact(sampleArtifact);
-    expect(address).toMatch(/^0g:\/\/mock\/0x[0-9a-f]{64}$/);
+    expect(address).toMatch(/^0g:\/\/mock\/[0-9a-f]{64}$/);
   });
 
   it("produces deterministic addresses for the same artifact", async () => {
