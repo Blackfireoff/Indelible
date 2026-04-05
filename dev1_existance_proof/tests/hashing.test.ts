@@ -15,9 +15,9 @@ describe("computeRawHash", () => {
     expect(hash1).not.toBe(hash2);
   });
 
-  it("returns a 0x-prefixed hex string of 66 characters (bytes32)", () => {
+  it("returns a hex string of 64 characters", () => {
     const hash = computeRawHash("test content");
-    expect(hash).toMatch(/^0x[0-9a-f]{64}$/);
+    expect(hash).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("does NOT normalize whitespace — different whitespace produces different hashes", () => {
@@ -34,11 +34,11 @@ describe("computeRawHash", () => {
 
   it("handles empty string", () => {
     const hash = computeRawHash("");
-    expect(hash).toMatch(/^0x[0-9a-f]{64}$/);
+    expect(hash).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("handles unicode content", () => {
     const hash = computeRawHash("La transition énergétique n'est pas un choix");
-    expect(hash).toMatch(/^0x[0-9a-f]{64}$/);
+    expect(hash).toMatch(/^[0-9a-f]{64}$/);
   });
 });

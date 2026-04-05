@@ -20,32 +20,33 @@ describe("MockStorageAdapter", () => {
   });
 
   it("uploadArtifact returns a non-empty dataAddress", async () => {
-    const addr = await adapter.uploadArtifact("test.json", '{"hello":"world"}');
-    expect(addr).toBeTruthy();
-    expect(addr.length).toBeGreaterThan(0);
+    const res = await adapter.uploadArtifact("test.json", '{"hello":"world"}');
+    expect(res.dataAddress).toBeTruthy();
+    expect(res.dataAddress.length).toBeGreaterThan(0);
+    expect(res.sequence).toBeNull();
   });
 
   it("downloadArtifact retrieves the same content", async () => {
     const content = JSON.stringify({ foo: "bar", n: 42 });
-    const addr = await adapter.uploadArtifact("artifact.json", content);
-    const retrieved = await adapter.downloadArtifact(addr);
+    const res = await adapter.uploadArtifact("artifact.json", content);
+    const retrieved = await adapter.downloadArtifact(res.dataAddress);
     expect(retrieved).toBe(content);
   });
 
   it("different content produces different dataAddresses", async () => {
-    const addr1 = await adapter.uploadArtifact("a.json", '{"a":1}');
-    const addr2 = await adapter.uploadArtifact("b.json", '{"b":2}');
-    expect(addr1).not.toBe(addr2);
+    const r1 = await adapter.uploadArtifact("a.json", '{"a":1}');
+    const r2 = await adapter.uploadArtifact("b.json", '{"b":2}');
+    expect(r1.dataAddress).not.toBe(r2.dataAddress);
   });
 
   it("same content always produces the same dataAddress", async () => {
     const adapter1 = new MockStorageAdapter(tempDir());
     const adapter2 = new MockStorageAdapter(tempDir());
     const content = '{"stable":true}';
-    const addr1 = await adapter1.uploadArtifact("file.json", content);
-    const addr2 = await adapter2.uploadArtifact("file.json", content);
+    const r1 = await adapter1.uploadArtifact("file.json", content);
+    const r2 = await adapter2.uploadArtifact("file.json", content);
     // The hash portion should match even across adapter instances
-    expect(addr1).toBe(addr2);
+    expect(r1.dataAddress).toBe(r2.dataAddress);
   });
 
   it("throws when downloading unknown address", async () => {

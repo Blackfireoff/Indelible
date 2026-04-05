@@ -15,7 +15,7 @@ import { uploadArtifacts } from "./uploadArtifacts.js";
 import { createArchiveRunDir, archiveRootLabel } from "../utils/localArtifactArchive.js";
 import { savePipelineJson } from "../utils/saveLocalArtifact.js";
 import { buildDocumentManifest } from "./buildDocumentManifest.js";
-import type { StorageAdapter } from "../adapters/storage/StorageAdapter.js";
+import type { ArtifactUploadResult, StorageAdapter } from "../adapters/storage/StorageAdapter.js";
 import type { RawCapture } from "../schemas/rawCapture.js";
 import type { StatementsArtifact } from "../schemas/statements.js";
 import type { RefinedStatementsArtifact } from "../schemas/refinedStatements.js";
@@ -145,8 +145,9 @@ export async function runIngestionJob(
 
   // Raw capture address first so a slow/failing derived upload cannot block manifest construction.
   const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
-  const rawCaptureAddress =
-    dataAddress ?? (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
+  const rawCaptureResult: ArtifactUploadResult = dataAddress
+    ? { dataAddress, sequence: null, flowTxHash: null }
+    : await adapter.uploadArtifact("raw_capture.json", rawCaptureJson);
 
   console.log("[upload] Uploading derived artifacts to storage …");
   const addresses = await uploadArtifacts(
@@ -161,7 +162,7 @@ export async function runIngestionJob(
   const manifest = buildDocumentManifest(
     rawCapture,
     cleanArticle,
-    rawCaptureAddress,
+    rawCaptureResult,
     addresses,
     "completed",
   );
@@ -169,19 +170,23 @@ export async function runIngestionJob(
   const manifestJson = JSON.stringify(manifest, null, 2);
   // Toujours persister le manifest dans l’archive locale avant l’upload réseau (0G peut bloquer ou échouer).
   savePipelineJson("document_manifest.json", manifestJson, archiveDir);
-  const manifestAddress = await adapter.uploadArtifact("document_manifest.json", manifestJson);
+  const manifestUpload = await adapter.uploadArtifact("document_manifest.json", manifestJson);
+  const manifestAddress = manifestUpload.dataAddress;
 
   const adapterType = process.env.STORAGE_ADAPTER ?? "mock";
   if (adapterType === "zerog" && !options.skipStorageVerify) {
     console.log("\n[verify] Downloading artifacts from 0G to verify round-trip …");
     const toVerify: Array<{ label: string; address: string }> = [
-      { label: "clean_article.json", address: addresses.cleanArticle },
-      { label: "statements.json", address: addresses.statements },
-      { label: "retrieval_chunks.json", address: addresses.retrievalChunks },
+      { label: "clean_article.json", address: addresses.cleanArticle.dataAddress },
+      { label: "statements.json", address: addresses.statements.dataAddress },
+      { label: "retrieval_chunks.json", address: addresses.retrievalChunks.dataAddress },
       { label: "document_manifest.json", address: manifestAddress },
     ];
     if (addresses.refinedStatements) {
-      toVerify.push({ label: "verified_statements.json", address: addresses.refinedStatements });
+      toVerify.push({
+        label: "verified_statements.json",
+        address: addresses.refinedStatements.dataAddress,
+      });
     }
 
     let allOk = true;
@@ -211,14 +216,14 @@ export async function runIngestionJob(
       sourceUrl: rawCapture.sourceUrl,
       storageAdapter: process.env.STORAGE_ADAPTER ?? "mock",
       localArchiveDir: archiveDir,
-      rawCaptureAddress,
+      rawCaptureAddress: rawCaptureResult.dataAddress,
       manifestAddress,
       addresses: {
-        cleanArticle: addresses.cleanArticle,
-        statements: addresses.statements,
-        refinedStatements: addresses.refinedStatements ?? null,
-        retrievalChunks: addresses.retrievalChunks,
-        embeddings: addresses.embeddings,
+        cleanArticle: addresses.cleanArticle.dataAddress,
+        statements: addresses.statements.dataAddress,
+        refinedStatements: addresses.refinedStatements?.dataAddress ?? null,
+        retrievalChunks: addresses.retrievalChunks.dataAddress,
+        embeddings: addresses.embeddings.dataAddress,
       },
       summary: {
         paragraphCount: cleanArticle.paragraphs.length,
@@ -235,7 +240,7 @@ export async function runIngestionJob(
   return {
     rawCapture,
     manifestAddress,
-    rawCaptureAddress,
+    rawCaptureAddress: rawCaptureResult.dataAddress,
     addresses,
     summary: {
       paragraphCount: cleanArticle.paragraphs.length,

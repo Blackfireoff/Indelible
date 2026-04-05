@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "0xc484f2ba520d2418db67bf7b7363f6b55f67dd279dfd50d720f026357be4d120",
+  "requestId": "0x46ffdbdbb06e4219d5ad4d8537d7fa2d44d31f2bd007af9d3b6599b25933c85f",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example5.html",
+  "llm_used": true,
+  "llm_model": "qwen/qwen-2.5-7b-instruct",
+  "statements": [
+    {
+      "statementId": "stmt_7cc095881d88dccf",
+      "speaker": "Trump",
+      "speaker_role": null,
+      "statement_text": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks",
+      "statement_type": "reported_speech",
+      "attribution_text": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks",
+      "evidence_paragraph_ids": [
+        "para_a732cd5704ab132d"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_a732cd5704ab132d",
+          "charStart": 0,
+          "charEnd": 69,
+          "matchedText": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks"
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_9928fdc8ed864005",
+      "speaker": "Trump",
+      "speaker_role": "U.S. President",
+      "statement_text": "U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure",
+      "statement_type": "reported_speech",
+      "attribution_text": "ON, April 5 (Reuters) - U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure, while Iranian and U.S.",
+      "evidence_paragraph_ids": [
+        "para_3cadec0f5ec2c807"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_3cadec0f5ec2c807",
+          "charStart": 38,
+          "charEnd": 200,
+          "matchedText": "U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure"
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_21fb8be4ef2e38c9",
+      "speaker": "Iran",
+      "speaker_role": null,
+      "statement_text": "\"entire region will become a hell for you\"",
+      "statement_type": "direct_quote",
+      "attribution_text": "warned",
+      "evidence_paragraph_ids": [
+        "para_6f540d5042efa951"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_6f540d5042efa951",
+          "charStart": 41,
+          "charEnd": 83,
+          "matchedText": "\"entire region will become a hell for you\""
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_9462daac19b03fe5",
+      "speaker": "Iran's Islamic Revolutionary Guard Corps and regional governor",
+      "speaker_role": null,
+      "statement_text": "Iran's Islamic Revolutionary Guard Corps said it was combing a southwestern area near where the U.S. plane came down, while the regional governor promised a commendation for anyone who captured or killed \"forces of the hostile enemy.\"",
+      "statement_type": "reported_speech",
+      "attribution_text": "Iran's Islamic Revolutionary Guard Corps said it was combing a southwestern area near where the U.S. plane came down, while the regional governor promised a commendation for anyone who captured or killed \"forces of the hostile enemy.\"",
+      "evidence_paragraph_ids": [
+        "para_e71aef621e44cf23"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_e71aef621e44cf23",
+          "charStart": 0,
+          "charEnd": 234,
+          "matchedText": "Iran's Islamic Revolutionary Guard Corps said it was combing a southwestern area near where the U.S. plane came down, while the regional governor promised a commendation for anyone who captured or killed \"forces of the hostile enemy.\""
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_24a4bcb8baaafaaa",
+      "speaker": "Khatam al-Anbiya spokesperson",
+      "speaker_role": null,
+      "statement_text": "\"The enemy should know that we rely on new air-defence systems built by the young, knowledgeable, and proud people of this country, unveiling them one after another in the field,\"",
+      "statement_type": "direct_quote",
+      "attribution_text": "said",
+      "evidence_paragraph_ids": [
+        "para_8b9e6d379b854e82"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_8b9e6d379b854e82",
+          "charStart": 0,
+          "charEnd": 179,
+          "matchedText": "\"The enemy should know that we rely on new air-defence systems built by the young, knowledgeable, and proud people of this country, unveiling them one after another in the field,\""
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_0096c3e88949b0fe",
+      "speaker": "Benjamin Netanyahu",
+      "speaker_role": "Israeli Prime Minister",
+      "statement_text": "Israeli Prime Minister Benjamin Netanyahu said Israel had struck the plant, which an Israeli military spokesperson said produced materials for explosives and missiles.",
+      "statement_type": "direct_quote",
+      "attribution_text": "said",
+      "evidence_paragraph_ids": [
+        "para_f72a77ae1e88bd70"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_f72a77ae1e88bd70",
+          "charStart": 0,
+          "charEnd": 167,
+          "matchedText": "Israeli Prime Minister Benjamin Netanyahu said Israel had struck the plant, which an Israeli military spokesperson said produced materials for explosives and missiles."
+        }
+      ],
+      "extracted_by": "llm"
+    }
+  ],
+  "extraction_summary": {
+    "total": 6,
+    "verified": 6,
+    "unverified": 0
+  }
+}

@@ -5,6 +5,7 @@
 
 export interface Citation {
   chunkId: string;
+  attestationId: string; // Used to fetch the clean article from 0G
   quote: string;
   sourceUrl: string;
   observedAt: string;

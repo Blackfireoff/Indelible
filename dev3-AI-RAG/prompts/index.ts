@@ -19,6 +19,7 @@ export function chunksToContext(chunks: RetrievedChunk[]): string {
       return (
         `--- CHUNK ${i + 1} ---\n` +
         `chunkId: ${chunk.chunkId}\n` +
+        `attestationId: ${chunk.documentId}\n` +
         `storagePointer: ${chunk.storagePointer}\n` +
         `sourceUrl: ${chunk.sourceUrl}\n` +
         `observedAt: ${chunk.observedAt}\n` +
@@ -52,6 +53,7 @@ OUTPUT SCHEMA:
   "citations": [
     {
       "chunkId": "must match a chunkId from the provided context",
+      "attestationId": "attestation ID of the document (use the attestationId from chunk metadata)",
       "quote": "exact quote from the chunk",
       "sourceUrl": "from chunk metadata",
       "observedAt": "from chunk metadata",

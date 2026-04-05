@@ -11,19 +11,14 @@
   },
   "dependencies": {
     "@0gfoundation/0g-ts-sdk": "^1.2.1",
-    "@chainlink/cre-sdk": "latest",
-    "viem": "^2.0.0"
+    "puppeteer": "^24.40.0",
+    "undici": "^6.24.1"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.3",
     "@types/node": "^22.0.0",
     "dotenv": "^17.4.0",
-    "hardhat": "^3.3.0",
     "tsx": "^4.21.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
-  },
-  "optionalDependencies": {
-    "ethers": "^6.13.1"
   }
 }
