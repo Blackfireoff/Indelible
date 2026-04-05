@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
-import { useAccount, useReadContract } from 'wagmi'
+import { useAccount, useReadContract, useDisconnect } from 'wagmi'
 import { erc20Abi, formatUnits } from 'viem'
 
 const WALLET_STORAGE_KEY = 'indelible_wallet_state'
@@ -11,6 +11,7 @@ const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f' as `0x${
 export function useWalletSync() {
   const { address, isConnected } = useAppKitAccount()
   const { address: wagmiAddress } = useAccount()
+  const { disconnect } = useDisconnect()
 
   // Read INDL balance — same call as NavBar.tsx
   const { data: balanceData } = useReadContract({
@@ -42,6 +43,20 @@ export function useWalletSync() {
       window.dispatchEvent(new CustomEvent('wallet-state-changed', { detail: null }))
     }
   }, [address, isConnected, balanceData])
+
+  // Listen for extension disconnect events
+  useEffect(() => {
+    const handleWalletStateChanged = (e: Event) => {
+      const customEvent = e as CustomEvent
+      // If the event comes from the extension/provider saying disconnected, and we are still connected here
+      if (customEvent.detail === null && isConnected) {
+        disconnect()
+      }
+    }
+    
+    window.addEventListener('wallet-state-changed', handleWalletStateChanged)
+    return () => window.removeEventListener('wallet-state-changed', handleWalletStateChanged)
+  }, [disconnect, isConnected])
 
   return { address, isConnected }
 }
