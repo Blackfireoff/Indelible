@@ -19,7 +19,7 @@
         "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example5.html",
         "speaker": "Trump",
         "speakerNormalizedId": "donald_trump",
-        "quoteType": "direct",
+        "quoteType": "indirect",
         "language": "en",
         "publisher": "Reuters",
         "title": "Trump, Israel pressure Iran ahead of deadline as search continues for missing US airman"
@@ -34,8 +34,8 @@
       "metadata": {
         "attestationId": "0xc484f2ba520d2418db67bf7b7363f6b55f67dd279dfd50d720f026357be4d120",
         "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example5.html",
-        "speaker": "Trump and Israel",
-        "speakerNormalizedId": "trump_and_israel",
+        "speaker": "Trump",
+        "speakerNormalizedId": "donald_trump",
         "quoteType": "indirect",
         "language": "en",
         "publisher": "Reuters",

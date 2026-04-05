@@ -136,10 +136,10 @@ describe("End-to-end pipeline", () => {
       "document_manifest.json",
       JSON.stringify(manifest, null, 2)
     );
-    expect(manifestAddress).toBeTruthy();
+    expect(manifestAddress.dataAddress).toBeTruthy();
 
     // Verify roundtrip: download and parse manifest
-    const downloaded = await adapter.downloadArtifact(manifestAddress);
+    const downloaded = await adapter.downloadArtifact(manifestAddress.dataAddress);
     const reparsed = JSON.parse(downloaded);
     expect(reparsed.attestationId).toBe(sampleCapture.attestationId);
     expect(reparsed.artifacts.cleanArticle.fileName).toBe("clean_article.json");

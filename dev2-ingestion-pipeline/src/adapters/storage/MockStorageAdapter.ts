@@ -1,7 +1,7 @@
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from "fs";
 import { join, resolve } from "path";
 import { createHash } from "crypto";
-import type { StorageAdapter } from "./StorageAdapter.js";
+import type { ArtifactUploadResult, StorageAdapter } from "./StorageAdapter.js";
 
 /**
  * MockStorageAdapter – stores artifacts as local files for dev and testing.
@@ -19,7 +19,7 @@ export class MockStorageAdapter implements StorageAdapter {
     mkdirSync(this.outputDir, { recursive: true });
   }
 
-  async uploadArtifact(fileName: string, data: string): Promise<string> {
+  async uploadArtifact(fileName: string, data: string): Promise<ArtifactUploadResult> {
     const filePath = join(this.outputDir, fileName);
     writeFileSync(filePath, data, "utf-8");
 
@@ -30,7 +30,11 @@ export class MockStorageAdapter implements StorageAdapter {
     this.store.set(dataAddress, filePath);
 
     console.log(`[MockStorage] Uploaded ${fileName} → ${dataAddress}`);
-    return dataAddress;
+    return {
+      dataAddress,
+      sequence: null,
+      flowTxHash: null,
+    };
   }
 
   async downloadArtifact(dataAddress: string): Promise<string> {
