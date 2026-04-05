@@ -172,21 +172,6 @@ export default function SourcesModal({ isOpen, onClose, document }: SourcesModal
             {document.articleTitle || document.source}
           </h3>
 
-          {/* Author row */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--landing-primary)] to-[var(--landing-primary-dark)] flex items-center justify-center shrink-0">
-              <span className="text-[13px] font-semibold text-white">{document.initials}</span>
-            </div>
-            <div>
-              <p className="text-[15px] font-semibold text-[var(--landing-text-primary)]">
-                {document.author}
-              </p>
-              <p className="text-[13px] text-[var(--landing-text-secondary)]">
-                {document.articleAuthor ? `Article by ${document.articleAuthor}` : 'Speaker'}
-              </p>
-            </div>
-          </div>
-
           {/* Metadata pills */}
           <div className="flex flex-wrap items-center gap-3">
             {document.sequence !== undefined && (
@@ -202,12 +187,6 @@ export default function SourcesModal({ isOpen, onClose, document }: SourcesModal
               <FontAwesomeIcon icon={faCalendarDays} className="w-3 h-3 text-[var(--landing-text-secondary)]" />
               <span className="text-[12px] text-[var(--landing-text-secondary)]">{document.date}</span>
             </div>
-            {document.articleAuthor && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full">
-                <FontAwesomeIcon icon={faUser} className="w-3 h-3 text-[var(--landing-text-secondary)]" />
-                <span className="text-[12px] text-[var(--landing-text-secondary)]">By {document.articleAuthor}</span>
-              </div>
-            )}
           </div>
         </div>
 
