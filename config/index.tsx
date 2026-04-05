@@ -22,6 +22,6 @@ export const wagmiAdapter: WagmiAdapter = globalAny.__wagmi_adapter__;
 export const metadata = {
   name: 'Indelible',
   description: 'Indelible. - Making political discourse transparent and accessible',
-  url: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
-  icons: [typeof window !== 'undefined' ? `${window.location.origin}/logo/small.svg` : 'http://localhost:3000/logo/small.svg']
+  url: 'https://indelible.firestudio.fr/',
+  icons: ['https://indelible.firestudio.fr/logo/small.svg']
 }

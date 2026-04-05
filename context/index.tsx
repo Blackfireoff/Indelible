@@ -20,7 +20,7 @@ if (!globalAny.__appkit_modal__) {
     enableAnalytics: false,
     themeMode: 'light',
     themeVariables: {
-      '--w3m-logo-image-url': typeof window !== 'undefined' ? `${window.location.origin}/logo/full.svg` : 'http://localhost:3000/logo/full.svg',
+      '--w3m-logo-image-url': 'https://indelible.firestudio.fr/logo/full.svg',
     } as any,
     features: {
       email: true,
