@@ -43,14 +43,11 @@ async function init() {
   els.selectionSource  = document.getElementById('selection-source');
 
   els.queryInput     = document.getElementById('query-input');
-  els.detailsBody    = document.getElementById('details-body');
-  els.detailsInput   = document.getElementById('details-input');
 
   els.btnSearch        = document.getElementById('btn-search');
   els.btnOpenSite      = document.getElementById('btn-open-site');
   els.btnClearSel      = document.getElementById('btn-clear-selection');
   els.btnClearQuery    = document.getElementById('btn-clear-query');
-  els.btnToggleDetails = document.getElementById('btn-toggle-details');
   els.btnBack          = document.getElementById('btn-back');
   els.btnRetry         = document.getElementById('btn-retry');
   els.btnDisconnect    = document.getElementById('btn-disconnect');
@@ -86,7 +83,6 @@ async function init() {
     els.queryInput.focus();
   });
 
-  els.btnToggleDetails.addEventListener('click', toggleDetails);
   els.btnSearch.addEventListener('click', handleSearch);
   els.btnBack.addEventListener('click', goBackToQuery);
   els.btnRetry.addEventListener('click', goBackToQuery);
@@ -254,15 +250,6 @@ function receiveSelectedText(text, source) {
   els.selectionSource.textContent = selectedSource;
   els.selectionPreview.classList.remove('hidden');
 
-  // Auto-populate query if empty
-  if (!els.queryInput.value.trim()) {
-    els.queryInput.value = selectedText.length > 200
-      ? selectedText.substring(0, 200) + '…'
-      : selectedText;
-    autoResize(els.queryInput);
-    updateSearchButton();
-  }
-
   // Ensure query state is showing
   if (walletAccount) {
     showOnly(els.stateQuery);
@@ -276,22 +263,6 @@ function clearSelection() {
 }
 
 // ══════════════════════════════════════════════════
-// Details Toggle
-// ══════════════════════════════════════════════════
-
-function toggleDetails() {
-  const isOpen = !els.detailsBody.classList.contains('hidden');
-  if (isOpen) {
-    els.detailsBody.classList.add('hidden');
-    els.btnToggleDetails.classList.remove('open');
-  } else {
-    els.detailsBody.classList.remove('hidden');
-    els.btnToggleDetails.classList.add('open');
-    els.detailsInput.focus();
-  }
-}
-
-// ══════════════════════════════════════════════════
 // Search
 // ══════════════════════════════════════════════════
 
@@ -300,13 +271,9 @@ async function handleSearch() {
   if (!query || !walletAccount) return;
 
   // Build full query with context
-  const details = els.detailsInput ? els.detailsInput.value.trim() : '';
   let fullQuery = query;
   if (selectedText && selectedText !== query) {
     fullQuery = 'Context: "' + selectedText + '"\n\nQuestion: ' + query;
-  }
-  if (details) {
-    fullQuery += '\n\nAdditional details: ' + details;
   }
 
   // Show searching state — matches website loading behavior
