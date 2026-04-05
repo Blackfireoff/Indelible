@@ -36,7 +36,7 @@ export default function AboutPage() {
             Our Mission
           </h2>
           <p className="text-[16px] leading-[26px] text-[var(--landing-text-secondary)]">
-            Our mission is to create a permanent, incorruptible record of political discourse. We believe that a transparent society requires a perfect memory. By leveraging decentralized technology and artificial intelligence, <em className="italic">INDELIBLE.</em> eliminates the 'memory hole'—ensuring that statements, promises, and declarations can never be quietly erased or altered by those in power. We exist to provide citizens, journalists, and researchers with a strictly neutral, publicly accessible source of truth.
+            Our mission is to create a permanent, incorruptible record of political discourse. We believe that a transparent society requires a perfect memory. By leveraging decentralized technology and artificial intelligence, <em className="italic">Indelible.</em> eliminates the 'memory hole'—ensuring that statements, promises, and declarations can never be quietly erased or altered by those in power. We exist to provide citizens, journalists, and researchers with a strictly neutral, publicly accessible source of truth.
           </p>
         </div>
 

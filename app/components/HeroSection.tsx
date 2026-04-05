@@ -10,7 +10,7 @@ import Image from 'next/image'
 import SearchBar from './SearchBar'
 
 const suggestions = [
-  "Biden on climate change",
+  "What's about Trump",
   "Trudeau healthcare policy",
   "Merkel economic views",
 ]

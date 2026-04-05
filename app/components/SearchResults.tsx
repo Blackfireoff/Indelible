@@ -132,7 +132,7 @@ export default function SearchResults() {
           data: txData
         }]
       })
-      
+
       const txHash = txHashStr as string
 
       setError("Verifying transaction and searching...")
@@ -146,6 +146,7 @@ export default function SearchResults() {
       if (!res.ok) throw new Error('Query failed')
       const apiData: ApiResponse = await res.json()
       setResult(apiData)
+      setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed')
     } finally {
@@ -288,9 +289,14 @@ export default function SearchResults() {
                           <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">{quote.author}</span>
                         </div>
                         <div className="flex items-center gap-4 pl-10">
-                          <div className="flex items-center gap-1.5">
-                            <FontAwesomeIcon icon={faFileLines} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
-                            <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.source}</span>
+                          <div className="flex items-center gap-1.5 relative group/file">
+                            <FontAwesomeIcon icon={faFileLines} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)] shrink-0" />
+                            <span className="text-[14px] text-[var(--landing-text-secondary)] truncate max-w-[200px]">
+                              {quote.source}
+                            </span>
+                            <div className="absolute top-full left-0 mt-2 px-3 py-1.5 bg-[#1A1A1A] text-white text-[12px] font-medium rounded-lg opacity-0 invisible translate-y-1.5 scale-95 origin-top-left group-hover/file:opacity-100 group-hover/file:visible group-hover/file:translate-y-0 group-hover/file:scale-100 transition-all duration-300 delay-200 ease-out whitespace-nowrap shadow-lg z-50 pointer-events-none">
+                              {quote.source}
+                            </div>
                           </div>
                           <div className="flex items-center gap-1.5">
                             <FontAwesomeIcon icon={faCalendarDays} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
