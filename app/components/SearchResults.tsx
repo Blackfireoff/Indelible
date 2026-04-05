@@ -1,6 +1,7 @@
 'use client'
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
 import { parseUnits, encodeFunctionData, erc20Abi, createPublicClient, http } from 'viem'
@@ -16,7 +17,7 @@ import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
 import SearchBar from './SearchBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles, faSpinner, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 
 interface Citation {
   chunkId: string
@@ -205,6 +206,14 @@ export default function SearchResults() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
+        {/* Back to Home / New Request */}
+        <div className="mb-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-[14px] font-medium text-[var(--landing-text-secondary)] hover:text-[var(--landing-primary)] transition-colors">
+            <FontAwesomeIcon icon={faChevronLeft} className="w-3.5 h-3.5" />
+            New request
+          </Link>
+        </div>
+
         {/* Search Input */}
         <div className="relative mb-6">
           <SearchBar
