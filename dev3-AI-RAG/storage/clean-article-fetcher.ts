@@ -39,11 +39,11 @@ export interface DocumentManifest {
   language: string;
   observedAt: string;
   artifacts: {
-    rawCapture: { fileName: string; dataAddress: string };
-    cleanArticle: { fileName: string; dataAddress: string };
-    statements: { fileName: string; dataAddress: string };
-    retrievalChunks: { fileName: string; dataAddress: string };
-    embeddings: { fileName: string; dataAddress: string };
+    rawCapture: { fileName: string; dataAddress: string; sequence?: number; flowTxHash?: string };
+    cleanArticle: { fileName: string; dataAddress: string; sequence?: number; flowTxHash?: string };
+    statements: { fileName: string; dataAddress: string; sequence?: number; flowTxHash?: string };
+    retrievalChunks: { fileName: string; dataAddress: string; sequence?: number; flowTxHash?: string };
+    embeddings: { fileName: string; dataAddress: string; sequence?: number; flowTxHash?: string };
   };
   processing: { dev2PipelineVersion: string; status: string };
 }
