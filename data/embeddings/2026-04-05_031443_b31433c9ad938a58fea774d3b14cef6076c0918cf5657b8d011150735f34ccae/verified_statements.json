@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "b31433c9ad938a58fea774d3b14cef6076c0918cf5657b8d011150735f34ccae",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/politique/moqueries-de-trump-les-propos-que-jai-pu-entendre-ni-sont-ni-elegants-ni-a-la-hauteur-deplore-emmanuel-macron-02-04-2026-SUPVOSNTVNCKPNYJY4AIUYST7A.php",
+  "llm_used": true,
+  "llm_model": "qwen/qwen-2.5-7b-instruct",
+  "statements": [
+    {
+      "statementId": "stmt_88fe3be3ba679359",
+      "speaker": "Emmanuel Macron",
+      "speaker_role": null,
+      "statement_text": "Les propos que j’ai pu entendre ne sont ni élégants, ni à la hauteur, et ils ne méritent pas de réponse",
+      "statement_type": "direct_quote",
+      "attribution_text": "a cinglé",
+      "evidence_paragraph_ids": [
+        "para_b16d686e07e15b32"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_b16d686e07e15b32",
+          "charStart": 143,
+          "charEnd": 246,
+          "matchedText": "Les propos que j’ai pu entendre ne sont ni élégants, ni à la hauteur, et ils ne méritent pas de réponse"
+        }
+      ],
+      "extracted_by": "llm"
+    }
+  ],
+  "extraction_summary": {
+    "total": 1,
+    "verified": 1,
+    "unverified": 0
+  }
+}

@@ -10,10 +10,11 @@
  *
  * Only the main document is requested (GET HTML). No subresource fetching.
  *
- * Fallback: if a plain fetch gets HTTP 402/403, we retry with a headless Chromium browser
- * (Puppeteer) which renders JS, handles cookies, and passes bot detection.
+ * Fallback: if a plain fetch gets HTTP 401/402/403, we retry with a headless Chromium browser
+ * (Puppeteer) which uses the **same** env (cookies, referer, proxy) via `browserLikeHeaders`.
  */
 import { fetch, ProxyAgent, type Dispatcher } from "undici";
+import { buildBrowserLikeHeaders, resolveFetchProxyUri } from "./browserLikeHeaders";
 import { fetchWithBrowser } from "./fetchWithBrowser";
 
 export interface FetchResult {
@@ -25,94 +26,13 @@ export interface FetchResult {
   status: number;
 }
 
-/** Accept header as sent by Chrome for a top-level document (incl. signed-exchange). */
-const DEFAULT_ACCEPT =
-  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
-
-/** Chrome 146 on Windows — match a real browser fingerprint for sec-ch-ua. */
-const DEFAULT_USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36";
-
-const DEFAULT_SEC_CH_UA =
-  '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"';
+export { buildBrowserLikeHeaders } from "./browserLikeHeaders";
 
 /** HTTP status codes that trigger a browser fallback instead of a hard failure. */
-const BROWSER_FALLBACK_STATUSES = new Set([402, 403]);
-
-/**
- * Build request headers modeled on Chrome DevTools (same-origin navigation).
- * Set `FETCH_COOKIE` + `FETCH_REFERER` (page précédente sur le même host) for sites like Reuters.
- */
-export function buildBrowserLikeHeaders(targetUrl: string): Record<string, string> {
-  const ua = process.env.FETCH_USER_AGENT?.trim() || DEFAULT_USER_AGENT;
-
-  let referer: string;
-  try {
-    const u = new URL(targetUrl);
-    referer = process.env.FETCH_REFERER?.trim() || `${u.origin}/`;
-  } catch {
-    referer = "https://www.google.com/";
-  }
-
-  const siteMode = process.env.FETCH_SEC_FETCH_SITE?.trim();
-  const secFetchSite =
-    siteMode === "same-origin" ||
-    siteMode === "same-site" ||
-    siteMode === "cross-site" ||
-    siteMode === "none"
-      ? siteMode
-      : "same-origin";
-
-  const accept = process.env.FETCH_ACCEPT?.trim() || DEFAULT_ACCEPT;
-
-  const headers: Record<string, string> = {
-    "User-Agent": ua,
-    Accept: accept,
-    "Accept-Language":
-      process.env.FETCH_ACCEPT_LANGUAGE?.trim() || "fr-FR,fr;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Cache-Control": "max-age=0",
-    Priority: "u=0, i",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": secFetchSite,
-    "Sec-Fetch-User": "?1",
-    "sec-ch-ua": process.env.FETCH_SEC_CH_UA?.trim() || DEFAULT_SEC_CH_UA,
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"Windows"',
-    Referer: referer,
-  };
-
-  const cookie = process.env.FETCH_COOKIE?.trim();
-  if (cookie) {
-    headers.Cookie = cookie;
-  }
-
-  const extra = process.env.FETCH_EXTRA_HEADERS?.trim();
-  if (extra) {
-    try {
-      const parsed = JSON.parse(extra) as Record<string, string>;
-      for (const [k, v] of Object.entries(parsed)) {
-        if (typeof k === "string" && typeof v === "string") {
-          headers[k] = v;
-        }
-      }
-    } catch {
-      console.warn(
-        "[fetchRawContent] FETCH_EXTRA_HEADERS is not valid JSON — ignored.",
-      );
-    }
-  }
-
-  return headers;
-}
+const BROWSER_FALLBACK_STATUSES = new Set([401, 402, 403]);
 
 function resolveProxyDispatcher(): Dispatcher | undefined {
-  const uri =
-    process.env.FETCH_HTTP_PROXY?.trim() ||
-    process.env.HTTPS_PROXY?.trim() ||
-    process.env.HTTP_PROXY?.trim();
+  const uri = resolveFetchProxyUri();
   if (!uri) {
     return undefined;
   }
@@ -125,8 +45,7 @@ function resolveProxyDispatcher(): Dispatcher | undefined {
  *
  * Strategy:
  * 1. Try a fast plain HTTP fetch with browser-like headers.
- * 2. If the server returns 402 (paywall) or 403 (bot block), fall back
- *    to a real headless Chromium browser via Puppeteer.
+ * 2. If the server returns 401/402/403, fall back to headless Chromium (same cookies/proxy as env).
  * 3. Throw on any other non-2xx status.
  */
 export async function fetchRawContent(url: string): Promise<FetchResult> {
@@ -146,7 +65,7 @@ export async function fetchRawContent(url: string): Promise<FetchResult> {
     return { body, contentType, status: response.status };
   }
 
-  // ── Paywall / bot block: fall back to headless browser ──
+  // ── Auth / paywall / bot block: fall back to headless browser ──
   if (BROWSER_FALLBACK_STATUSES.has(response.status)) {
     console.log(
       `[fetchRawContent] HTTP ${response.status} — falling back to headless browser for: ${url}`,
@@ -159,4 +78,3 @@ export async function fetchRawContent(url: string): Promise<FetchResult> {
     `Failed to fetch ${url}: HTTP ${response.status} ${response.statusText}`,
   );
 }
-

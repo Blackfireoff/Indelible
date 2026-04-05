@@ -164,6 +164,45 @@ npx tsx workflow/index.ts "https://www.reuters.com/world/..."
 
 Ne pas versionner le `.env` avec de vrais cookies (secrets).
 
+#### 401 après beaucoup de requêtes — ce n’est pas un « cache » Puppeteer
+
+Chaque run lance un navigateur headless **neuf** puis le ferme : il n’y a **pas** d’état local qui s’accumule dans ton script. Un **401** après un volume élevé vient presque toujours du **site** (Datadome, quota IP, session `datadome` / cookie expiré).
+
+Pour « réinitialiser » côté pratique :
+
+1. **Rafraîchir la session** : rouvrir le site dans Chrome, naviguer un peu, recopier un **`Cookie`** et un **`Referer`** à jour dans `.env` (souvent le plus efficace).
+2. **Pause** : attendre (débit / anti-bot).
+3. **Autre IP** : autre réseau, VPN, ou **`FETCH_HTTP_PROXY`** vers un autre nœud (le fallback Puppeteer utilise le **même** proxy que le fetch HTTP).
+4. **Ralentir** : espacer les appels dans ton orchestrateur (pas dans ce module seul).
+
+Le fallback navigateur réutilise maintenant les **mêmes** variables `FETCH_*` que le fetch HTTP (cookies, referer, proxy), pour éviter un headless sans cookie alors que tu en avais mis un pour le premier essai.
+
+Si Puppeteer affiche **« Navigating frame was detached »** ou **processus introuvable** sous Windows : le script n’utilise plus `--single-process` / `--no-zygote` sur ce système (ces flags font souvent crasher Chromium). Le `goto` utilise par défaut `waitUntil: load` (pas `networkidle2`) ; pour forcer l’ancien comportement : `FETCH_BROWSER_WAIT_UNTIL=networkidle2`.
+
+### Puppeteer / `npm install` (Windows)
+
+Puppeteer télécharge **Chrome** et **chrome-headless-shell** dans `%USERPROFILE%\.cache\puppeteer`. Si une install a été interrompue, le dossier peut exister **sans** `chrome.exe` / `chrome-headless-shell.exe`, et le `postinstall` échoue avec *« folder exists but the executable is missing »*.
+
+**Correction :** supprimer le cache puis réinstaller.
+
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.cache\puppeteer"
+cd dev1_existance_proof
+npm i
+```
+
+**Plan B** (sans retélécharger les binaires Puppeteer) : installer Chrome sur la machine, puis :
+
+```powershell
+$env:PUPPETEER_SKIP_DOWNLOAD="true"
+npm i
+$env:PUPPETEER_EXECUTABLE_PATH="C:\Program Files\Google\Chrome\Application\chrome.exe"
+```
+
+(`fetchWithBrowser` utilise le Chrome système si `PUPPETEER_EXECUTABLE_PATH` est défini.)
+
+L’avertissement **EBADENGINE** pour Vite vient souvent d’une version de Node légèrement trop ancienne (ex. 22.11, alors que Vite demande au moins 22.12) : mettre à jour Node supprime l’avertissement.
+
 ### Running Tests
 
 ```bash
@@ -181,3 +220,4 @@ npm run typecheck # Verify TypeScript types
 | `vitest` | Unit testing |
 | `tsx` | Direct TypeScript execution |
 | `typescript` | Type safety |
+| `puppeteer` | Option headless pour sites fortement protégés (`fetchWithBrowser`) |

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+  "publisher": "leparisien.fr",
+  "language": "fr-FR",
+  "observedAt": "2026-04-05T03:01:17.000Z",
+  "artifacts": {
+    "rawCapture": {
+      "fileName": "raw_capture.json",
+      "dataAddress": "0xed8a390d30b548abd40826e69c89ab38f9b7054e98e604d45857b9298c2d0bbe",
+      "sequence": 37398,
+      "flowTxHash": "0x739fbceb10dda5e7c22c6fd1219f817dde41cc1a564b67552c19cf4d76a9f676"
+    },
+    "cleanArticle": {
+      "fileName": "clean_article.json",
+      "dataAddress": "0x370ac7dbe6f120f7a1a6d69d46c15dfbbcb05221ca969f6227845e66814fe827",
+      "sequence": 37406,
+      "flowTxHash": "0xa63fdc8edb88acd54a47c2c3c6f1e8cdb2dc42907f4f97ab967edb80e24f2079"
+    },
+    "statements": {
+      "fileName": "statements.json",
+      "dataAddress": "0xf334d3ab53ff5cbb91ada7136cd72d10b39d77ad458c519760a3d1f8522b8218",
+      "sequence": 37412,
+      "flowTxHash": "0x19573aaeb0e495de5a154a4d04d88b3e21cdaaf87d1a1307272f732bcd2694c9"
+    },
+    "retrievalChunks": {
+      "fileName": "retrieval_chunks.json",
+      "dataAddress": "0x959f7c9b10a8249462107d602ce22ba0a8ceb9b2ab35d137c22a668783363f82",
+      "sequence": 37428,
+      "flowTxHash": "0xa871774c6648bb29a75424ffd6cd99b58a9fa8bfae129dba6425af9b2fb4f3dd"
+    },
+    "embeddings": {
+      "fileName": "embeddings.json",
+      "dataAddress": "0xc058451d60893a36a889811e3baa730002cc9cbfb262273f30235f7d606b9ba3",
+      "sequence": 37434,
+      "flowTxHash": "0x6f15b2e98f91c31f3910be21cb7a5c573ccb33865b9b0bbf29419fb1262ddaf8"
+    }
+  },
+  "processing": {
+    "dev2PipelineVersion": "1.0.0",
+    "status": "completed"
+  }
+}
