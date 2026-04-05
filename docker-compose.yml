@@ -23,13 +23,14 @@ services:
       # Mount local embeddings data (from dev2)
       - ./data/embeddings:/app/data/embeddings:ro
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.indelible.rule=Host(`indelible.firestudio.fr`)"
+      - "traefik.http.routers.indelible.entrypoints=websecure"
+      - "traefik.http.routers.indelible.tls.certresolver=firestudioresolver"
+      - "traefik.http.services.indelible.loadbalancer.server.port=3000"
+    networks:
+      front:
   # Optional: Indexer for faster 0G Storage queries
   # indexer:
   #   image: 0glabs/0g-storage-indexer:latest
@@ -40,3 +41,7 @@ services:
   #     - RPC_URL=${ZEROG_RPC_URL:-https://evmrpc-testnet.0g.ai}
   #     - CHAIN_ID=16602
   #   restart: unless-stopped
+networks:
+  front:
+    external: true
+
