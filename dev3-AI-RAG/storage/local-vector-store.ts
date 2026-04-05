@@ -137,14 +137,10 @@ export class LocalVectorStore {
   private async loadDirectory(dirName: string, dirPath: string): Promise<void> {
     const embeddingsPath = join(dirPath, "embeddings.json");
     const chunksPath = join(dirPath, "retrieval_chunks.json");
+    const statementsPath = join(dirPath, "statements.json");
 
     if (!existsSync(embeddingsPath)) {
       console.warn(`[LocalVectorStore] No embeddings.json in ${dirName}`);
-      return;
-    }
-
-    if (!existsSync(chunksPath)) {
-      console.warn(`[LocalVectorStore] No retrieval_chunks.json in ${dirName}`);
       return;
     }
 
@@ -152,15 +148,6 @@ export class LocalVectorStore {
       // Load embeddings
       const embeddingsContent = readFileSync(embeddingsPath, "utf-8");
       const embeddingsData: EmbeddingsData = JSON.parse(embeddingsContent);
-
-      // Load chunks for text content
-      const chunksContent = readFileSync(chunksPath, "utf-8");
-      const chunksData: RetrievalChunksData = JSON.parse(chunksContent);
-
-      // Verify attestation IDs match
-      if (embeddingsData.attestationId !== chunksData.attestationId) {
-        console.warn(`[LocalVectorStore] Attestation ID mismatch in ${dirName}: ${embeddingsData.attestationId} vs ${chunksData.attestationId}`);
-      }
 
       const attestationId = embeddingsData.attestationId;
       this.attestationIds.add(attestationId);
@@ -170,15 +157,61 @@ export class LocalVectorStore {
         this.allVectors.set(vector.chunkId, vector);
       }
 
-      // Index chunk metadata (text, speaker, etc.)
-      for (const chunk of chunksData.chunks) {
-        this.chunkMetadata.set(chunk.chunkId, {
-          ...chunk,
-          attestationId,
-        });
-      }
+      // Try to load chunks for text content
+      if (existsSync(chunksPath)) {
+        const chunksContent = readFileSync(chunksPath, "utf-8");
+        const chunksData: RetrievalChunksData = JSON.parse(chunksContent);
 
-      console.log(`[LocalVectorStore] Loaded ${embeddingsData.vectors.length} vectors from ${dirName}`);
+        // Index chunk metadata (text, speaker, etc.)
+        for (const chunk of chunksData.chunks) {
+          this.chunkMetadata.set(chunk.chunkId, {
+            ...chunk,
+            attestationId,
+          });
+        }
+        console.log(`[LocalVectorStore] Loaded ${embeddingsData.vectors.length} vectors from ${dirName} (via retrieval_chunks.json)`);
+      } else if (existsSync(statementsPath)) {
+        // Fallback: load text from statements.json
+        console.log(`[LocalVectorStore] No retrieval_chunks.json in ${dirName}, falling back to statements.json`);
+        const statementsContent = readFileSync(statementsPath, "utf-8");
+        const statementsData = JSON.parse(statementsContent);
+
+        // Build statementId -> statement map
+        const statementMap = new Map<string, { content: string; speaker: string | null; speakerNormalizedId: string | null }>();
+        for (const stmt of statementsData.statements ?? []) {
+          statementMap.set(stmt.statementId, {
+            content: stmt.content,
+            speaker: stmt.speaker?.name ?? null,
+            speakerNormalizedId: stmt.speaker?.normalizedId ?? null,
+          });
+        }
+
+        // Map vectors to statements via metadata.statementId
+        // Also set basic metadata for ALL vectors (text may be empty for non-statement chunks)
+        let loadedCount = 0;
+        for (const vector of embeddingsData.vectors) {
+          const statementId = vector.metadata?.statementId;
+          const stmt = statementId ? statementMap.get(statementId) : null;
+
+          this.chunkMetadata.set(vector.chunkId, {
+            chunkId: vector.chunkId,
+            chunkType: vector.chunkType,
+            text: stmt?.content ?? "",
+            statementId: statementId ?? null,
+            paragraphId: null,
+            speaker: stmt?.speaker ?? null,
+            speakerNormalizedId: stmt?.speakerNormalizedId ?? null,
+            sourceUrl: statementsData.sourceUrl ?? "",
+            attestationId,
+          });
+
+          if (stmt) loadedCount++;
+        }
+        console.log(`[LocalVectorStore] Loaded ${loadedCount} statement vectors from ${dirName} (via statements.json fallback)`);
+      } else {
+        console.warn(`[LocalVectorStore] No retrieval_chunks.json or statements.json in ${dirName}, text content unavailable`);
+        console.log(`[LocalVectorStore] Loaded ${embeddingsData.vectors.length} vectors from ${dirName} (no text)`);
+      }
     } catch (error) {
       console.warn(`[LocalVectorStore] Failed to load ${dirName}:`, error);
     }
@@ -198,7 +231,7 @@ export class LocalVectorStore {
 
       results.push({
         chunkId,
-        attestationId: metadata?.attestationId ?? embedding.chunkId.split("_")[0],
+        attestationId: metadata?.attestationId ?? (embedding.metadata as { attestationId?: string })?.attestationId ?? "unknown",
         chunkType: embedding.chunkType,
         text: metadata?.text ?? "",
         speaker: metadata?.speaker ?? null,
@@ -210,9 +243,25 @@ export class LocalVectorStore {
     }
 
     // Sort by score descending and take top-K
-    return results
+    const topResults = results
       .sort((a, b) => b.score - a.score)
       .slice(0, topK);
+
+    // Log the best finds
+    if (topResults.length > 0) {
+      console.log(`[VectorStore] Top ${topResults.length} similarity matches:`);
+      for (let i = 0; i < Math.min(topResults.length, 5); i++) {
+        const r = topResults[i];
+        const textPreview = r.text.length > 80 ? r.text.slice(0, 80) + "..." : r.text;
+        const speakerInfo = r.speaker ? ` (${r.speaker})` : "";
+        console.log(`[VectorStore]   [${i + 1}] score=${r.score.toFixed(4)} | ${r.chunkType}${speakerInfo} | "${textPreview}"`);
+      }
+      if (topResults.length > 5) {
+        console.log(`[VectorStore]   ... and ${topResults.length - 5} more matches`);
+      }
+    }
+
+    return topResults;
   }
 
   /**

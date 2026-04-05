@@ -23,6 +23,7 @@ import { runGeneralQuestionPipeline } from "./general-question";
 import { runVerifyClaimPipeline } from "./verify-claim";
 import { runDetectContradictionsPipeline } from "./detect-contradictions";
 import { getLocalVectorStore, type ScoredChunk } from "../storage/local-vector-store";
+import { getStatementVerifier, type VerifiedStatementResult } from "../retrieval/statement-verifier";
 
 // ---------------------------------------------------------------------------
 // Unified output type
@@ -145,12 +146,62 @@ export async function runPipeline(
   }
 
   // -------------------------------------------------------------------------
-  // Step 4: Build chunks from local data (text already available)
+  // Step 4: Verify statement hashes against 0G Storage
   // -------------------------------------------------------------------------
 
-  // Filter scored chunks to only those from matching attestations and above min score
+  // Initialize statement verifier and get verified statement IDs per attestation
+  const statementVerifier = await getStatementVerifier();
+  const verifiedStatementIdsByAttestation = new Map<string, Set<string>>();
+  const abandonedStatements: VerifiedStatementResult[] = [];
+
+  for (const attId of searchAttestationIds) {
+    if (!statementVerifier.hasManifest(attId)) {
+      console.log(`[Pipeline] No manifest for ${attId}, skipping hash verification`);
+      continue;
+    }
+
+    const verifiedIds = await statementVerifier.getVerifiedStatementIds(attId);
+    verifiedStatementIdsByAttestation.set(attId, verifiedIds);
+
+    // Log abandoned statements
+    const abandoned = statementVerifier.getAbandonedStatements(attId);
+    abandonedStatements.push(...abandoned);
+  }
+
+  if (abandonedStatements.length > 0) {
+    console.log(`[Pipeline] ${abandonedStatements.length} statements abandoned due to hash mismatch:`);
+    for (const abandoned of abandonedStatements.slice(0, 5)) {
+      console.log(`[Pipeline]   - ${abandoned.statementId}: ${abandoned.reason}`);
+    }
+    if (abandonedStatements.length > 5) {
+      console.log(`[Pipeline]   ... and ${abandonedStatements.length - 5} more`);
+    }
+  } else {
+    console.log(`[Pipeline] All statements verified successfully`);
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 5: Build chunks from local data (text already available)
+  // -------------------------------------------------------------------------
+
+  // Helper to check if a chunk's statement is verified
+  const isStatementVerified = (chunk: ScoredChunk): boolean => {
+    // Only statement chunks need verification
+    if (chunk.chunkType !== "statement") return true;
+
+    const verifiedIds = verifiedStatementIdsByAttestation.get(chunk.attestationId);
+    if (!verifiedIds) return true; // No verification data, assume ok
+
+    // The chunk's metadata contains the statementId
+    const metadata = vectorStore.getChunkMetadata(chunk.chunkId);
+    if (!metadata?.statementId) return true; // No statementId, skip
+
+    return verifiedIds.has(metadata.statementId);
+  };
+
+  // Filter scored chunks to only those from matching attestations, above min score, and verified
   const scoredChunks: RetrievedChunk[] = topScoredChunks
-    .filter(c => searchAttestationIds.includes(c.attestationId) && c.score >= minScore)
+    .filter(c => searchAttestationIds.includes(c.attestationId) && c.score >= minScore && isStatementVerified(c))
     .map(c => ({
       chunkId: c.chunkId,
       documentId: c.attestationId, // Use attestationId as documentId
@@ -203,7 +254,7 @@ export async function runPipeline(
   console.log(`[Pipeline] Returning ${scoredChunks.length} chunks from ${documents.length} documents`);
 
   // -------------------------------------------------------------------------
-  // Step 5: Dispatch to correct pipeline (early exit for empty results)
+  // Step 6: Dispatch to correct pipeline (early exit for empty results)
   // -------------------------------------------------------------------------
 
   if (scoredChunks.length === 0) {
@@ -268,7 +319,7 @@ export async function runPipeline(
   }
 
   // -------------------------------------------------------------------------
-  // Step 6: Dispatch to correct pipeline
+  // Step 7: Dispatch to correct pipeline
   // -------------------------------------------------------------------------
 
   // Build the LLM caller wrapper based on mode
