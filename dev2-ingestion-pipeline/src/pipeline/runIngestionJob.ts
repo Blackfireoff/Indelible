@@ -143,7 +143,12 @@ export async function runIngestionJob(
   );
   savePipelineJson("embeddings.json", JSON.stringify(embeddings, null, 2), archiveDir);
 
-  console.log("[upload] Uploading artifacts to storage …");
+  // Raw capture address first so a slow/failing derived upload cannot block manifest construction.
+  const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
+  const rawCaptureAddress =
+    dataAddress ?? (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
+
+  console.log("[upload] Uploading derived artifacts to storage …");
   const addresses = await uploadArtifacts(
     adapter,
     cleanArticle,
@@ -152,10 +157,6 @@ export async function runIngestionJob(
     embeddings,
     refinedStatementsArtifact,
   );
-
-  const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
-  const rawCaptureAddress =
-    dataAddress ?? (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
 
   const manifest = buildDocumentManifest(
     rawCapture,
@@ -166,6 +167,7 @@ export async function runIngestionJob(
   );
 
   const manifestJson = JSON.stringify(manifest, null, 2);
+  // Toujours persister le manifest dans l’archive locale avant l’upload réseau (0G peut bloquer ou échouer).
   savePipelineJson("document_manifest.json", manifestJson, archiveDir);
   const manifestAddress = await adapter.uploadArtifact("document_manifest.json", manifestJson);
 

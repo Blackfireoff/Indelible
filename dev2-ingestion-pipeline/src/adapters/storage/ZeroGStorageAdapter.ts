@@ -62,6 +62,39 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     this.privateKey = key;
   }
 
+  /**
+   * After a successful upload, we normally wait until an indexer reports storage nodes (required
+   * for immediate download). When the indexer lags or misbehaves, failing here would block the
+   * whole pipeline and prevent writing the Merkle root into the manifest.
+   *
+   * By default this wait is **best-effort**: on timeout/error we log a warning and continue so
+   * `uploadArtifact` still returns the root hash. Set `ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD=true`
+   * to restore hard-fail behavior (previous default semantics).
+   */
+  private async waitForIndexerAfterUpload(rootHash: string, label: string): Promise<void> {
+    const strict = process.env.ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD === "true";
+    try {
+      await waitUntilAnyIndexerHasLocations(
+        this.indexerUrlCandidates,
+        rootHash,
+        label,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (strict) {
+        throw err;
+      }
+      console.warn(
+        `[0G] ${label}: indexer did not report storage locations in time — continuing with root hash ${rootHash.slice(0, 18)}…`,
+      );
+      console.warn(
+        `[0G] The manifest will reference this address; downloads may fail until the indexer/storage sync. ` +
+          `(ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD=true to fail the pipeline instead.)`,
+      );
+      console.warn(`[0G] Detail: ${msg.slice(0, 500)}`);
+    }
+  }
+
   async uploadArtifact(fileName: string, data: string): Promise<string> {
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
@@ -153,11 +186,7 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
       const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
       console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
-      await waitUntilAnyIndexerHasLocations(
-        this.indexerUrlCandidates,
-        returnedRoot,
-        "post-upload",
-      );
+      await this.waitForIndexerAfterUpload(returnedRoot, "post-upload");
       return returnedRoot;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
