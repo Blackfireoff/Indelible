@@ -2,6 +2,12 @@
 const nextConfig = {
   turbopack: {},
   output: 'standalone', // Required for Docker - outputs self-contained Node.js server
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack: (config) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     return config

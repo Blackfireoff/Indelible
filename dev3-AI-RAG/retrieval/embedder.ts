@@ -10,7 +10,6 @@
  * This must match the model used by Dev 2 for pre-computing chunk embeddings.
  */
 
-import { pipeline, type FeatureExtractionPipeline } from "@xenova/transformers";
 import type { Chunk } from "../storage/types";
 
 export interface Embedding {
@@ -25,6 +24,8 @@ export interface IEmbedder {
 
 // Model identifier - must match what Dev 2 uses
 const MODEL_NAME = "Xenova/all-MiniLM-L6-v2";
+
+type FeatureExtractionPipeline = Awaited<ReturnType<typeof import("@xenova/transformers").pipeline>>;
 
 /**
  * Production-grade embedder using Transformers.js.
@@ -48,6 +49,9 @@ export class TransformersEmbedder implements IEmbedder {
       return this.initPromise;
     }
 
+    // Dynamic import to avoid WASM initialization during build
+    const { pipeline } = await import("@xenova/transformers");
+
     this.initPromise = pipeline(
       "feature-extraction",
       MODEL_NAME
@@ -68,7 +72,7 @@ export class TransformersEmbedder implements IEmbedder {
     const p = await this.getPipeline();
     const output = await p(text, {
       pooling: "mean",
-      normalize: true,
+      normalize: true as const,
     });
     return Array.from(output.data);
   }
@@ -87,7 +91,7 @@ export class TransformersEmbedder implements IEmbedder {
 
     const output = await p(texts, {
       pooling: "mean",
-      normalize: true,
+      normalize: true as const,
     });
 
     return chunks.map((chunk, i) => ({
