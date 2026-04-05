@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <!-- FontAwesome CDN — same icons as the website -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
   <div class="panel">
 
@@ -51,8 +53,11 @@
           <div class="connect-icon-box">
             <i class="fa-solid fa-link"></i>
           </div>
-          <h2 class="connect-title">Connect to Indelible</h2>
-          <p class="connect-desc">Sign in through the main website to start searching political speeches from any page.</p>
+          <h2 class="connect-title">Connect to <span
+              style="text-decoration-line: underline; text-decoration-color: var(--accent-color); text-decoration-thickness: 3px; text-underline-offset: 6px;">INDELIBLE.</span>
+          </h2>
+          <p class="connect-desc">Sign in through the main website to start searching political speeches from any page.
+          </p>
           <button class="btn-primary btn-lg" id="btn-open-site">
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
             Open Indelible
@@ -92,7 +97,8 @@
             Add details
           </button>
           <div class="details-body hidden" id="details-body">
-            <textarea id="details-input" placeholder="Add context: time period, specific politicians, topics…" rows="3"></textarea>
+            <textarea id="details-input" placeholder="Add context: time period, specific politicians, topics…"
+              rows="3"></textarea>
           </div>
         </div>
 
@@ -114,7 +120,8 @@
           <i class="fa-solid fa-triangle-exclamation"></i>
           <div>
             <p class="warning-title">Insufficient INDL balance</p>
-            <p class="warning-desc">Each search costs 1 INDL. <a href="#" id="link-get-token">Get more requests →</a></p>
+            <p class="warning-desc">Each search costs 1 INDL. <a href="#" id="link-get-token">Get more requests →</a>
+            </p>
           </div>
         </div>
       </div>
@@ -191,4 +198,5 @@
   </div>
   <script src="sidepanel.js"></script>
 </body>
+
 </html>
