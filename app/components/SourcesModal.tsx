@@ -175,9 +175,14 @@ export default function SourcesModal({ isOpen, onClose, document }: SourcesModal
           {/* Metadata pills */}
           <div className="flex flex-wrap items-center gap-3">
             {document.sequence !== undefined && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full">
-                <span className="text-[12px] text-[var(--landing-text-secondary)]">Seq: {document.sequence}</span>
-              </div>
+              <a
+                href={`https://storagescan-galileo.0g.ai/submission/${document.sequence}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full hover:border-[var(--landing-primary)] hover:text-[var(--landing-primary)] transition-colors"
+              >
+                <span className="text-[12px] text-[var(--landing-text-secondary)]">0G #{document.sequence} ↗</span>
+              </a>
             )}
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full">
               <FontAwesomeIcon icon={faBuildingColumns} className="w-3 h-3 text-[var(--landing-text-secondary)]" />

@@ -15,6 +15,7 @@ const publicClient = createPublicClient({
 import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
+import { faLink } from '@fortawesome/free-solid-svg-icons'
 import SearchBar from './SearchBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles, faSpinner, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -73,6 +74,7 @@ export default function SearchResults() {
   const [isLoadingDocument, setIsLoadingDocument] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const lastSearchedQuery = useRef<string | null>(null)
+  const [sequenceMap, setSequenceMap] = useState<Record<string, number>>({})
 
   useEffect(() => {
     if (status !== 'reconnecting' && status !== 'connecting' && !isConnected) {
@@ -89,6 +91,36 @@ export default function SearchResults() {
     setSearchQuery(query)
     performSearch(query)
   }, [query])
+
+  // Fetch 0G sequence numbers for all unique attestation IDs when results change
+  useEffect(() => {
+    if (!result?.output?.citations?.length) return
+    const uniqueAttestations = [...new Set(result.output.citations.map(c => c.attestationId).filter(Boolean))]
+    if (uniqueAttestations.length === 0) return
+
+    let cancelled = false
+    Promise.all(
+      uniqueAttestations.map(async (attId) => {
+        try {
+          const res = await fetch(`/api/clean-article?attestationId=${encodeURIComponent(attId)}`)
+          if (!res.ok) return null
+          const data = await res.json()
+          return { attId, sequence: data.article?.sequence as number | undefined }
+        } catch {
+          return null
+        }
+      })
+    ).then((results) => {
+      if (cancelled) return
+      const map: Record<string, number> = {}
+      for (const r of results) {
+        if (r && r.sequence !== undefined) map[r.attId] = r.sequence
+      }
+      setSequenceMap(map)
+    })
+
+    return () => { cancelled = true }
+  }, [result])
 
   const performSearch = async (q: string) => {
     if (!q.trim()) return
@@ -355,15 +387,28 @@ export default function SearchResults() {
                           <span className="text-[14px] font-semibold text-[var(--landing-text-primary)]">{quote.author}</span>
                         </div>
                         <div className="flex items-center gap-4 pl-10">
-                          <div className="flex items-center gap-1.5 relative group/file">
-                            <FontAwesomeIcon icon={faFileLines} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)] shrink-0" />
-                            <span className="text-[14px] text-[var(--landing-text-secondary)] truncate max-w-[200px]">
-                              {quote.source}
-                            </span>
-                            <div className="absolute top-full left-0 mt-2 px-3 py-1.5 bg-[#1A1A1A] text-white text-[12px] font-medium rounded-lg opacity-0 invisible translate-y-1.5 scale-95 origin-top-left group-hover/file:opacity-100 group-hover/file:visible group-hover/file:translate-y-0 group-hover/file:scale-100 transition-all duration-300 delay-200 ease-out whitespace-nowrap shadow-lg z-50 pointer-events-none">
-                              {quote.source}
+                          {quote.attestationId && sequenceMap[quote.attestationId] !== undefined ? (
+                            <a
+                              href={`https://storagescan-galileo.0g.ai/submission/${sequenceMap[quote.attestationId]}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 text-[14px] text-[var(--landing-primary)] hover:text-[var(--landing-primary-dark)] transition-colors hover:underline"
+                            >
+                              <FontAwesomeIcon icon={faLink} className="w-3.5 h-3.5 shrink-0" />
+                              <span>0G Submission #{sequenceMap[quote.attestationId]}</span>
+                              <FontAwesomeIcon icon={faUpRightFromSquare} className="w-2.5 h-2.5 opacity-60" />
+                            </a>
+                          ) : (
+                            <div className="flex items-center gap-1.5 relative group/file">
+                              <FontAwesomeIcon icon={faFileLines} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)] shrink-0" />
+                              <span className="text-[14px] text-[var(--landing-text-secondary)] truncate max-w-[200px]">
+                                {quote.source}
+                              </span>
+                              <div className="absolute top-full left-0 mt-2 px-3 py-1.5 bg-[#1A1A1A] text-white text-[12px] font-medium rounded-lg opacity-0 invisible translate-y-1.5 scale-95 origin-top-left group-hover/file:opacity-100 group-hover/file:visible group-hover/file:translate-y-0 group-hover/file:scale-100 transition-all duration-300 delay-200 ease-out whitespace-nowrap shadow-lg z-50 pointer-events-none">
+                                {quote.source}
+                              </div>
                             </div>
-                          </div>
+                          )}
                           <div className="flex items-center gap-1.5">
                             <FontAwesomeIcon icon={faCalendarDays} className="w-3.5 h-3.5 text-[var(--landing-text-secondary)]" />
                             <span className="text-[14px] text-[var(--landing-text-secondary)]">{quote.date}</span>
