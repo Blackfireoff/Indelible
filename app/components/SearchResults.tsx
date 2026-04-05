@@ -229,6 +229,7 @@ export default function SearchResults() {
             : citation.date,
         fullArticle: fullArticleText,
         paragraphs: article.paragraphs || undefined,
+        sequence: article.sequence,
       })
     } catch (err) {
       console.error('Error fetching clean article:', err)

@@ -22,6 +22,7 @@ export interface CleanArticle {
   observedAt: string;
   sourceUrl: string;
   authors: string[];
+  sequence: number;
   extractionMetadata: {
     rawFileHash: string;
     cleaningTimestamp: string;
@@ -124,7 +125,12 @@ export class CleanArticleFetcher {
         }
 
         const content = readFileSync(tmpPath, "utf-8");
-        return JSON.parse(content) as CleanArticle;
+        const article = JSON.parse(content) as CleanArticle;
+
+        // Add sequence number from manifest
+        article.sequence = manifest.artifacts.cleanArticle.sequence;
+
+        return article;
       } finally {
         try {
           unlinkSync(tmpPath);
