@@ -21,6 +21,7 @@ import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingG
 
 interface Citation {
   chunkId: string
+  attestationId: string
   quote: string
   sourceUrl: string
   observedAt: string
@@ -69,6 +70,7 @@ export default function SearchResults() {
   const [searchQuery, setSearchQuery] = useState(query)
   const [result, setResult] = useState<ApiResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingDocument, setIsLoadingDocument] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const lastSearchedQuery = useRef<string | null>(null)
 
@@ -180,7 +182,61 @@ export default function SearchResults() {
     articleTitle: 'Source Document',
     articleAuthor: 'Indelible RAG',
     fullArticle: cit.quote,
+    // Store attestationId for fetching clean article
+    attestationId: cit.attestationId,
   })) || []
+
+  // Fetch full clean article when user clicks "Read Original Document"
+  const handleReadOriginalDocument = async (citation: SourceDocument) => {
+    // If we already have the article loaded, just show it
+    if (citation.paragraphs && citation.paragraphs.length > 0) {
+      setSelectedDocument(citation)
+      return
+    }
+
+    if (!citation.attestationId) {
+      setSelectedDocument(citation)
+      return
+    }
+
+    setIsLoadingDocument(true)
+    try {
+      const res = await fetch(`/api/clean-article?attestationId=${encodeURIComponent(citation.attestationId)}`)
+      if (!res.ok) {
+        console.error('Failed to fetch clean article')
+        setSelectedDocument(citation)
+        return
+      }
+
+      const data = await res.json()
+      const article = data.article
+
+      // Build fullText from paragraphs if available
+      const fullArticleText = article.paragraphs
+        ? article.paragraphs.map((p: any) => p.text).join('\n\n')
+        : article.fullText || article.content || citation.fullArticle
+
+      // Update the citation with the full article content
+      setSelectedDocument({
+        ...citation,
+        articleTitle: article.title || citation.articleTitle,
+        articleAuthor: article.authors?.join(', ') || citation.articleAuthor,
+        source: article.publisher || article.sourceUrl || citation.source,
+        date: article.publishedAt
+          ? new Date(article.publishedAt).toLocaleDateString()
+          : article.observedAt
+            ? new Date(article.observedAt).toLocaleDateString()
+            : citation.date,
+        fullArticle: fullArticleText,
+        paragraphs: article.paragraphs || undefined,
+      })
+    } catch (err) {
+      console.error('Error fetching clean article:', err)
+      setSelectedDocument(citation)
+    } finally {
+      setIsLoadingDocument(false)
+    }
+  }
 
   // Human-readable message when no evidence is found
   const getSummaryMessage = () => {
@@ -315,11 +371,18 @@ export default function SearchResults() {
                       </div>
 
                       <Button
-                        onPress={() => setSelectedDocument(quote)}
-                        className="bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer"
+                        onPress={() => handleReadOriginalDocument(quote)}
+                        isLoading={isLoadingDocument}
+                        disabled={isLoadingDocument}
+                        className="bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                       >
-                        Read Original Document
-                        <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />
+                        {!isLoadingDocument && (
+                          <>
+                            Read Original Document
+                            <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />
+                          </>
+                        )}
+                        {isLoadingDocument && 'Loading...'}
                       </Button>
                     </div>
                   </div>
