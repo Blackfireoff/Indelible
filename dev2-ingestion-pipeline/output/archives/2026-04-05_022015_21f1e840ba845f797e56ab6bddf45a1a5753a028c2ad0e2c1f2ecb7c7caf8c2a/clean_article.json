@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+  "publisher": "Reuters",
+  "language": "en",
+  "title": "Trump reflects on limits to his power",
+  "subtitle": null,
+  "publishedAt": "2026-04-02T19:00:00Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_862726827549a665",
+      "order": 1,
+      "text": "President Donald Trump arrives from the Blue Room to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab",
+      "charStart": 0,
+      "charEnd": 231,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_ea199778d350c2b8",
+      "order": 2,
+      "text": "April 2 - Donald Trump’s speech to Americans on Wednesday told us little new about a month-old war that’s come to dominate his presidency. But the U.S. president’s comments this week to allies and even reporters about the limits on his power at home and abroad have been more revealing.",
+      "charStart": 233,
+      "charEnd": 519,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_2d3b7b15e56c6fbd",
+      "order": 3,
+      "text": "Over the weekend, demonstrators opposed to Trump’s policies gathered in thousands of U.S. cities for protests held under the banner of “No Kings.”",
+      "charStart": 521,
+      "charEnd": 667,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_e2a85eddfdc69aaa",
+      "order": 4,
+      "text": "\"They call me king now, do you believe it? ‘No king,’” Trump said at the White House on Wednesday. \"I'm such a king I can't get a ballroom approved… I could be doing a lot more if I was a king.”",
+      "charStart": 669,
+      "charEnd": 863,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(5)"
+      }
+    },
+    {
+      "paragraphId": "para_104069575417269f",
+      "order": 5,
+      "text": "Candid, lively and discursive, those were Trump’s unfiltered remarks to close allies gathered for an Easter lunch. In the remarks, a powerful president who often projects confidence reflected on the restraints he faces. The comments came after Trump visited the Supreme Court in a historic first for a president and heard justices he appointed skeptically question a lawyer defending his limits on birthright citizenship. (Trump was accompanied to the court by Attorney General Pam Bondi, who he fired on Thursday)",
+      "charStart": 865,
+      "charEnd": 1379,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(6)"
+      }
+    },
+    {
+      "paragraphId": "para_b31913d68b68ea55",
+      "order": 6,
+      "text": "Trump also suggested the financial demands of pursuing the U.S.-Israeli war with Iran were forcing hard choices at home. The federal government could not, he said, focus on issues like the cost of childcare. “We can't take care of daycare,\" Trump said. \"We have to take care of one thing: military protection. We have to guard the country.\"",
+      "charStart": 1381,
+      "charEnd": 1721,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_37fb6981a6a8a489",
+      "order": 7,
+      "text": "Those comments were not what the public heard from the president on Wednesday. The event was closed to me and the other members of the press pool covering Trump that day and only became public when the White House briefly posted a video of the remarks online - and then deleted them shortly thereafter.",
+      "charStart": 1723,
+      "charEnd": 2025,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(8)"
+      }
+    },
+    {
+      "paragraphId": "para_65f620ade13432d9",
+      "order": 8,
+      "text": "What the public saw instead Wednesday night was a different Trump: serious, defiant and tightly scripted, delivering a primetime address that did little to assuage fears that the Middle East conflict could widen.",
+      "charStart": 2027,
+      "charEnd": 2239,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    },
+    {
+      "paragraphId": "para_944234a68c5c2957",
+      "order": 9,
+      "text": "The contrast was stark. When my colleague Steve Holland called Trump before the speech, the president vented about NATO in aggrieved language that never appeared in the formal address.",
+      "charStart": 2241,
+      "charEnd": 2425,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(10)"
+      }
+    },
+    {
+      "paragraphId": "para_fa2dbb3ec12fc0e7",
+      "order": 10,
+      "text": "As reporters who follow Trump, we track the president’s moods and rhetorical styles closely. Teleprompter Trump is different from the looser telephone Trump, and both are different from the president at a rally or among his closest confidants.",
+      "charStart": 2427,
+      "charEnd": 2670,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(11)"
+      }
+    },
+    {
+      "paragraphId": "para_01ebf37fec84def2",
+      "order": 11,
+      "text": "In this White House, Trump serves as messenger-in-chief. These days, his less-scripted moments are revealing a president who feels increasingly boxed in by a Congress failing to deliver his legislative priorities, skeptical federal courts, reluctant foreign allies and a war in Iran that’s complicated his push to rein in inflation.",
+      "charStart": 2672,
+      "charEnd": 3004,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(12)"
+      }
+    },
+    {
+      "paragraphId": "para_e308f4aea9ff3351",
+      "order": 12,
+      "text": "Trump’s primetime speech did not include direct criticism of NATO. But he has spent days bashing the military alliance and even threatening to withdraw, blasting its members as doing little to help with Iran and in the Strait of Hormuz. \"Hopefully, we're never going to need 'em,” Trump said on Wednesday. “I don't think we will need 'em.\"",
+      "charStart": 3006,
+      "charEnd": 3345,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(15)"
+      }
+    },
+    {
+      "paragraphId": "para_98822b68f8fd1882",
+      "order": 13,
+      "text": "Experts say it is not clear whether Trump could act unilaterally to leave the 77-year-old trans-Atlantic coalition, but Trump’s criticisms have troubled Washington’s major European allies. They’re pressing their case directly with the U.S. president: Finnish President Alexander Stubb spoke to Trump on Wednesday, and NATO Secretary-General Mark Rutte will visit Washington next week. It remains to be seen whether they can save an alliance that may be in tatters once the Iran war is over.",
+      "charStart": 3347,
+      "charEnd": 3837,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(16)"
+      }
+    },
+    {
+      "paragraphId": "para_1f13eb3c422e9dcd",
+      "order": 14,
+      "text": "April 2: Washington-based planning commission weighs approving Trump’s White House ballroom",
+      "charStart": 3839,
+      "charEnd": 3930,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(20)"
+      }
+    },
+    {
+      "paragraphId": "para_6c3f496228e7d070",
+      "order": 15,
+      "text": "April 6: Trump participates in the White House Easter Egg Roll",
+      "charStart": 3932,
+      "charEnd": 3994,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(21)"
+      }
+    },
+    {
+      "paragraphId": "para_bd04abb5b96b5224",
+      "order": 16,
+      "text": "April 7: Trump-backed candidate faces Democrat in Georgia race to replace former Representative Marjorie Taylor Greene",
+      "charStart": 3996,
+      "charEnd": 4114,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(22)"
+      }
+    },
+    {
+      "paragraphId": "para_9cff5f0ac8aeeb1a",
+      "order": 17,
+      "text": "April 7-8: Vice President JD Vance to visit Hungary ahead of election there",
+      "charStart": 4116,
+      "charEnd": 4191,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(23)"
+      }
+    },
+    {
+      "paragraphId": "para_095e07b6b0a4fbcb",
+      "order": 18,
+      "text": "Reporting by Trevor Hunnicutt; Editing by Colleen Jenkins and Alistair Bell",
+      "charStart": 4193,
+      "charEnd": 4268,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(24)"
+      }
+    },
+    {
+      "paragraphId": "para_bd4381566552c0fe",
+      "order": 19,
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "charStart": 4270,
+      "charEnd": 4337,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(25)"
+      }
+    },
+    {
+      "paragraphId": "para_c78f835de1a70c6a",
+      "order": 20,
+      "text": "Trevor Hunnicutt is White House Correspondent at Reuters News. He writes about U.S. foreign and domestic policy and regularly travels with the President of the United States. Prior to joining the White House team in 2021, he covered presidential campaigns, economics, finance and investing for many years. He has also served on the board of the White House Correspondents' Association. Hunnicutt holds a bachelor's degree from Pomona College and a master's from the London School of Economics.",
+      "charStart": 4339,
+      "charEnd": 4832,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(26)"
+      }
+    }
+  ],
+  "fullText": "President Donald Trump arrives from the Blue Room to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab\n\nApril 2 - Donald Trump’s speech to Americans on Wednesday told us little new about a month-old war that’s come to dominate his presidency. But the U.S. president’s comments this week to allies and even reporters about the limits on his power at home and abroad have been more revealing.\n\nOver the weekend, demonstrators opposed to Trump’s policies gathered in thousands of U.S. cities for protests held under the banner of “No Kings.”\n\n\"They call me king now, do you believe it? ‘No king,’” Trump said at the White House on Wednesday. \"I'm such a king I can't get a ballroom approved… I could be doing a lot more if I was a king.”\n\nCandid, lively and discursive, those were Trump’s unfiltered remarks to close allies gathered for an Easter lunch. In the remarks, a powerful president who often projects confidence reflected on the restraints he faces. The comments came after Trump visited the Supreme Court in a historic first for a president and heard justices he appointed skeptically question a lawyer defending his limits on birthright citizenship. (Trump was accompanied to the court by Attorney General Pam Bondi, who he fired on Thursday)\n\nTrump also suggested the financial demands of pursuing the U.S.-Israeli war with Iran were forcing hard choices at home. The federal government could not, he said, focus on issues like the cost of childcare. “We can't take care of daycare,\" Trump said. \"We have to take care of one thing: military protection. We have to guard the country.\"\n\nThose comments were not what the public heard from the president on Wednesday. The event was closed to me and the other members of the press pool covering Trump that day and only became public when the White House briefly posted a video of the remarks online - and then deleted them shortly thereafter.\n\nWhat the public saw instead Wednesday night was a different Trump: serious, defiant and tightly scripted, delivering a primetime address that did little to assuage fears that the Middle East conflict could widen.\n\nThe contrast was stark. When my colleague Steve Holland called Trump before the speech, the president vented about NATO in aggrieved language that never appeared in the formal address.\n\nAs reporters who follow Trump, we track the president’s moods and rhetorical styles closely. Teleprompter Trump is different from the looser telephone Trump, and both are different from the president at a rally or among his closest confidants.\n\nIn this White House, Trump serves as messenger-in-chief. These days, his less-scripted moments are revealing a president who feels increasingly boxed in by a Congress failing to deliver his legislative priorities, skeptical federal courts, reluctant foreign allies and a war in Iran that’s complicated his push to rein in inflation.\n\nTrump’s primetime speech did not include direct criticism of NATO. But he has spent days bashing the military alliance and even threatening to withdraw, blasting its members as doing little to help with Iran and in the Strait of Hormuz. \"Hopefully, we're never going to need 'em,” Trump said on Wednesday. “I don't think we will need 'em.\"\n\nExperts say it is not clear whether Trump could act unilaterally to leave the 77-year-old trans-Atlantic coalition, but Trump’s criticisms have troubled Washington’s major European allies. They’re pressing their case directly with the U.S. president: Finnish President Alexander Stubb spoke to Trump on Wednesday, and NATO Secretary-General Mark Rutte will visit Washington next week. It remains to be seen whether they can save an alliance that may be in tatters once the Iran war is over.\n\nApril 2: Washington-based planning commission weighs approving Trump’s White House ballroom\n\nApril 6: Trump participates in the White House Easter Egg Roll\n\nApril 7: Trump-backed candidate faces Democrat in Georgia race to replace former Representative Marjorie Taylor Greene\n\nApril 7-8: Vice President JD Vance to visit Hungary ahead of election there\n\nReporting by Trevor Hunnicutt; Editing by Colleen Jenkins and Alistair Bell\n\nOur Standards: The Thomson Reuters Trust Principles., opens new tab\n\nTrevor Hunnicutt is White House Correspondent at Reuters News. He writes about U.S. foreign and domestic policy and regularly travels with the President of the United States. Prior to joining the White House team in 2021, he covered presidential campaigns, economics, finance and investing for many years. He has also served on the board of the White House Correspondents' Association. Hunnicutt holds a bachelor's degree from Pomona College and a master's from the London School of Economics."
+}

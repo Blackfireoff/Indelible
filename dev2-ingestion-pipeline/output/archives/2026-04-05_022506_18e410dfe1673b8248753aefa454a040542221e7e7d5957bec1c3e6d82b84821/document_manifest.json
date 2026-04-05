@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+  "publisher": "Reuters",
+  "language": "en",
+  "observedAt": "2026-04-05T02:24:43.000Z",
+  "artifacts": {
+    "rawCapture": {
+      "fileName": "raw_capture.json",
+      "dataAddress": "0x9d7f0245732fa061c4fd44d6a1ae9aa2c630b4f9da797e7b6e04cedcbd8e7a65",
+      "sequence": 36797,
+      "flowTxHash": "0xbcfe26f87852406af3a8f81ef592b9a507f9b3c09301cec1f9f8adb1ed1cf505"
+    },
+    "cleanArticle": {
+      "fileName": "clean_article.json",
+      "dataAddress": "0xc423ebe8abf88bd841b970f65c6c73d7e1bc543a69eb82fd6eb77056b29c1046",
+      "sequence": 36799,
+      "flowTxHash": "0x93c6e9e72ab6d30006dae6ef413b19653966132e8ee3843b1928f1fc0b21f7aa"
+    },
+    "statements": {
+      "fileName": "statements.json",
+      "dataAddress": "0xacc578ff23134c4c1d1f398a4104ba14d83d641faff73e615cbac4bd90790a33",
+      "sequence": 36801,
+      "flowTxHash": "0x012e01dd795c1d8a83750985dfa8e2ce2d07314cf42cfd994688d2cb913fe1c3"
+    },
+    "retrievalChunks": {
+      "fileName": "retrieval_chunks.json",
+      "dataAddress": "0x27b493232134ac181cfaa2a8db202d2fe117b5900628e81548d2f99ca388a1ca",
+      "sequence": 36806,
+      "flowTxHash": "0xa705291cba706f0caa5e4e8c045c070a2c8b37f7643dd2a3f0ba20adf47fcbf4"
+    },
+    "embeddings": {
+      "fileName": "embeddings.json",
+      "dataAddress": "0xb8e9d1b39b7e36c8de790ef99aee6e4e8da9fe5ebfd98438987c528af7efc2ef",
+      "sequence": 36807,
+      "flowTxHash": "0xbed7c4cb1efe28f24a98d3695ac5e6a30bd7f59f8ea2c94f2400e0f76ac0e822"
+    }
+  },
+  "processing": {
+    "dev2PipelineVersion": "1.0.0",
+    "status": "completed"
+  }
+}

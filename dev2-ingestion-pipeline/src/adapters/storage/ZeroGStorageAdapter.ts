@@ -38,6 +38,21 @@ const DEFAULT_INDEXER_URL = "https://indexer-storage-testnet-turbo.0g.ai";
 /** Minimum balance considered safe for at least one upload (~0.001 A0GI). */
 const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
 
+function getUploadTimeoutMsFromEnv(): number | null {
+  const raw = process.env.ZEROG_UPLOAD_WAIT_TIMEOUT_MS;
+  if (!raw || raw.trim() === "") {
+    return 180_000;
+  }
+  const parsed = parseInt(raw, 10);
+  if (!Number.isFinite(parsed)) {
+    return 180_000;
+  }
+  if (parsed <= 0) {
+    return null;
+  }
+  return parsed;
+}
+
 export class ZeroGStorageAdapter implements StorageAdapter {
   private readonly rpcUrl: string;
   /** First entry of `indexerUrlCandidates` — used for `indexer.upload`. */
@@ -202,7 +217,7 @@ export class ZeroGStorageAdapter implements StorageAdapter {
       const rootHash = tree!.rootHash() as string;
       console.log(`[0G] Attempting on-chain submission for root: ${rootHash}…`);
 
-      const [tx, uploadErr] = await indexer.upload(
+      const uploadPromise = indexer.upload(
         zgFile,
         this.rpcUrl,
         signer,
@@ -210,6 +225,23 @@ export class ZeroGStorageAdapter implements StorageAdapter {
         retryOpts,
         txOpts,
       );
+
+      const uploadTimeoutMs = getUploadTimeoutMsFromEnv();
+      const [tx, uploadErr] = uploadTimeoutMs
+        ? await Promise.race([
+            uploadPromise,
+            new Promise<never>((_, reject) => {
+              setTimeout(() => {
+                reject(
+                  new Error(
+                    `[0G] Upload wait timed out after ${uploadTimeoutMs}ms (ZEROG_UPLOAD_WAIT_TIMEOUT_MS). ` +
+                      `The storage log may still finalize later.`,
+                  ),
+                );
+              }, uploadTimeoutMs);
+            }),
+          ])
+        : await uploadPromise;
 
       if (uploadErr !== null) {
         const errMsg = String(uploadErr);
