@@ -1,0 +1,25 @@
+{
+  "archivedAt": "2026-04-05T00:34:48.468Z",
+  "attestationId": "0xe93aae3bd021dd8b202b78523e2a729dd1c6f43e5362b25e3775611aa2a2979f",
+  "requestId": "0xaafe6667a0458111337db679a0057bb992d524c0575abc653ebc91cecd1cc1f2",
+  "sourceUrl": "file:///C:/Users/hippo/Documents/Indelible/example6.html",
+  "storageAdapter": "zerog",
+  "localArchiveDir": "C:\\Users\\hippo\\Documents\\Indelible\\dev2-ingestion-pipeline\\output\\archives\\2026-04-05_003046_0xe93aae3bd021dd8b202b78523e2a729dd1c6f43e5362b25e3775611aa2a297",
+  "rawCaptureAddress": "0x841da077d828601ff3476900438aa14b047a2eb91cd4e15c7fa96d91b60cea42",
+  "manifestAddress": "0xf0bb999c2fc69a5f30fe277c2fa922dd5af5a599eb70ef8a545db01fa95f29fb",
+  "addresses": {
+    "cleanArticle": "0xa301f067f47160df198eadcb7eb57a38c7657c94f18b571da32dcd3a024da361",
+    "statements": "0x8cbde249fe76c759a87fbd949f920d1090e68d2077cf5d04109df3f611b24653",
+    "refinedStatements": "0x4a7e68bf92ad9d13a246b65f47ac099ac7793bd903e6b5422127ead16339c376",
+    "retrievalChunks": "0x7f9073862346bb1aa3c53f92379da41d6c66675700f76167c42bb9c9951e36ff",
+    "embeddings": "0x6edd50d51479632ef0350c9c8d54a61127e21c93821495af403cd5e3ba51d570"
+  },
+  "summary": {
+    "paragraphCount": 38,
+    "statementCount": 10,
+    "chunkCount": 48,
+    "vectorCount": 48,
+    "refinedStatementTotal": 10,
+    "refinedVerified": 10
+  }
+}
