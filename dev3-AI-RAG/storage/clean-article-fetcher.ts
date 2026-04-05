@@ -56,9 +56,9 @@ export class CleanArticleFetcher {
   }
 
   /**
-   * Get the manifest for an attestation ID from local storage.
+   * Get the manifest and its directory for an attestation ID from local storage.
    */
-  private getManifest(attestationId: string): DocumentManifest | null {
+  private getManifest(attestationId: string): { manifest: DocumentManifest; directory: string } | null {
     // Find the directory that contains this attestation
     // The directories are named like: 2026-04-05_003046_{attestationId}
     const { readdirSync, statSync, readFileSync: readFile } = require("fs");
@@ -81,7 +81,7 @@ export class CleanArticleFetcher {
       try {
         const manifest: DocumentManifest = JSON.parse(readFile(manifestPath, "utf-8"));
         if (manifest.attestationId === attestationId) {
-          return manifest;
+          return { manifest, directory: fullPath };
         }
       } catch {
         // Skip invalid manifests
@@ -96,13 +96,35 @@ export class CleanArticleFetcher {
    * Fetch the clean article from 0G Storage.
    */
   async fetchCleanArticle(attestationId: string): Promise<CleanArticle | null> {
-    const manifest = this.getManifest(attestationId);
-    if (!manifest) {
+    const result = this.getManifest(attestationId);
+    if (!result) {
       console.warn(`[CleanArticleFetcher] No manifest for ${attestationId}`);
       return null;
     }
 
-    const dataAddress = manifest.artifacts.cleanArticle.dataAddress;
+    const { manifest, directory } = result;
+    const { fileName, dataAddress } = manifest.artifacts.cleanArticle;
+
+    // 1. Try local file first (especially for mocks or already downloaded articles)
+    const localPath = join(directory, fileName);
+    if (existsSync(localPath)) {
+      try {
+        console.log(`[CleanArticleFetcher] Local file found for ${attestationId}, skipping 0G download.`);
+        const content = readFileSync(localPath, "utf-8");
+        const article = JSON.parse(content) as CleanArticle;
+        article.sequence = manifest.artifacts.cleanArticle.sequence || 0;
+        return article;
+      } catch (err) {
+        console.error(`[CleanArticleFetcher] Error reading local clean article:`, err);
+      }
+    }
+
+    // 2. If it's a mock and we don't have it locally, we can't fetch it
+    if (dataAddress.startsWith("mock://")) {
+      console.warn(`[CleanArticleFetcher] Mock data address found but local file missing: ${dataAddress}`);
+      return null;
+    }
+
     console.log(`[CleanArticleFetcher] Fetching clean article from 0G: ${dataAddress.slice(0, 20)}...`);
 
     try {
