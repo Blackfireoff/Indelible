@@ -25,6 +25,7 @@ export interface SourceDocument {
   articleTitle?: string
   fullArticle: string
   attestationId?: string
+  sequence?: number
   paragraphs?: Array<{
     paragraphId: string
     order: number
@@ -188,6 +189,11 @@ export default function SourcesModal({ isOpen, onClose, document }: SourcesModal
 
           {/* Metadata pills */}
           <div className="flex flex-wrap items-center gap-3">
+            {document.sequence !== undefined && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full">
+                <span className="text-[12px] text-[var(--landing-text-secondary)]">Seq: {document.sequence}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--landing-bg)] border border-[var(--landing-border)] rounded-full">
               <FontAwesomeIcon icon={faBuildingColumns} className="w-3 h-3 text-[var(--landing-text-secondary)]" />
               <span className="text-[12px] text-[var(--landing-text-secondary)]">{document.source}</span>
