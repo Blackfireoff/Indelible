@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm i
 
 # =============================================================================
 # Stage 2: Builder
@@ -52,9 +52,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy local embeddings data (from dev2)
-# These JSON files contain pre-computed embeddings for similarity search
-COPY --chown=nextjs:nodejs /app/data ./data
+# Create data directory for embeddings (populated at runtime via volume mount or fetched from 0G)
+RUN mkdir -p ./data && chown nextjs:nodejs ./data
 
 # Switch to non-root user
 USER nextjs
@@ -68,3 +67,4 @@ ENV HOSTNAME="0.0.0.0"
 
 # Start the application
 CMD ["node", "server.js"]
+

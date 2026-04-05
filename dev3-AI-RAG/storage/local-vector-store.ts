@@ -51,6 +51,12 @@ interface EmbeddingEntry {
   chunkId: string;
   chunkType: string;
   vector: number[];
+  metadata?: {
+    statementId?: string;
+    paragraphId?: string;
+    speakerNormalizedId?: string;
+    attestationId?: string;
+  };
 }
 
 interface EmbeddingsData {
