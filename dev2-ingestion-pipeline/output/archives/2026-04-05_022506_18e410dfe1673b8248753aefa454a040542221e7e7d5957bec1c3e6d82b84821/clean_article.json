@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+  "publisher": "Reuters",
+  "language": "en",
+  "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list",
+  "subtitle": null,
+  "publishedAt": "2026-04-02T18:42:06.207Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_2a942c0afd87e714",
+      "order": 1,
+      "text": "President Donald Trump arrives to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab",
+      "charStart": 0,
+      "charEnd": 212,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_1517ca0c7b9e71d5",
+      "order": 2,
+      "text": "WASHINGTON, April 2 (Reuters) - U.S. President Donald Trump is set to unveil a $1.5 trillion defense budget request for the next fiscal year on Friday, by far the largest year-over-year increase in defense spending in the post-World War Two era.",
+      "charStart": 214,
+      "charEnd": 459,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_8faa2ffd0bb6b521",
+      "order": 3,
+      "text": "Funding for Trump's marquee but controversial $185 billion \"Golden Dome\" missile defense shield is expected to be included in the budget request as well as Lockheed Martin",
+      "charStart": 461,
+      "charEnd": 632,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_5fd468febddc5b14",
+      "order": 4,
+      "text": "Procurement of Virginia-class submarines made by General Dynamics",
+      "charStart": 634,
+      "charEnd": 699,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_232121c7b59bc4c8",
+      "order": 5,
+      "text": "as well as other top shipbuilding priorities is expected.",
+      "charStart": 701,
+      "charEnd": 758,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    },
+    {
+      "paragraphId": "para_ab55c43177936be0",
+      "order": 6,
+      "text": "Last year, Trump asked Congress for a national defense budget of $892.6 billion then added $150 billion through a supplemental budget request, sending the total price tag over $1 trillion for the first time in history.",
+      "charStart": 760,
+      "charEnd": 978,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(10)"
+      }
+    },
+    {
+      "paragraphId": "para_2f11dcf5bedbffa6",
+      "order": 7,
+      "text": "While the budget request framework for the fiscal year ending September 30, 2027 is set to be unveiled on Friday, a Pentagon official said more details on the defense budget will be announced on April 21.",
+      "charStart": 980,
+      "charEnd": 1184,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(11)"
+      }
+    },
+    {
+      "paragraphId": "para_31453e3509913a97",
+      "order": 8,
+      "text": "Earlier this year the administration was contemplating whether the $1.5 trillion budget request could be in the form of a $900 billion national security budget, with a $400 billion to $600 billion additional request, similar to the structure used in 2026.",
+      "charStart": 1186,
+      "charEnd": 1441,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(12)"
+      }
+    },
+    {
+      "paragraphId": "para_9f3e4163fc875ca8",
+      "order": 9,
+      "text": "The administration plans to use funds for more weapons production in the hopes of deterring Chinese aggression in the Indo-Pacific region and to rebuild weapons stocks depleted by conflicts in Israel, Iran and Ukraine.",
+      "charStart": 1443,
+      "charEnd": 1661,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(13)"
+      }
+    },
+    {
+      "paragraphId": "para_29adae6bdfd30a17",
+      "order": 10,
+      "text": "The budget request will be debated in Congress in the coming weeks and months.",
+      "charStart": 1663,
+      "charEnd": 1741,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(14)"
+      }
+    },
+    {
+      "paragraphId": "para_6270f67298d79d66",
+      "order": 11,
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "charStart": 1743,
+      "charEnd": 1810,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(16)"
+      }
+    },
+    {
+      "paragraphId": "para_69ed72ea5a660829",
+      "order": 12,
+      "text": "Mike Stone is a Reuters reporter covering the U.S. arms trade and defense industry. Most recently Mike has been focused on the Golden Dome missile defense shield. Mike also spends a lot of his time writing on Ukraine and how industry has adapted, or faltered as it supports that conflict. Mike, a New Yorker, has extensively covered how the U.S. has supplied Ukraine with weapons, the cadence, decisions and milestones that have had battlefield impacts. Before his time in Washington Mike’s coverage focused on mergers and acquisitions for oil and gas companies, financial institutions, defense companies, consumer product makers, retailers, real estate giants, and telecommunications companies.",
+      "charStart": 1812,
+      "charEnd": 2507,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(17)"
+      }
+    }
+  ],
+  "fullText": "President Donald Trump arrives to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab\n\nWASHINGTON, April 2 (Reuters) - U.S. President Donald Trump is set to unveil a $1.5 trillion defense budget request for the next fiscal year on Friday, by far the largest year-over-year increase in defense spending in the post-World War Two era.\n\nFunding for Trump's marquee but controversial $185 billion \"Golden Dome\" missile defense shield is expected to be included in the budget request as well as Lockheed Martin\n\nProcurement of Virginia-class submarines made by General Dynamics\n\nas well as other top shipbuilding priorities is expected.\n\nLast year, Trump asked Congress for a national defense budget of $892.6 billion then added $150 billion through a supplemental budget request, sending the total price tag over $1 trillion for the first time in history.\n\nWhile the budget request framework for the fiscal year ending September 30, 2027 is set to be unveiled on Friday, a Pentagon official said more details on the defense budget will be announced on April 21.\n\nEarlier this year the administration was contemplating whether the $1.5 trillion budget request could be in the form of a $900 billion national security budget, with a $400 billion to $600 billion additional request, similar to the structure used in 2026.\n\nThe administration plans to use funds for more weapons production in the hopes of deterring Chinese aggression in the Indo-Pacific region and to rebuild weapons stocks depleted by conflicts in Israel, Iran and Ukraine.\n\nThe budget request will be debated in Congress in the coming weeks and months.\n\nOur Standards: The Thomson Reuters Trust Principles., opens new tab\n\nMike Stone is a Reuters reporter covering the U.S. arms trade and defense industry. Most recently Mike has been focused on the Golden Dome missile defense shield. Mike also spends a lot of his time writing on Ukraine and how industry has adapted, or faltered as it supports that conflict. Mike, a New Yorker, has extensively covered how the U.S. has supplied Ukraine with weapons, the cadence, decisions and milestones that have had battlefield impacts. Before his time in Washington Mike’s coverage focused on mergers and acquisitions for oil and gas companies, financial institutions, defense companies, consumer product makers, retailers, real estate giants, and telecommunications companies."
+}

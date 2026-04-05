@@ -40,7 +40,7 @@ export function createArchiveRunDir(attestationId: string, _requestId: string): 
   const att = sanitizeSegment(attestationId) || "unknown_attestation";
   const runId = `${date}_${time}_${att}`;
 
-  const dir = resolve(process.cwd(), base, "archives", runId);
+  const dir = resolve(process.cwd(), base, "embeddings", runId);
   mkdirSync(dir, { recursive: true });
   return dir;
 }

@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+  "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+  "chunkingStrategy": {
+    "statementChunks": true,
+    "paragraphChunks": true,
+    "version": "1.0.0"
+  },
+  "chunks": [
+    {
+      "chunkId": "chunk_s_ac894050628b83d2",
+      "chunkType": "statement",
+      "text": "\"Hopefully, we're never going to need 'em,” Trump said on Wednesday. “I don't think we will need 'em.\"",
+      "statementId": "stmt_555d71f6a3ab8712",
+      "paragraphId": "para_e308f4aea9ff3351",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": "Donald Trump",
+        "speakerNormalizedId": "donald_trump",
+        "quoteType": "direct",
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_d815d5c1a55f598e",
+      "chunkType": "paragraph",
+      "text": "President Donald Trump arrives from the Blue Room to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab",
+      "statementId": null,
+      "paragraphId": "para_862726827549a665",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_1eb7f508f97eb394",
+      "chunkType": "paragraph",
+      "text": "April 2 - Donald Trump’s speech to Americans on Wednesday told us little new about a month-old war that’s come to dominate his presidency. But the U.S. president’s comments this week to allies and even reporters about the limits on his power at home and abroad have been more revealing.",
+      "statementId": null,
+      "paragraphId": "para_ea199778d350c2b8",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_bc0b0a7615ba58a6",
+      "chunkType": "paragraph",
+      "text": "Over the weekend, demonstrators opposed to Trump’s policies gathered in thousands of U.S. cities for protests held under the banner of “No Kings.”",
+      "statementId": null,
+      "paragraphId": "para_2d3b7b15e56c6fbd",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_384a0e72301d0a7b",
+      "chunkType": "paragraph",
+      "text": "\"They call me king now, do you believe it? ‘No king,’” Trump said at the White House on Wednesday. \"I'm such a king I can't get a ballroom approved… I could be doing a lot more if I was a king.”",
+      "statementId": null,
+      "paragraphId": "para_e2a85eddfdc69aaa",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_c319ef28a9f1f038",
+      "chunkType": "paragraph",
+      "text": "Candid, lively and discursive, those were Trump’s unfiltered remarks to close allies gathered for an Easter lunch. In the remarks, a powerful president who often projects confidence reflected on the restraints he faces. The comments came after Trump visited the Supreme Court in a historic first for a president and heard justices he appointed skeptically question a lawyer defending his limits on birthright citizenship. (Trump was accompanied to the court by Attorney General Pam Bondi, who he fired on Thursday)",
+      "statementId": null,
+      "paragraphId": "para_104069575417269f",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_f72249a1aaa4dc14",
+      "chunkType": "paragraph",
+      "text": "Trump also suggested the financial demands of pursuing the U.S.-Israeli war with Iran were forcing hard choices at home. The federal government could not, he said, focus on issues like the cost of childcare. “We can't take care of daycare,\" Trump said. \"We have to take care of one thing: military protection. We have to guard the country.\"",
+      "statementId": null,
+      "paragraphId": "para_b31913d68b68ea55",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_e11a1c56aed931bd",
+      "chunkType": "paragraph",
+      "text": "Those comments were not what the public heard from the president on Wednesday. The event was closed to me and the other members of the press pool covering Trump that day and only became public when the White House briefly posted a video of the remarks online - and then deleted them shortly thereafter.",
+      "statementId": null,
+      "paragraphId": "para_37fb6981a6a8a489",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fb6140c7a3827711",
+      "chunkType": "paragraph",
+      "text": "What the public saw instead Wednesday night was a different Trump: serious, defiant and tightly scripted, delivering a primetime address that did little to assuage fears that the Middle East conflict could widen.",
+      "statementId": null,
+      "paragraphId": "para_65f620ade13432d9",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_4dd43a3f1f4359b3",
+      "chunkType": "paragraph",
+      "text": "The contrast was stark. When my colleague Steve Holland called Trump before the speech, the president vented about NATO in aggrieved language that never appeared in the formal address.",
+      "statementId": null,
+      "paragraphId": "para_944234a68c5c2957",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_26d82e1542a5ed28",
+      "chunkType": "paragraph",
+      "text": "As reporters who follow Trump, we track the president’s moods and rhetorical styles closely. Teleprompter Trump is different from the looser telephone Trump, and both are different from the president at a rally or among his closest confidants.",
+      "statementId": null,
+      "paragraphId": "para_fa2dbb3ec12fc0e7",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fff39862e9caca04",
+      "chunkType": "paragraph",
+      "text": "In this White House, Trump serves as messenger-in-chief. These days, his less-scripted moments are revealing a president who feels increasingly boxed in by a Congress failing to deliver his legislative priorities, skeptical federal courts, reluctant foreign allies and a war in Iran that’s complicated his push to rein in inflation.",
+      "statementId": null,
+      "paragraphId": "para_01ebf37fec84def2",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_154711bc15a6f957",
+      "chunkType": "paragraph",
+      "text": "Trump’s primetime speech did not include direct criticism of NATO. But he has spent days bashing the military alliance and even threatening to withdraw, blasting its members as doing little to help with Iran and in the Strait of Hormuz. \"Hopefully, we're never going to need 'em,” Trump said on Wednesday. “I don't think we will need 'em.\"",
+      "statementId": null,
+      "paragraphId": "para_e308f4aea9ff3351",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_b97d9f9ef88b39dc",
+      "chunkType": "paragraph",
+      "text": "Experts say it is not clear whether Trump could act unilaterally to leave the 77-year-old trans-Atlantic coalition, but Trump’s criticisms have troubled Washington’s major European allies. They’re pressing their case directly with the U.S. president: Finnish President Alexander Stubb spoke to Trump on Wednesday, and NATO Secretary-General Mark Rutte will visit Washington next week. It remains to be seen whether they can save an alliance that may be in tatters once the Iran war is over.",
+      "statementId": null,
+      "paragraphId": "para_98822b68f8fd1882",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_4a48d8a9a4c134bf",
+      "chunkType": "paragraph",
+      "text": "April 2: Washington-based planning commission weighs approving Trump’s White House ballroom",
+      "statementId": null,
+      "paragraphId": "para_1f13eb3c422e9dcd",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_95e1f1c8e787fd93",
+      "chunkType": "paragraph",
+      "text": "April 6: Trump participates in the White House Easter Egg Roll",
+      "statementId": null,
+      "paragraphId": "para_6c3f496228e7d070",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fe4347af57ed455d",
+      "chunkType": "paragraph",
+      "text": "April 7: Trump-backed candidate faces Democrat in Georgia race to replace former Representative Marjorie Taylor Greene",
+      "statementId": null,
+      "paragraphId": "para_bd04abb5b96b5224",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_0ae6a6dd2046ff35",
+      "chunkType": "paragraph",
+      "text": "April 7-8: Vice President JD Vance to visit Hungary ahead of election there",
+      "statementId": null,
+      "paragraphId": "para_9cff5f0ac8aeeb1a",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_0f60b5c50da24933",
+      "chunkType": "paragraph",
+      "text": "Reporting by Trevor Hunnicutt; Editing by Colleen Jenkins and Alistair Bell",
+      "statementId": null,
+      "paragraphId": "para_095e07b6b0a4fbcb",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_328d8373800529c7",
+      "chunkType": "paragraph",
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "statementId": null,
+      "paragraphId": "para_bd4381566552c0fe",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    },
+    {
+      "chunkId": "chunk_p_a3c4086c139c1d13",
+      "chunkType": "paragraph",
+      "text": "Trevor Hunnicutt is White House Correspondent at Reuters News. He writes about U.S. foreign and domestic policy and regularly travels with the President of the United States. Prior to joining the White House team in 2021, he covered presidential campaigns, economics, finance and investing for many years. He has also served on the board of the White House Correspondents' Association. Hunnicutt holds a bachelor's degree from Pomona College and a master's from the London School of Economics.",
+      "statementId": null,
+      "paragraphId": "para_c78f835de1a70c6a",
+      "metadata": {
+        "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+        "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Trump reflects on limits to his power"
+      }
+    }
+  ]
+}

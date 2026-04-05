@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "env:merge": "node scripts/merge-subproject-envs.mjs",
+    "pipeline:dev2:file": "node scripts/run-dev2-from-file.mjs",
+    "pipeline:chain": "node scripts/run-dev1-dev2.mjs",
     "test": "jest",
     "test:watch": "jest --watch"
   },
