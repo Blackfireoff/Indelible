@@ -48,7 +48,7 @@ export interface VerifiedRefinedStatement extends LlmRawStatement {
   verified: boolean;
   verification_method: VerificationMethod;
   matched_spans: MatchedSpan[];
-  extracted_by: "deterministic" | "llm_refinement";
+  extracted_by: "deterministic" | "llm" | "llm_refinement";
 }
 
 export interface RefinedStatementsArtifact {

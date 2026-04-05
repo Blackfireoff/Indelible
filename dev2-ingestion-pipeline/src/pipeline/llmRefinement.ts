@@ -1,47 +1,45 @@
 /**
- * LLM Refinement step – uses a local OpenAI-compatible endpoint (e.g. LM Studio)
- * to extract statements from the already-cleaned article JSON.
+ * LLM Refinement step — extrait des déclarations depuis le JSON article (pas de HTML).
+ *
+ * Fournisseurs :
+ *  - `local` : endpoint compatible OpenAI (LM Studio, etc.) — comportement historique.
+ *  - `0g`    : 0G Compute via `@0glabs/0g-serving-broker` (comme dev3-AI-RAG).
  *
  * Rules (non-negotiable):
  *  1. Never sends raw HTML to the LLM – only clean paragraph text.
- *  2. If the endpoint is unreachable, returns [] and logs a warning.
+ *  2. If the endpoint / 0G init fails, returns [] and logs a warning.
  *  3. Every returned statement is verified against the source text before export.
  *  4. schema-validated JSON output only (strict parsing with fallback).
  *
- * Env vars:
- *  ENABLE_LLM_REFINEMENT   "true" | "false"
- *  LOCAL_LLM_BASE_URL      e.g. "http://127.0.0.1:1234/v1"
- *  LOCAL_LLM_API_KEY       e.g. "lm-studio"
- *  LOCAL_LLM_MODEL         e.g. "qwen2.5-7b-instruct"
- *  LOCAL_LLM_TIMEOUT_MS    e.g. "60000"
+ * Env vars (voir aussi `.env.example`) :
+ *  ENABLE_LLM_REFINEMENT     "true" | "false"
+ *  LLM_REFINEMENT_PROVIDER   "local" | "0g"   (défaut: local)
+ *
+ * Local :
+ *  LOCAL_LLM_BASE_URL, LOCAL_LLM_API_KEY, LOCAL_LLM_MODEL, LOCAL_LLM_TIMEOUT_MS
+ *
+ * 0G Compute :
+ *  ZEROG_PRIVATE_KEY ou LLM_0G_PRIVATE_KEY
+ *  LLM_0G_RPC_URL ou ZEROG_RPC_URL
+ *  LLM_0G_PROVIDER_ADDRESS   (optionnel — sinon premier service "chatbot")
+ *  LLM_0G_MODEL              (optionnel — sinon modèle du service)
+ *  LLM_0G_MAX_TOKENS
  */
 
+import type OpenAI from "openai";
 import type { CleanArticle, ArticleParagraph } from "../schemas/cleanArticle.js";
 import type { LlmRawStatement, StatementType } from "../schemas/refinedStatements.js";
+import { ensureZerogLlmClient } from "./zerogLlmClient.js";
+import {
+  completeLlmChat,
+  extractJsonFromOutput,
+  resolveLlmConfig,
+  type LlmRefinementConfig,
+} from "./llmShared.js";
 
-// ─── Configuration ────────────────────────────────────────────────────────────
+export type { LlmRefinementConfig, LlmRefinementProvider } from "./llmShared.js";
 
-export interface LlmRefinementConfig {
-  baseUrl?: string;
-  apiKey?: string;
-  model?: string;
-  timeoutMs?: number;
-  /** Max paragraphs per LLM request window (default 5) */
-  windowSize?: number;
-  /** Max application-level retry attempts per window (default 2) */
-  maxWindowRetries?: number;
-}
-
-function resolveConfig(cfg: LlmRefinementConfig = {}): Required<LlmRefinementConfig> {
-  return {
-    baseUrl: cfg.baseUrl ?? process.env.LOCAL_LLM_BASE_URL ?? "http://127.0.0.1:1234/v1",
-    apiKey: cfg.apiKey ?? process.env.LOCAL_LLM_API_KEY ?? "lm-studio",
-    model: cfg.model ?? process.env.LOCAL_LLM_MODEL ?? "local-model",
-    timeoutMs: cfg.timeoutMs ?? parseInt(process.env.LOCAL_LLM_TIMEOUT_MS ?? "60000", 10),
-    windowSize: cfg.windowSize ?? 5,
-    maxWindowRetries: cfg.maxWindowRetries ?? 2,
-  };
-}
+const resolveConfig = resolveLlmConfig;
 
 // ─── Prompt ───────────────────────────────────────────────────────────────────
 
@@ -53,22 +51,29 @@ OUTPUT: A JSON object { "statements": [...] }.
 ══ ABSOLUTE RULES ══
 1. "statement_text" MUST be copied CHARACTER FOR CHARACTER from the paragraph text. No rewording. No summary. No paraphrase.
 2. "evidence_paragraph_ids" MUST contain ONLY IDs that appear in the INPUT. Never invent IDs.
-3. Only extract statements where a named person (politician, official, spokesperson) is clearly the source.
+3. Extract statements where someone is clearly the source of the words (direct quote or clearly attributed reported speech). Prefer politicians, officials, and named actors.
 4. Output ONLY the raw JSON object. No markdown. No code fences. No explanation before or after.
-5. If a paragraph contains a direct quote in quotation marks attributed to a named person, you MUST include it.
-6. Do NOT include background facts or context not attributed to a specific person.
+5. If a paragraph contains a direct quote in quotation marks with attribution, you MUST include it.
+6. Do NOT include background facts or narrator-only context with no attributable speaker.
+
+══ SPEAKER (MANDATORY) ══
+7. For EVERY statement you output, "speaker" MUST be a non-empty string. Never use null, "", or omit the field.
+8. Name who is speaking using the BEST reading of the paragraph: exact name or title as in the text when possible.
+9. If attribution is indirect (e.g. pronoun or "the official" after a name was given earlier in the SAME paragraph), resolve it to that person or entity for "speaker".
+10. If several interpretations are possible, choose the single most plausible speaker and set "confidence" accordingly (lower when uncertain).
+11. If you truly cannot identify any speaker, do NOT emit that row at all (omit the statement rather than leaving "speaker" empty).
 
 ══ FIELD REFERENCE ══
 statement_text   : verbatim copy from paragraph (required)
-speaker          : full name as written in the article, or null
+speaker          : non-empty string — who is treated as the source of this statement (required)
 speaker_role     : role/title or null
 statement_type   : one of [direct_quote, reported_speech, claim, denial, threat, promise, background]
-attribution_text : the phrase like "Trump said" or "according to X" that links speaker to statement, or null
+attribution_text : short phrase grounding the link (e.g. "Trump said", "according to the ministry"); use null only if impossible
 evidence_paragraph_ids : array of IDs from the input (required, at least one)
 confidence       : float 0.0–1.0
 
 ══ OUTPUT SCHEMA ══
-{"statements":[{"speaker":"...","speaker_role":"...","statement_text":"...","statement_type":"direct_quote","attribution_text":"...","evidence_paragraph_ids":["para_id"],"confidence":0.9}]}`;
+{"statements":[{"speaker":"Full Name or Title","speaker_role":"...","statement_text":"...","statement_type":"direct_quote","attribution_text":"...","evidence_paragraph_ids":["para_id"],"confidence":0.9}]}`;
 
 function buildUserMessage(paragraphs: ArticleParagraph[]): string {
   const paraJson = paragraphs.map((p) => ({
@@ -113,63 +118,6 @@ function detectQuoteSnippets(paragraphs: ArticleParagraph[]): string[] {
     if (snippets.length >= 3) break;
   }
   return snippets;
-}
-
-// ─── JSON extraction ──────────────────────────────────────────────────────────
-
-/**
- * Robustly extract JSON from LLM output.
- *
- * Handles:
- *  - Markdown code fences (```json ... ```)
- *  - Leading/trailing prose before/after the JSON
- *  - BOM characters
- *
- * Strategy: find the first `{` or `[`, then use a brace counter to locate
- * the matching close brace/bracket. Avoids fragile regex-on-JSON.
- */
-function extractJsonFromOutput(raw: string): string | null {
-  // Strip BOM
-  const text = raw.replace(/^\uFEFF/, "").trim();
-
-  // 1. Try stripping fences anywhere in the string (multiline)
-  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fenceMatch) {
-    const inner = fenceMatch[1].trim();
-    if (inner.startsWith("{") || inner.startsWith("[")) return inner;
-  }
-
-  // 2. Find first { or [ and walk to matching close
-  const startBrace = text.indexOf("{");
-  const startBracket = text.indexOf("[");
-  let start = -1;
-  let openChar: string;
-  let closeChar: string;
-
-  if (startBrace === -1 && startBracket === -1) return null;
-  if (startBrace === -1) { start = startBracket; openChar = "["; closeChar = "]"; }
-  else if (startBracket === -1) { start = startBrace; openChar = "{"; closeChar = "}"; }
-  else if (startBrace < startBracket) { start = startBrace; openChar = "{"; closeChar = "}"; }
-  else { start = startBracket; openChar = "["; closeChar = "]"; }
-
-  let depth = 0;
-  let inString = false;
-  let escape = false;
-
-  for (let i = start; i < text.length; i++) {
-    const ch = text[i];
-    if (escape) { escape = false; continue; }
-    if (ch === "\\" && inString) { escape = true; continue; }
-    if (ch === '"') { inString = !inString; continue; }
-    if (inString) continue;
-    if (ch === openChar) depth++;
-    else if (ch === closeChar) {
-      depth--;
-      if (depth === 0) return text.slice(start, i + 1);
-    }
-  }
-
-  return null;
 }
 
 // ─── Schema validation ────────────────────────────────────────────────────────
@@ -291,28 +239,40 @@ export async function runLlmRefinement(
 ): Promise<{ statements: LlmRawStatement[]; modelUsed: string }> {
   const cfg = resolveConfig(config);
 
-  console.log(`[llmRefinement] Connecting to ${cfg.baseUrl} (model: ${cfg.model})`);
+  let localClient: OpenAI | null = null;
 
-  let OpenAI: typeof import("openai").default;
-  try {
-    const mod = await import("openai");
-    OpenAI = mod.default;
-  } catch {
-    console.warn("[llmRefinement] openai package not available – skipping LLM refinement");
-    return { statements: [], modelUsed: cfg.model };
+  if (cfg.provider === "local") {
+    console.log(`[llmRefinement] Provider=local → ${cfg.baseUrl} (model: ${cfg.model})`);
+    try {
+      const mod = await import("openai");
+      localClient = new mod.default({
+        baseURL: cfg.baseUrl,
+        apiKey: cfg.apiKey,
+        timeout: cfg.timeoutMs,
+        maxRetries: 0,
+      });
+    } catch {
+      console.warn("[llmRefinement] openai package not available – skipping LLM refinement");
+      return { statements: [], modelUsed: cfg.model };
+    }
+  } else {
+    console.log("[llmRefinement] Provider=0g (0G Compute) …");
+    try {
+      const z = await ensureZerogLlmClient({});
+      console.log(
+        `[llmRefinement] 0G endpoint: ${z.endpoint} | service model: ${z.defaultModel} | provider: ${z.providerAddress.slice(0, 10)}…`,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[llmRefinement] 0G init failed: ${msg} — skipping LLM refinement.`);
+      return { statements: [], modelUsed: cfg.model };
+    }
   }
-
-  // maxRetries: 0 here because we implement our own application-level retry
-  const client = new OpenAI({
-    baseURL: cfg.baseUrl,
-    apiKey: cfg.apiKey,
-    timeout: cfg.timeoutMs,
-    maxRetries: 0,
-  });
 
   const allStatements: LlmRawStatement[] = [];
   const { windowSize, maxWindowRetries } = cfg;
   const paragraphs = article.paragraphs;
+  let lastModelUsed = cfg.model;
 
   for (let i = 0; i < paragraphs.length; i += windowSize) {
     const window = paragraphs.slice(i, i + windowSize);
@@ -335,33 +295,31 @@ export async function runLlmRefinement(
 
       let rawContent: string;
       try {
-        const response = await client.chat.completions.create({
-          model: cfg.model,
-          temperature: 0,
-          max_tokens: 2048,
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: userMsg },
-          ],
-        });
-        rawContent = response.choices[0]?.message?.content ?? "";
+        const out = await completeLlmChat(cfg, localClient, SYSTEM_PROMPT, userMsg);
+        rawContent = out.rawContent;
+        lastModelUsed = out.modelUsed;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
-        // Connection refused → endpoint not running, abort entire refinement
-        if (
+        const networkLike =
           msg.includes("ECONNREFUSED") ||
           msg.includes("fetch failed") ||
           msg.includes("connect ECONNREFUSED") ||
           msg.includes("Failed to fetch") ||
-          msg.includes("ENOTFOUND")
-        ) {
+          msg.includes("ENOTFOUND");
+
+        if (networkLike && cfg.provider === "local") {
           console.warn(
             `[llmRefinement] LLM endpoint not reachable at ${cfg.baseUrl}. ` +
-            "Falling back to deterministic-only mode."
+              "Falling back to deterministic-only mode.",
           );
           return { statements: [], modelUsed: cfg.model };
         }
-        // Other error (timeout, etc.) – log and retry
+        if (networkLike && cfg.provider === "0g") {
+          console.warn(
+            `[llmRefinement] 0G inference unreachable or failed: ${msg.slice(0, 200)} — aborting refinement.`,
+          );
+          return { statements: [], modelUsed: lastModelUsed };
+        }
         console.warn(`[llmRefinement] ${windowLabel} attempt ${attempt} failed: ${msg.slice(0, 120)}`);
         continue;
       }
@@ -406,5 +364,5 @@ export async function runLlmRefinement(
   });
 
   console.log(`[llmRefinement] Total: ${deduped.length} unique statement(s) extracted by LLM`);
-  return { statements: deduped, modelUsed: cfg.model };
+  return { statements: deduped, modelUsed: lastModelUsed };
 }

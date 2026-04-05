@@ -5,15 +5,15 @@
 import { loadRawCaptureFromStorage } from "./loadRawCapture.js";
 import { extractMainArticle } from "./extractMainArticle.js";
 import { buildCleanArticle } from "./buildCleanArticle.js";
-import { extractStatements } from "./extractStatements.js";
 import { validateStatements, buildParagraphMap } from "./validateStatements.js";
 import { filterConservativeStatements } from "./conservativeAttribution.js";
-import { runLlmRefinement } from "./llmRefinement.js";
-import { verifyRefinedStatements, deterministicStatementsToRefined } from "./verifyRefinedStatements.js";
+import { extractStatementsFromCleanArticle } from "./llmExtractStatements.js";
+import { deterministicStatementsToRefined } from "./verifyRefinedStatements.js";
 import { buildRetrievalChunks } from "./buildRetrievalChunks.js";
 import { generateEmbeddings } from "./generateEmbeddings.js";
 import { uploadArtifacts } from "./uploadArtifacts.js";
-import { saveArtifactLocallyIfEnabled } from "../utils/saveLocalArtifact.js";
+import { createArchiveRunDir, archiveRootLabel } from "../utils/localArtifactArchive.js";
+import { savePipelineJson } from "../utils/saveLocalArtifact.js";
 import { buildDocumentManifest } from "./buildDocumentManifest.js";
 import type { StorageAdapter } from "../adapters/storage/StorageAdapter.js";
 import type { RawCapture } from "../schemas/rawCapture.js";
@@ -58,6 +58,12 @@ export async function runIngestionJob(
   console.log(`[job] Attestation: ${rawCapture.attestationId}`);
   console.log(`[job] Source URL:   ${rawCapture.sourceUrl}`);
 
+  const archiveDir = createArchiveRunDir(rawCapture.attestationId, rawCapture.requestId);
+  if (archiveDir) {
+    console.log(`[archive] Local run folder: ${archiveRootLabel(archiveDir)} → ${archiveDir}`);
+    savePipelineJson("raw_capture.json", JSON.stringify(rawCapture, null, 2), archiveDir);
+  }
+
   console.log("[extract] Running Mozilla Readability …");
   const extracted = await extractMainArticle(rawCapture.dataBrut, rawCapture.sourceUrl);
   console.log(
@@ -71,13 +77,11 @@ export async function runIngestionJob(
     `[clean_article] ${cleanArticle.paragraphs.length} paragraphs | ` +
       `${cleanArticle.fullText.length} chars`,
   );
+  savePipelineJson("clean_article.json", JSON.stringify(cleanArticle, null, 2), archiveDir);
 
-  console.log("[statements] Extracting statements (deterministic rules) …");
-  const rawStatements = await extractStatements(
-    cleanArticle.paragraphs,
-    rawCapture.attestationId,
-    { useLlmFallback: false },
-  );
+  console.log("[statements] Extracting statements (LLM from clean_article) …");
+  const { statements: rawStatements, modelUsed: statementLlmModel } =
+    await extractStatementsFromCleanArticle(cleanArticle, rawCapture.attestationId);
 
   const paragraphMap = buildParagraphMap(cleanArticle.paragraphs);
   const validatedStatements = validateStatements(rawStatements, paragraphMap);
@@ -99,71 +103,52 @@ export async function runIngestionJob(
     },
     statements: conservativeStatements,
   };
+  savePipelineJson("statements.json", JSON.stringify(statementsArtifact, null, 2), archiveDir);
 
-  const enableLlmRefinement = process.env.ENABLE_LLM_REFINEMENT === "true";
-  let refinedStatementsArtifact: RefinedStatementsArtifact | undefined;
+  const refinedFromStatements = deterministicStatementsToRefined(conservativeStatements, "llm");
+  const refinedStatementsArtifact: RefinedStatementsArtifact = {
+    schemaVersion: "1.0",
+    attestationId: rawCapture.attestationId,
+    requestId: rawCapture.requestId,
+    sourceUrl: rawCapture.sourceUrl,
+    llm_used: true,
+    llm_model: statementLlmModel,
+    statements: refinedFromStatements,
+    extraction_summary: {
+      total: refinedFromStatements.length,
+      verified: refinedFromStatements.length,
+      unverified: 0,
+    },
+  };
 
-  if (enableLlmRefinement) {
-    console.log("[llm-refinement] Running LLM refinement step …");
-    const { statements: llmRaw, modelUsed } = await runLlmRefinement(cleanArticle);
-    const deterministicRefined = deterministicStatementsToRefined(conservativeStatements);
-    const llmVerified = verifyRefinedStatements(llmRaw, cleanArticle, { keepUnverified: false });
-    const deterministicTexts = new Set(deterministicRefined.map((s) => s.statement_text.slice(0, 80)));
-    const newFromLlm = llmVerified.filter(
-      (s) => !deterministicTexts.has(s.statement_text.slice(0, 80)),
-    );
-    const allRefined = [...deterministicRefined, ...newFromLlm];
-    const verifiedCount = allRefined.filter((s) => s.verified).length;
+  console.log(
+    `[verified_statements] ${refinedFromStatements.length} refined (LLM extraction, extracted_by=llm) | model: ${statementLlmModel}`,
+  );
 
-    refinedStatementsArtifact = {
-      schemaVersion: "1.0",
-      attestationId: rawCapture.attestationId,
-      requestId: rawCapture.requestId,
-      sourceUrl: rawCapture.sourceUrl,
-      llm_used: llmRaw.length > 0,
-      llm_model: modelUsed,
-      statements: allRefined,
-      extraction_summary: {
-        total: allRefined.length,
-        verified: verifiedCount,
-        unverified: allRefined.length - verifiedCount,
-      },
-    };
-
-    console.log(
-      `[llm-refinement] ${allRefined.length} total statements ` +
-        `(${deterministicRefined.length} deterministic + ${newFromLlm.length} from LLM), ` +
-        `${verifiedCount} verified`,
-    );
-  } else {
-    const deterministicRefined = deterministicStatementsToRefined(conservativeStatements);
-    refinedStatementsArtifact = {
-      schemaVersion: "1.0",
-      attestationId: rawCapture.attestationId,
-      requestId: rawCapture.requestId,
-      sourceUrl: rawCapture.sourceUrl,
-      llm_used: false,
-      llm_model: null,
-      statements: deterministicRefined,
-      extraction_summary: {
-        total: deterministicRefined.length,
-        verified: deterministicRefined.length,
-        unverified: 0,
-      },
-    };
-  }
+  savePipelineJson(
+    "verified_statements.json",
+    JSON.stringify(refinedStatementsArtifact, null, 2),
+    archiveDir,
+  );
 
   console.log("[chunks] Building retrieval chunks …");
   const retrievalChunks = buildRetrievalChunks(cleanArticle, conservativeStatements);
   console.log(`[chunks] ${retrievalChunks.chunks.length} total chunks`);
+  savePipelineJson("retrieval_chunks.json", JSON.stringify(retrievalChunks, null, 2), archiveDir);
 
   console.log("[embeddings] Generating embeddings …");
   const embeddings = await generateEmbeddings(retrievalChunks.chunks, rawCapture.attestationId);
   console.log(
     `[embeddings] ${embeddings.vectors.length} vectors | model: ${embeddings.embeddingModel.model}`,
   );
+  savePipelineJson("embeddings.json", JSON.stringify(embeddings, null, 2), archiveDir);
 
-  console.log("[upload] Uploading artifacts to storage …");
+  // Raw capture address first so a slow/failing derived upload cannot block manifest construction.
+  const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
+  const rawCaptureAddress =
+    dataAddress ?? (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
+
+  console.log("[upload] Uploading derived artifacts to storage …");
   const addresses = await uploadArtifacts(
     adapter,
     cleanArticle,
@@ -172,11 +157,6 @@ export async function runIngestionJob(
     embeddings,
     refinedStatementsArtifact,
   );
-
-  const rawCaptureJson = JSON.stringify(rawCapture, null, 2);
-  saveArtifactLocallyIfEnabled("raw_capture.json", rawCaptureJson);
-  const rawCaptureAddress =
-    dataAddress ?? (await adapter.uploadArtifact("raw_capture.json", rawCaptureJson));
 
   const manifest = buildDocumentManifest(
     rawCapture,
@@ -187,7 +167,8 @@ export async function runIngestionJob(
   );
 
   const manifestJson = JSON.stringify(manifest, null, 2);
-  saveArtifactLocallyIfEnabled("document_manifest.json", manifestJson);
+  // Toujours persister le manifest dans l’archive locale avant l’upload réseau (0G peut bloquer ou échouer).
+  savePipelineJson("document_manifest.json", manifestJson, archiveDir);
   const manifestAddress = await adapter.uploadArtifact("document_manifest.json", manifestJson);
 
   const adapterType = process.env.STORAGE_ADAPTER ?? "mock";
@@ -221,6 +202,36 @@ export async function runIngestionJob(
   }
 
   const s = refinedStatementsArtifact!.extraction_summary;
+
+  if (archiveDir) {
+    const runMeta = {
+      archivedAt: new Date().toISOString(),
+      attestationId: rawCapture.attestationId,
+      requestId: rawCapture.requestId,
+      sourceUrl: rawCapture.sourceUrl,
+      storageAdapter: process.env.STORAGE_ADAPTER ?? "mock",
+      localArchiveDir: archiveDir,
+      rawCaptureAddress,
+      manifestAddress,
+      addresses: {
+        cleanArticle: addresses.cleanArticle,
+        statements: addresses.statements,
+        refinedStatements: addresses.refinedStatements ?? null,
+        retrievalChunks: addresses.retrievalChunks,
+        embeddings: addresses.embeddings,
+      },
+      summary: {
+        paragraphCount: cleanArticle.paragraphs.length,
+        statementCount: conservativeStatements.length,
+        chunkCount: retrievalChunks.chunks.length,
+        vectorCount: embeddings.vectors.length,
+        refinedStatementTotal: s.total,
+        refinedVerified: s.verified,
+      },
+    };
+    savePipelineJson("run_meta.json", JSON.stringify(runMeta, null, 2), archiveDir);
+  }
+
   return {
     rawCapture,
     manifestAddress,
