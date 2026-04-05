@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {},
   output: 'standalone', // Required for Docker - outputs self-contained Node.js server
   typescript: {
     ignoreBuildErrors: true,
