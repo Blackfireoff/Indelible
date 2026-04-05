@@ -1,0 +1,473 @@
+/**
+ * ZeroGStorageAdapter – uploads and downloads artifacts via 0G Storage network.
+ *
+ * Target network: 0G-Galileo-Testnet (chainId 16602)
+ *  - RPC:     https://evmrpc-testnet.0g.ai
+ *  - Indexer: https://indexer-storage-testnet-turbo.0g.ai
+ *  - Faucet:  https://faucet.0g.ai
+ *
+ * Upload path follows 0g-storage-ts-starter-kit (`upload.ts` + `uploadData` in src/storage.ts):
+ * ZgFile.fromFilePath → indexer.upload(..., uploadOpts, retryOpts, txOpts).
+ * @see https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts
+ */
+
+import { FixedPriceFlow__factory, Indexer, StorageNode, ZgFile } from "@0gfoundation/0g-ts-sdk";
+import { ethers } from "ethers";
+import { readFileSync, unlinkSync, existsSync, writeFileSync } from "fs";
+import { join } from "path";
+import { tmpdir } from "os";
+import { randomBytes } from "crypto";
+import type { ArtifactUploadResult, StorageAdapter } from "./StorageAdapter.js";
+import {
+  buildRetryOptsFromEnv,
+  buildTxOptsFromEnv,
+  parseIndexerUrlCandidates,
+  waitUntilAnyIndexerHasLocations,
+} from "./zeroGStarterKitUpload.js";
+import { prepareStringForZeroGUpload } from "./zeroGUploadPayload.js";
+
+export interface ZeroGConfig {
+  rpcUrl?: string;
+  indexerUrl?: string;
+  privateKey?: string;
+}
+
+const DEFAULT_RPC_URL = "https://evmrpc-testnet.0g.ai";
+const DEFAULT_INDEXER_URL = "https://indexer-storage-testnet-turbo.0g.ai";
+
+/** Minimum balance considered safe for at least one upload (~0.001 A0GI). */
+const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
+
+/** Below this wei balance, a revert is treated as « likely out of gas / funds ». */
+const LOW_BALANCE_REVERT_THRESHOLD_WEI = 10n * MIN_SAFE_BALANCE_WEI;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+/** Outer retries (after SDK-internal retries) — skip for deterministic / config errors. */
+function isRetryableArtifactUploadError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  if (msg.includes("Insufficient A0GI balance on Galileo")) {
+    return false;
+  }
+  if (msg.includes("Merkle tree error")) {
+    return false;
+  }
+  if (msg.includes("ZEROG_PRIVATE_KEY is required")) {
+    return false;
+  }
+  return true;
+}
+
+function getUploadArtifactAttemptsFromEnv(): { maxAttempts: number; baseDelayMs: number } {
+  const maxAttempts = Math.max(1, parseInt(process.env.ZEROG_UPLOAD_ARTIFACT_ATTEMPTS ?? "3", 10) || 3);
+  const baseDelayMs = Math.max(
+    500,
+    parseInt(process.env.ZEROG_UPLOAD_ARTIFACT_RETRY_BASE_MS ?? "4000", 10) || 4000,
+  );
+  return { maxAttempts, baseDelayMs };
+}
+
+function getUploadTimeoutMsFromEnv(): number | null {
+  const raw = process.env.ZEROG_UPLOAD_WAIT_TIMEOUT_MS;
+  if (!raw || raw.trim() === "") {
+    return 180_000;
+  }
+  const parsed = parseInt(raw, 10);
+  if (!Number.isFinite(parsed)) {
+    return 180_000;
+  }
+  if (parsed <= 0) {
+    return null;
+  }
+  return parsed;
+}
+
+export class ZeroGStorageAdapter implements StorageAdapter {
+  private readonly rpcUrl: string;
+  /** First entry of `indexerUrlCandidates` — used for `indexer.upload`. */
+  private readonly indexerUrl: string;
+  /** Turbo + optional standard (or any fallbacks) — used for location polling + download. */
+  private readonly indexerUrlCandidates: string[];
+  private readonly privateKey: string;
+
+  constructor(config: ZeroGConfig = {}) {
+    this.rpcUrl = config.rpcUrl ?? process.env.ZEROG_RPC_URL ?? DEFAULT_RPC_URL;
+    const primary = config.indexerUrl ?? process.env.ZEROG_INDEXER_URL ?? DEFAULT_INDEXER_URL;
+    this.indexerUrlCandidates = parseIndexerUrlCandidates(primary);
+    this.indexerUrl = this.indexerUrlCandidates[0] ?? primary;
+
+    const key = config.privateKey ?? process.env.ZEROG_PRIVATE_KEY;
+    if (!key) {
+      throw new Error(
+        "ZeroGStorageAdapter: ZEROG_PRIVATE_KEY is required. " +
+        "Set it in .env or as an environment variable.",
+      );
+    }
+    this.privateKey = key;
+  }
+
+  /**
+   * After a successful upload, we normally wait until an indexer reports storage nodes (required
+   * for immediate download). When the indexer lags or misbehaves, failing here would block the
+   * whole pipeline and prevent writing the Merkle root into the manifest.
+   *
+   * By default this wait is **best-effort**: on timeout/error we log a warning and continue so
+   * `uploadArtifact` still returns the root hash. Set `ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD=true`
+   * to restore hard-fail behavior (previous default semantics).
+   */
+  /**
+   * Flow `Submit` event carries `submissionIndex` — the same sequence the SDK uses as `txSeq`
+   * for storage node calls (`getFileInfoByTxSeq`, segment uploads). See SDK `Uploader.processLogs`.
+   */
+  private parseSubmissionIndexFromReceipt(receipt: ethers.TransactionReceipt): number | null {
+    const iface = new ethers.Interface(FixedPriceFlow__factory.abi);
+    for (const log of receipt.logs) {
+      try {
+        const parsed = iface.parseLog({
+          topics: log.topics as string[],
+          data: log.data,
+        });
+        if (parsed?.name === "Submit") {
+          const r = parsed.args as ethers.Result;
+          const si = r.submissionIndex;
+          return si !== undefined ? Number(si) : null;
+        }
+      } catch {
+        continue;
+      }
+    }
+    return null;
+  }
+
+  /** Fallback when receipt parsing fails: ask a storage node for `FileInfo.tx.seq` (per Storage SDK). */
+  private async tryGetStorageSequenceFromNode(
+    rootHash: string,
+    indexerInstance: Indexer,
+  ): Promise<number | null> {
+    try {
+      const locs = await indexerInstance.getFileLocations(rootHash);
+      if (!locs || locs.length === 0) {
+        return null;
+      }
+      const node = new StorageNode(locs[0].url);
+      const info = await node.getFileInfo(rootHash, false);
+      return info?.tx?.seq ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  private async waitForIndexerAfterUpload(rootHash: string, label: string): Promise<void> {
+    const strict = process.env.ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD === "true";
+    try {
+      await waitUntilAnyIndexerHasLocations(
+        this.indexerUrlCandidates,
+        rootHash,
+        label,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (strict) {
+        throw err;
+      }
+      console.warn(
+        `[0G] ${label}: indexer did not report storage locations in time — continuing with root hash ${rootHash.slice(0, 18)}…`,
+      );
+      console.warn(
+        `[0G] The manifest will reference this address; downloads may fail until the indexer/storage sync. ` +
+          `(ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD=true to fail the pipeline instead.)`,
+      );
+      console.warn(`[0G] Detail: ${msg.slice(0, 500)}`);
+    }
+  }
+
+  /**
+   * En plus des retries **internes** au SDK (`ZEROG_UPLOAD_MAX_RETRIES`), on refait l’upload
+   * depuis zéro quelques fois (nouveau merkle + nouvelle tx) — utile si le revert est transitoire
+   * (nonce, RPC, estimation de gas). Mettre `ZEROG_UPLOAD_ARTIFACT_ATTEMPTS=1` pour désactiver.
+   */
+  async uploadArtifact(fileName: string, data: string): Promise<ArtifactUploadResult> {
+    const { maxAttempts, baseDelayMs } = getUploadArtifactAttemptsFromEnv();
+    if (maxAttempts > 1) {
+      console.log(
+        `[0G] Outer upload retries: up to ${maxAttempts} attempt(s), backoff base ${baseDelayMs}ms (ZEROG_UPLOAD_ARTIFACT_ATTEMPTS / ZEROG_UPLOAD_ARTIFACT_RETRY_BASE_MS)`,
+      );
+    }
+
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await this.uploadArtifactOnce(fileName, data, attempt, maxAttempts);
+      } catch (err) {
+        lastErr = err;
+        const retryable = isRetryableArtifactUploadError(err);
+        if (!retryable || attempt >= maxAttempts) {
+          throw err;
+        }
+        const delay = baseDelayMs * 2 ** (attempt - 1);
+        const preview = err instanceof Error ? err.message.slice(0, 220) : String(err);
+        console.warn(
+          `[0G] "${fileName}" attempt ${attempt}/${maxAttempts} failed — ${preview}${preview.length >= 220 ? "…" : ""} — retrying in ${delay}ms…`,
+        );
+        await sleep(delay);
+      }
+    }
+    throw lastErr;
+  }
+
+  private async uploadArtifactOnce(
+    fileName: string,
+    data: string,
+    attempt: number,
+    maxAttempts: number,
+  ): Promise<ArtifactUploadResult> {
+    const provider = new ethers.JsonRpcProvider(this.rpcUrl);
+    const signer = new ethers.Wallet(this.privateKey, provider);
+
+    // Flow contract is auto-discovered by the Indexer in the new SDK (first candidate only)
+    const indexer = new Indexer(this.indexerUrl);
+    if (this.indexerUrlCandidates.length > 1 && attempt === 1) {
+      console.log(
+        `[0G] Indexer candidates for location polling: ${this.indexerUrlCandidates.join(" | ")} (upload uses first)`,
+      );
+    }
+
+    // ── Balance pre-flight check ──────────────────────────────────────────
+    const address = await signer.getAddress();
+    const balance = await provider.getBalance(address);
+    if (balance < MIN_SAFE_BALANCE_WEI) {
+      throw new Error(
+        `[ZeroGStorage] Insufficient A0GI balance on Galileo testnet.\n` +
+          `  Wallet:  ${address}\n` +
+          `  Balance: ${ethers.formatEther(balance)} A0GI (need at least 0.001 A0GI)\n` +
+          `  Faucet:  https://faucet.0g.ai\n` +
+          `  Explorer: https://chainscan-galileo.0g.ai/address/${address}`,
+      );
+    }
+
+    // ── Optional JSON minify + pad (see zeroGUploadPayload.ts) ─────────────
+    const { payload: padded, minified } = prepareStringForZeroGUpload(data);
+    if (minified) {
+      console.log(`[0G] JSON minified for upload: ${fileName} (ZEROG_UPLOAD_MINIFY_JSON=true)`);
+    }
+
+    const safeBase = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const tmpPath = join(
+      tmpdir(),
+      `indelible_zg_${randomBytes(8).toString("hex")}_${safeBase}`,
+    );
+
+    const retryOpts = buildRetryOptsFromEnv();
+    const txOpts = buildTxOptsFromEnv();
+
+    const attemptLabel = maxAttempts > 1 ? ` (attempt ${attempt}/${maxAttempts})` : "";
+    console.log(
+      `[0G] Uploading ${fileName}${attemptLabel} (${padded.length} bytes after prepare, ${data.length} bytes raw input)`,
+    );
+    console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
+    console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
+    if (retryOpts) {
+      console.log(`  retryOpts: Retries=${retryOpts.Retries}, Interval=${retryOpts.Interval}s`);
+    }
+
+    let zgFile: Awaited<ReturnType<typeof ZgFile.fromFilePath>> | null = null;
+
+    try {
+      writeFileSync(tmpPath, padded, "utf-8");
+
+      // Same as starter kit uploadFile(): ZgFile.fromFilePath → merkleTree → indexer.upload(…6 args)
+      zgFile = await ZgFile.fromFilePath(tmpPath);
+
+      const [tree, treeErr] = await zgFile.merkleTree();
+      if (treeErr !== null) {
+        throw new Error(`Merkle tree error: ${treeErr}`);
+      }
+
+      const rootHash = tree!.rootHash() as string;
+      console.log(`[0G] Attempting on-chain submission for root: ${rootHash}…`);
+
+      const uploadPromise = indexer.upload(
+        zgFile,
+        this.rpcUrl,
+        signer,
+        undefined,
+        retryOpts,
+        txOpts,
+      );
+
+      const uploadTimeoutMs = getUploadTimeoutMsFromEnv();
+      const [tx, uploadErr] = uploadTimeoutMs
+        ? await Promise.race([
+            uploadPromise,
+            new Promise<never>((_, reject) => {
+              setTimeout(() => {
+                reject(
+                  new Error(
+                    `[0G] Upload wait timed out after ${uploadTimeoutMs}ms (ZEROG_UPLOAD_WAIT_TIMEOUT_MS). ` +
+                      `The storage log may still finalize later.`,
+                  ),
+                );
+              }, uploadTimeoutMs);
+            }),
+          ])
+        : await uploadPromise;
+
+      if (uploadErr !== null) {
+        const errMsg = String(uploadErr);
+        if (!errMsg.includes("already exists")) {
+          throw new Error(`Upload failed: ${errMsg}`);
+        }
+        console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
+        await this.waitForIndexerAfterUpload(rootHash, "post-upload (dedup)");
+        const storageSeq = await this.tryGetStorageSequenceFromNode(rootHash, indexer);
+        return {
+          dataAddress: rootHash,
+          sequence: storageSeq,
+          flowTxHash: null,
+        };
+      }
+
+      const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
+      const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
+      console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
+
+      let storageSeq: number | null = null;
+      if (txId) {
+        const receipt = await provider.getTransactionReceipt(txId);
+        if (receipt) {
+          storageSeq = this.parseSubmissionIndexFromReceipt(receipt);
+        }
+      }
+
+      await this.waitForIndexerAfterUpload(returnedRoot, "post-upload");
+
+      if (storageSeq === null) {
+        storageSeq = await this.tryGetStorageSequenceFromNode(returnedRoot, indexer);
+      }
+
+      return {
+        dataAddress: returnedRoot,
+        sequence: storageSeq,
+        flowTxHash: txId || null,
+      };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+
+      const looksLikeChainRevert =
+        msg.includes("require(false)") ||
+        msg.includes("insufficient funds") ||
+        msg.includes("CALL_EXCEPTION") ||
+        msg.includes("NotEnoughFee") ||
+        msg.includes("reverted");
+
+      if (looksLikeChainRevert) {
+        const balanceAfter = await provider.getBalance(address);
+        const lowFunds = balanceAfter < LOW_BALANCE_REVERT_THRESHOLD_WEI;
+        if (lowFunds) {
+          throw new Error(
+            `[0G] Transaction reverted on Galileo (chainId 16602).\n` +
+              `  Wallet:  ${address}\n` +
+              `  Balance: ${ethers.formatEther(balanceAfter)} A0GI (low for repeated uploads)\n` +
+              `  Try the faucet: https://faucet.0g.ai\n` +
+              `  Original error: ${msg}`,
+          );
+        }
+        throw new Error(
+          `[0G] Transaction reverted on Galileo (chainId 16602) with non-trivial balance.\n` +
+            `  Wallet:  ${address}\n` +
+            `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
+            `  Often transient (RPC, nonce, gas). Outer retries (ZEROG_UPLOAD_ARTIFACT_ATTEMPTS) may help; ` +
+            `otherwise try ZEROG_GAS_LIMIT / ZEROG_GAS_PRICE or another RPC.\n` +
+            `  Faucet (if needed): https://faucet.0g.ai\n` +
+            `  Original error: ${msg}`,
+        );
+      }
+
+      throw err;
+    } finally {
+      if (zgFile !== null) {
+        try {
+          await zgFile.close();
+        } catch {
+          /* ignore */
+        }
+      }
+      if (existsSync(tmpPath)) {
+        try {
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }
+
+  async downloadArtifact(dataAddress: string): Promise<string> {
+    const rootHash = dataAddress.replace("0g://", "");
+
+    const indexer = await waitUntilAnyIndexerHasLocations(
+      this.indexerUrlCandidates,
+      rootHash,
+      "pre-download",
+    );
+
+    const tmpPath = join(
+      tmpdir(),
+      `indelible-download-${randomBytes(8).toString("hex")}.json`,
+    );
+
+    try {
+      const err = await indexer.download(rootHash, tmpPath, true);
+      if (err !== null) {
+        throw new Error(`0G download error: ${err}`);
+      }
+
+      const content = readFileSync(tmpPath, "utf-8").trimEnd();
+
+      try {
+        const parsed = JSON.parse(content) as Record<string, unknown>;
+        if (typeof parsed.code === "number" && typeof parsed.message === "string") {
+          throw new Error(
+            `Storage node returned error: ${parsed.message} (code ${parsed.code})`,
+          );
+        }
+      } catch (parseErr) {
+        if (!(parseErr instanceof SyntaxError)) {
+          throw parseErr;
+        }
+      }
+
+      return content;
+    } finally {
+      if (existsSync(tmpPath)) {
+        try {
+          unlinkSync(tmpPath);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }
+
+  /** Check and display the wallet balance without uploading anything. */
+  async checkBalance(): Promise<void> {
+    const provider = new ethers.JsonRpcProvider(this.rpcUrl);
+    const signer = new ethers.Wallet(this.privateKey, provider);
+    const address = await signer.getAddress();
+    const balance = await provider.getBalance(address);
+    const balanceEth = ethers.formatEther(balance);
+    const ok = balance >= MIN_SAFE_BALANCE_WEI;
+
+    console.log(`\n=== 0G Galileo Wallet Balance ===`);
+    console.log(`Network:  0G-Galileo-Testnet (chainId 16602)`);
+    console.log(`RPC:      ${this.rpcUrl}`);
+    console.log(`Wallet:   ${address}`);
+    console.log(`Balance:  ${balanceEth} A0GI  ${ok ? "✓ OK" : "✗ INSUFFICIENT"}`);
+    if (!ok) {
+      console.log(`\nGet testnet tokens: https://faucet.0g.ai`);
+      console.log(`Explorer: https://chainscan-galileo.0g.ai/address/${address}`);
+    }
+  }
+}

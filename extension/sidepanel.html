@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indelible</title>
+  <link rel="stylesheet" href="sidepanel.css">
+  <!-- FontAwesome CDN — same icons as the website -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+  <div class="panel">
+
+    <!-- ═══════ Header — matches NavBar.tsx exactly ═══════ -->
+    <header class="panel-header">
+      <div class="header-left">
+        <a class="header-logo-link" id="link-home" href="#" title="Indelible">
+          <img src="icons/logo.svg" alt="Indelible" class="header-logo-img">
+        </a>
+      </div>
+      <div class="header-right">
+        <!-- Balance Badge — matches NavBar INDL badge exactly -->
+        <div class="balance-badge" id="balance-badge" style="display:none;">
+          <span class="balance-dot" id="balance-dot"></span>
+          <span class="balance-text"><span id="balance-count">0</span> Requests</span>
+        </div>
+        <!-- Disconnect Button — matches NavBar disconnect exactly -->
+        <div class="disconnect-wrap" id="disconnect-wrap" style="display:none;">
+          <button class="disconnect-btn" id="btn-disconnect" aria-label="Disconnect wallet">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════ Main Content ═══════ -->
+    <main class="panel-main" id="panel-main">
+
+      <!-- STATE: Loading -->
+      <div class="state" id="state-loading">
+        <div class="center-card">
+          <div class="spinner"></div>
+          <p class="muted-text">Connecting…</p>
+        </div>
+      </div>
+
+      <!-- STATE: Not Connected — matches HeroSection connect prompt -->
+      <div class="state hidden" id="state-connect">
+        <div class="center-card">
+          <div class="connect-icon-box">
+            <i class="fa-solid fa-link"></i>
+          </div>
+          <h2 class="connect-title">Connect to <span
+              style="text-decoration-line: underline; text-decoration-color: var(--accent-color); text-decoration-thickness: 3px; text-underline-offset: 6px;">INDELIBLE.</span>
+          </h2>
+          <p class="connect-desc">Sign in through the main website to start searching political speeches from any page.
+          </p>
+          <button class="btn-primary btn-lg" id="btn-open-site">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            Open Indelible
+          </button>
+        </div>
+      </div>
+
+      <!-- STATE: Query (Connected) — matches HeroSection + SearchResults input -->
+      <div class="state hidden" id="state-query">
+
+        <!-- Selection Preview — styled as quote card from SearchResults -->
+        <div class="selection-card hidden" id="selection-preview">
+          <div class="selection-label">
+            <i class="fa-solid fa-quote-left"></i>
+            <span>Selected text</span>
+            <button class="clear-btn" id="btn-clear-selection" title="Clear">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <p class="selection-text" id="selection-text"></p>
+          <p class="selection-source" id="selection-source"></p>
+        </div>
+
+        <!-- Search Input — matches website search bar exactly -->
+        <div class="search-bar">
+          <button class="search-icon-btn" id="btn-clear-query" type="button" aria-label="Clear search">
+            <i class="fa-solid fa-magnifying-glass search-icon-default"></i>
+            <i class="fa-solid fa-xmark search-icon-hover"></i>
+          </button>
+          <textarea id="query-input" placeholder="Ask about a politician..." rows="1"></textarea>
+        </div>
+
+
+
+        <!-- Search Button — matches website button exactly -->
+        <button class="btn-primary btn-search" id="btn-search" disabled>
+          Search
+        </button>
+
+        <!-- Suggestions — matches HeroSection suggestions -->
+        <div class="suggestions" id="suggestions">
+          <span class="suggestions-label">Try:</span>
+          <button class="suggestion-chip" data-query="Give more details">Give more details</button>
+          <button class="suggestion-chip" data-query="Show me related quotes">Show me related quotes</button>
+          <button class="suggestion-chip" data-query="Give me other sources">Give me other sources</button>
+        </div>
+
+        <!-- Balance Warning -->
+        <div class="warning-banner hidden" id="balance-warning">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <p class="warning-title">Insufficient INDL balance</p>
+            <p class="warning-desc">Each search costs 1 INDL. <a href="#" id="link-get-token">Get more requests →</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE: Searching — matches website loading (spinner + message) -->
+      <div class="state hidden" id="state-searching">
+        <div class="center-card">
+          <div class="searching-spinner">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+          <p class="searching-text" id="searching-text">Processing…</p>
+          <p class="muted-text">This may take a moment</p>
+        </div>
+      </div>
+
+      <!-- STATE: Results — matches SearchResults.tsx exactly -->
+      <div class="state hidden" id="state-results">
+        <!-- Back / New Search -->
+        <button class="back-btn" id="btn-back">
+          <i class="fa-solid fa-chevron-left"></i>
+          New search
+        </button>
+
+        <!-- AI Summary Card — matches SearchResults summary card -->
+        <div class="summary-card" id="result-summary">
+          <div class="summary-header">
+            <div class="summary-icon-box">
+              <i class="fa-solid fa-up-right-from-square"></i>
+            </div>
+            <div>
+              <h3 class="summary-title">Redirection</h3>
+              <p class="summary-meta" id="summary-meta">0 sources retrieved</p>
+            </div>
+          </div>
+          <p class="summary-answer" id="summary-answer"></p>
+        </div>
+
+        <!-- Source Documents Header — matches SearchResults -->
+        <div class="sources-header-row">
+          <div>
+            <h2 class="sources-title">Source Documents</h2>
+            <p class="sources-subtitle" id="sources-subtitle">Found 0 relevant quotes</p>
+          </div>
+          <span class="mode-badge" id="mode-badge">Mode: —</span>
+        </div>
+
+        <!-- Source Cards -->
+        <div class="sources-list" id="sources-list"></div>
+      </div>
+
+      <!-- STATE: Error — clean error card -->
+      <div class="state hidden" id="state-error">
+        <div class="center-card">
+          <div class="error-icon-box">
+            <i class="fa-solid fa-circle-exclamation"></i>
+          </div>
+          <h3 class="error-title">Something went wrong</h3>
+          <p class="error-message" id="error-message">An unknown error occurred.</p>
+          <button class="btn-primary" id="btn-retry">Try again</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ═══════ Footer — matches Footer.tsx exactly ═══════ -->
+    <footer class="panel-footer">
+      <div class="footer-items">
+        <div class="footer-item"><span class="footer-dot"></span><span>Powered by AI</span></div>
+        <div class="footer-item"><span class="footer-dot"></span><span>Immutable data</span></div>
+        <div class="footer-item"><span class="footer-dot"></span><span>Transparent</span></div>
+      </div>
+    </footer>
+
+  </div>
+  <script src="sidepanel.js"></script>
+</body>
+
+</html>

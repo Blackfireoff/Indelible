@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "b31433c9ad938a58fea774d3b14cef6076c0918cf5657b8d011150735f34ccae",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/politique/moqueries-de-trump-les-propos-que-jai-pu-entendre-ni-sont-ni-elegants-ni-a-la-hauteur-deplore-emmanuel-macron-02-04-2026-SUPVOSNTVNCKPNYJY4AIUYST7A.php",
+  "publisher": "leparisien.fr",
+  "language": "fr-FR",
+  "observedAt": "2026-04-05T03:14:21.000Z",
+  "artifacts": {
+    "rawCapture": {
+      "fileName": "raw_capture.json",
+      "dataAddress": "0xc4d1dc013aa5228c9aec114f49e1722f340a1836cd99ce4fe00bfda0a3ff1ced",
+      "sequence": 37663,
+      "flowTxHash": "0x7f0c9cf4c96117ca1330d9ee97f4d79114294a403de7171cc81a4c1d6f93e9c5"
+    },
+    "cleanArticle": {
+      "fileName": "clean_article.json",
+      "dataAddress": "0xd149aa85e9e737b5b5ff72a4caa4121a96efc4603143df44bce7ddd79cbf4d60",
+      "sequence": 37667,
+      "flowTxHash": "0x1ab9e0a6819888c7c5fe264550b454f59dc8cccaa7eda7d174e5eb07f3458887"
+    },
+    "statements": {
+      "fileName": "statements.json",
+      "dataAddress": "0x7cd39c5bb07a58bda1e8fe9e70cb75e4c9330a8920168e8541a686fd744c008c",
+      "sequence": 37675,
+      "flowTxHash": "0x985af4dc8d2264c467dbd8021bd32aa9ea78f8b8f8a5b1c934a3cd38ab942890"
+    },
+    "retrievalChunks": {
+      "fileName": "retrieval_chunks.json",
+      "dataAddress": "0x709b59650e95d276201bfdd9e4182f9c54cef9530a669d370ad2f083e17b5409",
+      "sequence": 37692,
+      "flowTxHash": "0xa262b47e0007a70eb2b880aadb972f16b6843fd42a1e4d3a41187662613cbc93"
+    },
+    "embeddings": {
+      "fileName": "embeddings.json",
+      "dataAddress": "0x6d2fa8751cbd51340a025b0197f825646842fdbdd7c578f10ff95ecb25585f6b",
+      "sequence": 37699,
+      "flowTxHash": "0x7c6c3cf762d4a794ba15c2fdd7cdbfdc0050941602d6dcc0ddcba12e15c93a50"
+    }
+  },
+  "processing": {
+    "dev2PipelineVersion": "1.0.0",
+    "status": "completed"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+  "publisher": "Reuters",
+  "language": "en",
+  "observedAt": "2026-04-05T01:55:56.000Z",
+  "artifacts": {
+    "rawCapture": {
+      "fileName": "raw_capture.json",
+      "dataAddress": "mock://sha256:7fb3a4bdb50ec1f9fd7f2be887ce9802dcc247ac167166f1d2a49d04e8a68212/raw_capture.json",
+      "sequence": null,
+      "flowTxHash": null
+    },
+    "cleanArticle": {
+      "fileName": "clean_article.json",
+      "dataAddress": "mock://sha256:3941c85f0b1ca9096c04d06d8f6530c78993d7ff7704e9f5fb92ccc8bde28d65/clean_article.json",
+      "sequence": null,
+      "flowTxHash": null
+    },
+    "statements": {
+      "fileName": "statements.json",
+      "dataAddress": "mock://sha256:22e328774945b380a6a4be36a84e3b23b06c81763cb440b6b86e6cfb8082801a/statements.json",
+      "sequence": null,
+      "flowTxHash": null
+    },
+    "retrievalChunks": {
+      "fileName": "retrieval_chunks.json",
+      "dataAddress": "mock://sha256:2d47f74cfdf9cac234af18754dd1a396152e88c00d36c2d54cd868dc135789ee/retrieval_chunks.json",
+      "sequence": null,
+      "flowTxHash": null
+    },
+    "embeddings": {
+      "fileName": "embeddings.json",
+      "dataAddress": "mock://sha256:747abcb771764cf06ee90fd57a48a87b0444a0c0ba05de36692521b6e38c02c1/embeddings.json",
+      "sequence": null,
+      "flowTxHash": null
+    }
+  },
+  "processing": {
+    "dev2PipelineVersion": "1.0.0",
+    "status": "completed"
+  }
+}

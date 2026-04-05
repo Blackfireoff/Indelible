@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: indelible-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # 0G Configuration
+      - ZERO_G_PRIVATE_KEY=${ZERO_G_PRIVATE_KEY}
+      - ZERO_G_RPC_URL=${ZERO_G_RPC_URL:-https://evmrpc-testnet.0g.ai}
+      - ZEROG_RPC_URL=${ZEROG_RPC_URL:-https://evmrpc-testnet.0g.ai}
+      - ZEROG_INDEXER_URL=${ZEROG_INDEXER_URL:-https://indexer-storage-testnet-turbo.0g.ai}
+      - FLOW_CONTRACT_ADDRESS=${FLOW_CONTRACT_ADDRESS:-0x22E03a6A89B950F1c82ec5e74F8eCa321a105296}
+      - DOCUMENT_REGISTRY_ADDRESS=${DOCUMENT_REGISTRY_ADDRESS:-}
+      - ZERO_G_PROVIDER_ADDRESS=${ZERO_G_PROVIDER_ADDRESS:-}
+    volumes:
+      # Mount local embeddings data (from dev2)
+      - ./data/embeddings:/app/data/embeddings:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Indexer for faster 0G Storage queries
+  # indexer:
+  #   image: 0glabs/0g-storage-indexer:latest
+  #   container_name: indelible-indexer
+  #   ports:
+  #     - "8545:8545"
+  #   environment:
+  #     - RPC_URL=${ZEROG_RPC_URL:-https://evmrpc-testnet.0g.ai}
+  #     - CHAIN_ID=16602
+  #   restart: unless-stopped

@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+  "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+  "chunkingStrategy": {
+    "statementChunks": true,
+    "paragraphChunks": true,
+    "version": "1.0.0"
+  },
+  "chunks": [
+    {
+      "chunkId": "chunk_p_bf2f193e4de01265",
+      "chunkType": "paragraph",
+      "text": "President Donald Trump arrives to speak about the Iran war from the Cross Hall of the White House on Wednesday, April 1, 2026, in Washington. Alex Brandon/Pool via REUTERS Purchase Licensing Rights, opens new tab",
+      "statementId": null,
+      "paragraphId": "para_2a942c0afd87e714",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_8ba6577f2f466d20",
+      "chunkType": "paragraph",
+      "text": "WASHINGTON, April 2 (Reuters) - U.S. President Donald Trump is set to unveil a $1.5 trillion defense budget request for the next fiscal year on Friday, by far the largest year-over-year increase in defense spending in the post-World War Two era.",
+      "statementId": null,
+      "paragraphId": "para_1517ca0c7b9e71d5",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_6b9406f444f740a5",
+      "chunkType": "paragraph",
+      "text": "Funding for Trump's marquee but controversial $185 billion \"Golden Dome\" missile defense shield is expected to be included in the budget request as well as Lockheed Martin",
+      "statementId": null,
+      "paragraphId": "para_8faa2ffd0bb6b521",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_74a6606c5f453fd5",
+      "chunkType": "paragraph",
+      "text": "Procurement of Virginia-class submarines made by General Dynamics",
+      "statementId": null,
+      "paragraphId": "para_5fd468febddc5b14",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_ead57edf5a85c009",
+      "chunkType": "paragraph",
+      "text": "as well as other top shipbuilding priorities is expected.",
+      "statementId": null,
+      "paragraphId": "para_232121c7b59bc4c8",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_a65ec206cd19ec51",
+      "chunkType": "paragraph",
+      "text": "Last year, Trump asked Congress for a national defense budget of $892.6 billion then added $150 billion through a supplemental budget request, sending the total price tag over $1 trillion for the first time in history.",
+      "statementId": null,
+      "paragraphId": "para_ab55c43177936be0",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_147f6a1b093c94c8",
+      "chunkType": "paragraph",
+      "text": "While the budget request framework for the fiscal year ending September 30, 2027 is set to be unveiled on Friday, a Pentagon official said more details on the defense budget will be announced on April 21.",
+      "statementId": null,
+      "paragraphId": "para_2f11dcf5bedbffa6",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_6737472de4c2c882",
+      "chunkType": "paragraph",
+      "text": "Earlier this year the administration was contemplating whether the $1.5 trillion budget request could be in the form of a $900 billion national security budget, with a $400 billion to $600 billion additional request, similar to the structure used in 2026.",
+      "statementId": null,
+      "paragraphId": "para_31453e3509913a97",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_b2211e33ad9d8a6d",
+      "chunkType": "paragraph",
+      "text": "The administration plans to use funds for more weapons production in the hopes of deterring Chinese aggression in the Indo-Pacific region and to rebuild weapons stocks depleted by conflicts in Israel, Iran and Ukraine.",
+      "statementId": null,
+      "paragraphId": "para_9f3e4163fc875ca8",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_6515eab42d8fb9a3",
+      "chunkType": "paragraph",
+      "text": "The budget request will be debated in Congress in the coming weeks and months.",
+      "statementId": null,
+      "paragraphId": "para_29adae6bdfd30a17",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_d2ff50854d520d76",
+      "chunkType": "paragraph",
+      "text": "Our Standards: The Thomson Reuters Trust Principles., opens new tab",
+      "statementId": null,
+      "paragraphId": "para_6270f67298d79d66",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    },
+    {
+      "chunkId": "chunk_p_ed7bf9b742eccb40",
+      "chunkType": "paragraph",
+      "text": "Mike Stone is a Reuters reporter covering the U.S. arms trade and defense industry. Most recently Mike has been focused on the Golden Dome missile defense shield. Mike also spends a lot of his time writing on Ukraine and how industry has adapted, or faltered as it supports that conflict. Mike, a New Yorker, has extensively covered how the U.S. has supplied Ukraine with weapons, the cadence, decisions and milestones that have had battlefield impacts. Before his time in Washington Mike’s coverage focused on mergers and acquisitions for oil and gas companies, financial institutions, defense companies, consumer product makers, retailers, real estate giants, and telecommunications companies.",
+      "statementId": null,
+      "paragraphId": "para_69ed72ea5a660829",
+      "metadata": {
+        "attestationId": "18e410dfe1673b8248753aefa454a040542221e7e7d5957bec1c3e6d82b84821",
+        "sourceUrl": "https://www.reuters.com/business/aerospace-defense/golden-dome-ships-missiles-top-trumps-15-trillion-fiscal-2027-defense-wish-list-2026-04-02/",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "en",
+        "publisher": "Reuters",
+        "title": "Golden Dome, ships and missiles top Trump's $1.5 trillion fiscal 2027 defense wish list"
+      }
+    }
+  ]
+}

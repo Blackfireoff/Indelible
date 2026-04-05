@@ -1,0 +1,25 @@
+{
+  "archivedAt": "2026-04-05T02:21:10.003Z",
+  "attestationId": "21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.reuters.com/world/us/trump-off-script-2026-04-02/",
+  "storageAdapter": "mock",
+  "localArchiveDir": "C:\\Users\\hippo\\Documents\\Indelible\\dev2-ingestion-pipeline\\output\\archives\\2026-04-05_022015_21f1e840ba845f797e56ab6bddf45a1a5753a028c2ad0e2c1f2ecb7c7caf8c2a",
+  "rawCaptureAddress": "mock://sha256:7fb3a4bdb50ec1f9fd7f2be887ce9802dcc247ac167166f1d2a49d04e8a68212/raw_capture.json",
+  "manifestAddress": "mock://sha256:d7470962eaecf874383205c46f763b4d5a5c4106538213c0152f88fc348eb1c1/document_manifest.json",
+  "addresses": {
+    "cleanArticle": "mock://sha256:3941c85f0b1ca9096c04d06d8f6530c78993d7ff7704e9f5fb92ccc8bde28d65/clean_article.json",
+    "statements": "mock://sha256:22e328774945b380a6a4be36a84e3b23b06c81763cb440b6b86e6cfb8082801a/statements.json",
+    "refinedStatements": "mock://sha256:46d70bde72bfe1e8856ce06fa5ecf677e7613b98c89777f5b9c42ce56df32625/verified_statements.json",
+    "retrievalChunks": "mock://sha256:2d47f74cfdf9cac234af18754dd1a396152e88c00d36c2d54cd868dc135789ee/retrieval_chunks.json",
+    "embeddings": "mock://sha256:747abcb771764cf06ee90fd57a48a87b0444a0c0ba05de36692521b6e38c02c1/embeddings.json"
+  },
+  "summary": {
+    "paragraphCount": 20,
+    "statementCount": 1,
+    "chunkCount": 21,
+    "vectorCount": 21,
+    "refinedStatementTotal": 1,
+    "refinedVerified": 1
+  }
+}

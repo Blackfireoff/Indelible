@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "att-001",
+  "embeddingModel": {
+    "provider": "example-provider",
+    "model": "text-embedding-model",
+    "dimension": 1024,
+    "version": "1.0"
+  },
+  "vectors": [
+    {
+      "chunkId": "doc-001-chunk-0001",
+      "chunkType": "paragraph",
+      "vector": "VECTOR_PLACEHOLDER_1024_sin_i_0.01_0.3",
+      "metadata": {
+        "paragraphId": "p_0001",
+        "attestationId": "att-001"
+      }
+    },
+    {
+      "chunkId": "doc-001-chunk-0002",
+      "chunkType": "statement",
+      "vector": "VECTOR_PLACEHOLDER_1024_cos_i_0.02_0.5_tariff_heavy",
+      "metadata": {
+        "statementId": "s_0001",
+        "speakerNormalizedId": "donald_trump",
+        "attestationId": "att-001"
+      }
+    },
+    {
+      "chunkId": "doc-001-chunk-0003",
+      "chunkType": "paragraph",
+      "vector": "VECTOR_PLACEHOLDER_1024_sin_i_0.015_0.2",
+      "metadata": {
+        "paragraphId": "p_0002",
+        "attestationId": "att-001"
+      }
+    }
+  ]
+}

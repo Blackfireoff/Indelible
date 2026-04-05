@@ -1,0 +1,13 @@
+# 0G Galileo Testnet Configuration
+
+# Your Web3 Wallet Private Key (starts with 0x)
+# DO NOT COMMIT YOUR REAL .env FILE
+# This single key pays for both EVM Gas and 0G Storage fees (using A0GI token).
+PRIVATE_KEY="cf77b7df14cfd5a763c26a857aedba2cd0b7010d82fde875ba39f17b9a13a233"
+
+# 0G Galileo RPC and Indexer (Defaults)
+ZG_RPC_URL="https://evmrpc-testnet.0g.ai"
+ZG_INDEXER_URL="https://indexer-storage-testnet-turbo.0g.ai"
+
+# Switch to enable the real storage adapter instead of the mock
+USE_REAL_0G_STORAGE="true"

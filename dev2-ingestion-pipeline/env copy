@@ -1,0 +1,72 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 0G Storage (Galileo testnet, chainId 16602)
+# ─────────────────────────────────────────────────────────────────────────────
+ZEROG_RPC_URL=https://evmrpc-testnet.0g.ai
+ZEROG_INDEXER_URL=https://indexer-storage-testnet-turbo.0g.ai/
+ZEROG_PRIVATE_KEY=88c77e09e0300eb0f939d2b69759ce6f368d182f2c4eeba56627003e77d555f6
+LLM_0G_MODEL=qwen/qwen-2.5-7b-instruct
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Local embeddings (no API key required)
+# ─────────────────────────────────────────────────────────────────────────────
+# "local"  → downloads Xenova/all-MiniLM-L6-v2 on first run (~20 MB)
+# "stub"   → zero vectors (fast, for testing)
+# "openai" → requires OPENAI_API_KEY below
+EMBEDDING_PROVIDER=local
+LOCAL_EMBEDDING_MODEL=Xenova/all-MiniLM-L6-v2
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LLM refinement (optional – local OpenAI-compatible endpoint)
+# ─────────────────────────────────────────────────────────────────────────────
+# Set ENABLE_LLM_REFINEMENT=true to activate.
+# Tested with LM Studio. Start LM Studio → Local Server → load a model.
+# Recommended model: qwen2.5-7b-instruct (good instruction following, fast)
+#
+# Fallback: if the endpoint is unreachable, the pipeline continues in
+# deterministic-only mode (no crash, no data loss).
+ENABLE_LLM_REFINEMENT=true
+LLM_REFINEMENT_PROVIDER=0g
+LOCAL_LLM_BASE_URL=http://127.0.0.1:1234/v1
+LOCAL_LLM_API_KEY=lm-studio
+LOCAL_LLM_MODEL=qwen2.5-coder-7b-instruct
+LOCAL_LLM_TIMEOUT_MS=60000
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OpenAI (optional, only needed if EMBEDDING_PROVIDER=openai)
+# ─────────────────────────────────────────────────────────────────────────────
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+
+SAVE_ARTIFACTS_BEFORE_UPLOAD=false
+LOCAL_ARTIFACT_ARCHIVE=true
+LOCAL_ARTIFACTS_SUBDIR=local-artifacts
+# ─────────────────────────────────────────────────────────────────────────────
+# Pipeline configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# "zerog" for real 0G Storage, "mock" for local dev/testing
+STORAGE_ADAPTER=zerog
+OUTPUT_DIR=./output
+
+# Path to raw capture JSON produced by Dev 1
+# RAW_CAPTURE_PATH=./src/fixtures/sample-raw-capture.json
+ROW_CAPTURE_PATH=./src/fixtures/example4_raw_capture.json
+# Or provide the 0G data address directly:
+# RAW_CAPTURE_DATA_ADDRESS=0xabc123...
+
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Worker (npm run worker) — poll Dev1 registry, run ingestion per new item
+# ─────────────────────────────────────────────────────────────────────────────
+# JSON list: [ { "id": "<stable-id>", "rawCaptureDataAddress": "0x..." }, ... ]
+# or { "items": [ ... ] }. Prefer HTTPS in prod:
+# DEV1_REGISTRY_URL=https://example.com/dev1-registry.json
+# DEV1_REGISTRY_PATH=./path/to/registry.json
+#
+# Idempotency + retries (local JSON file by default):
+# WORKER_STATE_PATH=./data/worker-state.json
+# WORKER_POLL_INTERVAL_MS=30000
+# WORKER_STALE_PROCESSING_MS=1800000
+# WORKER_MAX_RETRIES=5
+# SKIP_STORAGE_VERIFY=true

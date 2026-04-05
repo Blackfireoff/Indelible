@@ -24,3 +24,48 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Landing Page Color Variables */
+:root {
+  /* Page Background */
+  --landing-bg: #f5f5f5;
+  --landing-bg-white: #ffffff;
+  --landing-bg-light: #fafafa;
+
+  /* Text Colors */
+  --landing-text-button: #000000;
+  --landing-text-primary: #18181b;
+  --landing-text-secondary: #71717a;
+  --landing-text-muted: #a1a1aa;
+
+  /* Brand Colors */
+  --landing-primary: #525252;
+  --landing-primary-dark: #3b3b3b;
+  --landing-primary-darker: #292929;
+  --landing-primary-light: rgba(4, 133, 247, 0.2);
+  --landing-primary-subtle: #ffd321;
+
+  /* Border Colors */
+  --landing-border: #e4e4e7;
+  --landing-border-primary: rgba(184, 124, 76, 0.2);
+
+  /* Primary Light/Subtle */
+  --landing-primary-light: rgba(184, 124, 76, 0.2);
+  --landing-primary-subtle: rgba(184, 124, 76, 0.05);
+
+  /* Status Colors */
+  --landing-success: #22c55e;
+
+  /* Component Specific */
+  --landing-quote-mark: rgba(4, 133, 247, 0.2);
+
+  --accent-color: #ffd321;
+  --accent-color-smooth: #ffcb21;
+  --accent-color-dark: #ecbd21;
+  --accent-color-darker: #d48819;
+  --accent-color-light: rgba(255, 211, 33, 0.1);
+  --accent-color-lighter: rgba(255, 211, 33, 0.05);
+
+  --red-500: #e13b3b;
+  --red-500-hover: #c43434;
+}
