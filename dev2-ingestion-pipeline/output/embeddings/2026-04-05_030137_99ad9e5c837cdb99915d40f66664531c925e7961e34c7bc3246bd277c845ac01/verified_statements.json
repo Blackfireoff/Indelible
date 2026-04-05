@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+  "llm_used": true,
+  "llm_model": "qwen/qwen-2.5-7b-instruct",
+  "statements": [
+    {
+      "statementId": "stmt_52424066f34a6d39",
+      "speaker": "Ali Abdollahi",
+      "speaker_role": "general, chef du commandement des forces armées iraniennes",
+      "statement_text": "Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens",
+      "statement_type": "reported_speech",
+      "attribution_text": "rejeté cet ultimatum. « Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens » de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement d",
+      "evidence_paragraph_ids": [
+        "para_aee5a37ce75319c1"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_aee5a37ce75319c1",
+          "charStart": 46,
+          "charEnd": 244,
+          "matchedText": "Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens"
+        }
+      ],
+      "extracted_by": "llm"
+    },
+    {
+      "statementId": "stmt_ca1fa6289518e3ed",
+      "speaker": "Ali Abdollahi",
+      "speaker_role": "general, chef du commandement des forces armées iraniennes",
+      "statement_text": "Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place",
+      "statement_type": "reported_speech",
+      "attribution_text": "« Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place », a ajouté le général Abdollahi, cité par la télévision d’E",
+      "evidence_paragraph_ids": [
+        "para_e05a6f1942eee1d3"
+      ],
+      "confidence": 0.95,
+      "verified": true,
+      "verification_method": "exact_match",
+      "matched_spans": [
+        {
+          "paragraphId": "para_e05a6f1942eee1d3",
+          "charStart": 2,
+          "charEnd": 161,
+          "matchedText": "Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place"
+        }
+      ],
+      "extracted_by": "llm"
+    }
+  ],
+  "extraction_summary": {
+    "total": 2,
+    "verified": 2,
+    "unverified": 0
+  }
+}

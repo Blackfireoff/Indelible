@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "b31433c9ad938a58fea774d3b14cef6076c0918cf5657b8d011150735f34ccae",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/politique/moqueries-de-trump-les-propos-que-jai-pu-entendre-ni-sont-ni-elegants-ni-a-la-hauteur-deplore-emmanuel-macron-02-04-2026-SUPVOSNTVNCKPNYJY4AIUYST7A.php",
+  "publisher": "leparisien.fr",
+  "language": "fr-FR",
+  "title": "Moqueries de Trump : « Les propos que j’ai pu entendre ne sont ni élégants ni à la hauteur », déplore Emmanuel Macron",
+  "subtitle": null,
+  "publishedAt": "2026-04-02T10:06:27Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_0e7180b12dfb94f4",
+      "order": 1,
+      "text": "Le président de la République a réagi ce jeudi, depuis Séoul, aux propos du président américain qui a moqué son couple.",
+      "charStart": 0,
+      "charEnd": 119,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(1)"
+      }
+    },
+    {
+      "paragraphId": "para_b16d686e07e15b32",
+      "order": 2,
+      "text": "« Ni élégants, ni à la hauteur ». Emmanuel Macron a réagi jeudi 2 avril, depuis Séoul en Corée du Sud, aux moqueries du président américain. « Les propos que j’ai pu entendre ne sont ni élégants, ni à la hauteur, et ils ne méritent pas de réponse », a cinglé le chef de l’État.",
+      "charStart": 121,
+      "charEnd": 398,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_2bea1181aa9eabde",
+      "order": 3,
+      "text": "À l’occasion d’un discours, mercredi, le président des États-Unis Donald Trump s’est laissé aller à des remarques peu amènes envers son homologue français Emmanuel Macron, accusé, comme les autres membres de l’OTAN, de ne pas avoir aidé les Américains au Moyen Orient.",
+      "charStart": 400,
+      "charEnd": 668,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_cb44d71bc5f7ee25",
+      "order": 4,
+      "text": "Il s’est alors laissé aller à une pique peu élégante à l’encontre du couple Macron, avec qui il s’entend pourtant bien habituellement.",
+      "charStart": 670,
+      "charEnd": 804,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_626e6e0d007ee84f",
+      "order": 5,
+      "text": "« Il est maltraité par sa femme, il est encore en train de récupérer de la droite reçue dans sa mâchoire », a lancé le milliardaire, évoquant cette vidéo virale où Brigitte Macron avait semblé repousser le visage de son mari, juste avant qu’il ne quitte l’avion présidentiel lors de leur arrivée au Vietnam, l’an dernier.",
+      "charStart": 806,
+      "charEnd": 1127,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(5)"
+      }
+    },
+    {
+      "paragraphId": "para_2249decea013b3be",
+      "order": 6,
+      "text": "« Il faut permettre d’avoir la paix le plus vite possible »",
+      "charStart": 1129,
+      "charEnd": 1188,
+      "sourceHints": {
+        "tagName": "h2",
+        "cssSelector": "h2:nth-child(6)"
+      }
+    },
+    {
+      "paragraphId": "para_e001f08d84964189",
+      "order": 7,
+      "text": "À l’occasion de sa visite en Corée du Sud, juste après un passage au Japon, Emmanuel Macron a profité de ce micro tendu pour s’exprimer plus largement sur la situation au Moyen-Orient, en particulier le blocage du détroit d’Ormuz qui a fait exploser le coût du pétrole : « Il faut permettre d’avoir la paix le plus vite possible, un cessez-le-feu, un cadre clair et permettre de reprendre la libre circulation à travers le détroit d’Ormuz » parce que « ce sont nos compatriotes qui sont victimes des conséquences de cette guerre ».",
+      "charStart": 1190,
+      "charEnd": 1721,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_67ec1a7230bd9918",
+      "order": 8,
+      "text": "Il a également critiqué les réponses court-termistes au nucléaire iranien, estimant que « ce n’est pas une action militaire ciblée, même sur quelques semaines, qui permet de régler dans la durée la question du nucléaire ». Il a ajouté : « Je rappelle qu’il y a six mois, on nous avait expliqué que tout avait été détruit et que tout avait été réglé. Donc on voit bien ce qu’il manque. S’il n’y a pas, derrière, des enquêteurs internationaux qui vont regarder où est la matière existante, comment se fait la recherche, où sont les sites, ce n’est pas sérieux ».",
+      "charStart": 1723,
+      "charEnd": 2283,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(8)"
+      }
+    },
+    {
+      "paragraphId": "para_364d14251029c7cc",
+      "order": 9,
+      "text": "Les échanges entre Emmanuel Macron Donald Trump et son allié israélien se sont durcis ces derniers jours lorsque le président américain a accusé la France d’avoir interdit le survol de son espace aérien aux avions militaires américains livrant du matériel à Israël. Jeudi, l’ambassadeur israélien en France Joshua Zarka a déclaré que « La France n’est pas une puissance amicale ».",
+      "charStart": 2285,
+      "charEnd": 2665,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    }
+  ],
+  "fullText": "Le président de la République a réagi ce jeudi, depuis Séoul, aux propos du président américain qui a moqué son couple.\n\n« Ni élégants, ni à la hauteur ». Emmanuel Macron a réagi jeudi 2 avril, depuis Séoul en Corée du Sud, aux moqueries du président américain. « Les propos que j’ai pu entendre ne sont ni élégants, ni à la hauteur, et ils ne méritent pas de réponse », a cinglé le chef de l’État.\n\nÀ l’occasion d’un discours, mercredi, le président des États-Unis Donald Trump s’est laissé aller à des remarques peu amènes envers son homologue français Emmanuel Macron, accusé, comme les autres membres de l’OTAN, de ne pas avoir aidé les Américains au Moyen Orient.\n\nIl s’est alors laissé aller à une pique peu élégante à l’encontre du couple Macron, avec qui il s’entend pourtant bien habituellement.\n\n« Il est maltraité par sa femme, il est encore en train de récupérer de la droite reçue dans sa mâchoire », a lancé le milliardaire, évoquant cette vidéo virale où Brigitte Macron avait semblé repousser le visage de son mari, juste avant qu’il ne quitte l’avion présidentiel lors de leur arrivée au Vietnam, l’an dernier.\n\n« Il faut permettre d’avoir la paix le plus vite possible »\n\nÀ l’occasion de sa visite en Corée du Sud, juste après un passage au Japon, Emmanuel Macron a profité de ce micro tendu pour s’exprimer plus largement sur la situation au Moyen-Orient, en particulier le blocage du détroit d’Ormuz qui a fait exploser le coût du pétrole : « Il faut permettre d’avoir la paix le plus vite possible, un cessez-le-feu, un cadre clair et permettre de reprendre la libre circulation à travers le détroit d’Ormuz » parce que « ce sont nos compatriotes qui sont victimes des conséquences de cette guerre ».\n\nIl a également critiqué les réponses court-termistes au nucléaire iranien, estimant que « ce n’est pas une action militaire ciblée, même sur quelques semaines, qui permet de régler dans la durée la question du nucléaire ». Il a ajouté : « Je rappelle qu’il y a six mois, on nous avait expliqué que tout avait été détruit et que tout avait été réglé. Donc on voit bien ce qu’il manque. S’il n’y a pas, derrière, des enquêteurs internationaux qui vont regarder où est la matière existante, comment se fait la recherche, où sont les sites, ce n’est pas sérieux ».\n\nLes échanges entre Emmanuel Macron Donald Trump et son allié israélien se sont durcis ces derniers jours lorsque le président américain a accusé la France d’avoir interdit le survol de son espace aérien aux avions militaires américains livrant du matériel à Israël. Jeudi, l’ambassadeur israélien en France Joshua Zarka a déclaré que « La France n’est pas une puissance amicale »."
+}

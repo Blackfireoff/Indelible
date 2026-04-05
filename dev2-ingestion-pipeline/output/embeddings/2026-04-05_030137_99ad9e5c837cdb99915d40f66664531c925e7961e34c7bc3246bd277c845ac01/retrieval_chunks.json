@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+  "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+  "chunkingStrategy": {
+    "statementChunks": true,
+    "paragraphChunks": true,
+    "version": "1.0.0"
+  },
+  "chunks": [
+    {
+      "chunkId": "chunk_s_28a9035964a955b8",
+      "chunkType": "statement",
+      "text": "Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens",
+      "statementId": "stmt_52424066f34a6d39",
+      "paragraphId": "para_aee5a37ce75319c1",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": "Ali Abdollahi",
+        "speakerNormalizedId": "ali_abdollahi",
+        "quoteType": "indirect",
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_s_7e870f720b5eadb2",
+      "chunkType": "statement",
+      "text": "Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place",
+      "statementId": "stmt_ca1fa6289518e3ed",
+      "paragraphId": "para_e05a6f1942eee1d3",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": "Ali Abdollahi",
+        "speakerNormalizedId": "ali_abdollahi",
+        "quoteType": "indirect",
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_91044136d186fa9c",
+      "chunkType": "paragraph",
+      "text": "Un nouvel ultimatum. Donald Trump a donné samedi « 48 heures » à l’Iran pour « conclure un accord ou rouvrir le détroit d’Ormuz », sans quoi les États-Unis déchaîneraient « les enfers sur eux ».",
+      "statementId": null,
+      "paragraphId": "para_cfb7a6a7c8dcd54c",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_8189e486bdfb64d9",
+      "chunkType": "paragraph",
+      "text": "« Vous vous souvenez quand j’ai donné 10 jours à l’Iran pour CONCLURE UN ACCORD ou ROUVRIR LE DETROIT D’ORMUZ. Le temps presse - 48 heures avant de déchaîner les enfers sur eux. Gloire à DIEU ! », a écrit le président américain sur sa plateforme Truth Social en ce week-end pascal.",
+      "statementId": null,
+      "paragraphId": "para_88b4e3462b35bb9a",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_5e989cc75aed214f",
+      "chunkType": "paragraph",
+      "text": "Samedi soir, l’Iran a rejeté cet ultimatum. « Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens » de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement des forces armées iraniennes.",
+      "statementId": null,
+      "paragraphId": "para_aee5a37ce75319c1",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_193666cae09004f2",
+      "chunkType": "paragraph",
+      "text": "« Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place », a ajouté le général Abdollahi, cité par la télévision d’Etat sur Telegram.",
+      "statementId": null,
+      "paragraphId": "para_e05a6f1942eee1d3",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_f8e679cbfbea5fbe",
+      "chunkType": "paragraph",
+      "text": "Le 26 mars, Donald Trump avait émis un ultimatum de 10 jours à Téhéran pour rouvrir le détroit d’Ormuz, voie maritime critique pour l’économie mondiale et bloquée par l’Iran depuis le début de la guerre.",
+      "statementId": null,
+      "paragraphId": "para_780e7539ce05a704",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_0c577d4c796ade3b",
+      "chunkType": "paragraph",
+      "text": "L’ultimatum avait alors été fixé au « lundi 6 avril à 20 heures, heure de Washington ».",
+      "statementId": null,
+      "paragraphId": "para_595916ea55fd67da",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_e431c017490797aa",
+      "chunkType": "paragraph",
+      "text": "En l’absence d’une réouverture du détroit, le président américain avait menacé de détruire les centrales électriques en Iran.",
+      "statementId": null,
+      "paragraphId": "para_14196147bf3eb274",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_bd47e8b756204403",
+      "chunkType": "paragraph",
+      "text": "VidéoDes policiers iraniens tirent sur deux hélicoptères américains",
+      "statementId": null,
+      "paragraphId": "para_be0aeab59a6e079a",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_786c51148a289f9c",
+      "chunkType": "paragraph",
+      "text": "Après six semaines d’une guerre qui embrase le Moyen-Orient, déclenchée le 28 février par l’attaque américano-israélienne contre l’Iran, Téhéran ne plie pas. Ce samedi, la centrale nucléaire de Bouchehr, construite avec l’aide de la Russie, a été visée par une frappe, tuant un garde. Il s’agit de la seule installation nucléaire civile opérationnelle en Iran et elle a déjà été visée à quatre reprises depuis le début de la guerre le 28 février.",
+      "statementId": null,
+      "paragraphId": "para_da8b6f9023ddf6a1",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_fee9b15db617f42b",
+      "chunkType": "paragraph",
+      "text": "Pendant ce temps, Téhéran et Washington s’activent pour retrouver un des deux occupants du premier avion américain à s’être écrasé depuis le début de la guerre en Iran. Depuis le début de la guerre, aucun soldat américain n’a été tué ni capturé sur le sol iranien, mais 13 ont péri au Koweït, en Arabie saoudite et en Irak.",
+      "statementId": null,
+      "paragraphId": "para_caca8def3c170790",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    },
+    {
+      "chunkId": "chunk_p_78fefb0b8f96598e",
+      "chunkType": "paragraph",
+      "text": "Les hostilités ont fait des milliers de morts, essentiellement en Iran et au Liban, s’étendant à plusieurs pays de la région.",
+      "statementId": null,
+      "paragraphId": "para_a73986952ca0c88b",
+      "metadata": {
+        "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+        "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+        "speaker": null,
+        "speakerNormalizedId": null,
+        "quoteType": null,
+        "language": "fr-FR",
+        "publisher": "leparisien.fr",
+        "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette"
+      }
+    }
+  ]
+}

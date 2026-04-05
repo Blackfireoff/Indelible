@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+  "publisher": "leparisien.fr",
+  "language": "fr-FR",
+  "title": "Guerre au Moyen-Orient : Donald Trump lance un ultimatum à l’Iran pour conclure un accord, Téhéran le rejette",
+  "subtitle": null,
+  "publishedAt": "2026-04-04T17:04:28Z",
+  "extractionMethod": {
+    "mainContentExtractor": "mozilla-readability",
+    "version": "1.0.0"
+  },
+  "paragraphs": [
+    {
+      "paragraphId": "para_cfb7a6a7c8dcd54c",
+      "order": 1,
+      "text": "Un nouvel ultimatum. Donald Trump a donné samedi « 48 heures » à l’Iran pour « conclure un accord ou rouvrir le détroit d’Ormuz », sans quoi les États-Unis déchaîneraient « les enfers sur eux ».",
+      "charStart": 0,
+      "charEnd": 194,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(1)"
+      }
+    },
+    {
+      "paragraphId": "para_88b4e3462b35bb9a",
+      "order": 2,
+      "text": "« Vous vous souvenez quand j’ai donné 10 jours à l’Iran pour CONCLURE UN ACCORD ou ROUVRIR LE DETROIT D’ORMUZ. Le temps presse - 48 heures avant de déchaîner les enfers sur eux. Gloire à DIEU ! », a écrit le président américain sur sa plateforme Truth Social en ce week-end pascal.",
+      "charStart": 196,
+      "charEnd": 477,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(2)"
+      }
+    },
+    {
+      "paragraphId": "para_aee5a37ce75319c1",
+      "order": 3,
+      "text": "Samedi soir, l’Iran a rejeté cet ultimatum. « Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens » de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement des forces armées iraniennes.",
+      "charStart": 479,
+      "charEnd": 823,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(3)"
+      }
+    },
+    {
+      "paragraphId": "para_e05a6f1942eee1d3",
+      "order": 4,
+      "text": "« Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place », a ajouté le général Abdollahi, cité par la télévision d’Etat sur Telegram.",
+      "charStart": 825,
+      "charEnd": 1064,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(4)"
+      }
+    },
+    {
+      "paragraphId": "para_780e7539ce05a704",
+      "order": 5,
+      "text": "Le 26 mars, Donald Trump avait émis un ultimatum de 10 jours à Téhéran pour rouvrir le détroit d’Ormuz, voie maritime critique pour l’économie mondiale et bloquée par l’Iran depuis le début de la guerre.",
+      "charStart": 1066,
+      "charEnd": 1269,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(6)"
+      }
+    },
+    {
+      "paragraphId": "para_595916ea55fd67da",
+      "order": 6,
+      "text": "L’ultimatum avait alors été fixé au « lundi 6 avril à 20 heures, heure de Washington ».",
+      "charStart": 1271,
+      "charEnd": 1358,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(7)"
+      }
+    },
+    {
+      "paragraphId": "para_14196147bf3eb274",
+      "order": 7,
+      "text": "En l’absence d’une réouverture du détroit, le président américain avait menacé de détruire les centrales électriques en Iran.",
+      "charStart": 1360,
+      "charEnd": 1485,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(8)"
+      }
+    },
+    {
+      "paragraphId": "para_be0aeab59a6e079a",
+      "order": 8,
+      "text": "VidéoDes policiers iraniens tirent sur deux hélicoptères américains",
+      "charStart": 1487,
+      "charEnd": 1554,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(9)"
+      }
+    },
+    {
+      "paragraphId": "para_da8b6f9023ddf6a1",
+      "order": 9,
+      "text": "Après six semaines d’une guerre qui embrase le Moyen-Orient, déclenchée le 28 février par l’attaque américano-israélienne contre l’Iran, Téhéran ne plie pas. Ce samedi, la centrale nucléaire de Bouchehr, construite avec l’aide de la Russie, a été visée par une frappe, tuant un garde. Il s’agit de la seule installation nucléaire civile opérationnelle en Iran et elle a déjà été visée à quatre reprises depuis le début de la guerre le 28 février.",
+      "charStart": 1556,
+      "charEnd": 2002,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(10)"
+      }
+    },
+    {
+      "paragraphId": "para_caca8def3c170790",
+      "order": 10,
+      "text": "Pendant ce temps, Téhéran et Washington s’activent pour retrouver un des deux occupants du premier avion américain à s’être écrasé depuis le début de la guerre en Iran. Depuis le début de la guerre, aucun soldat américain n’a été tué ni capturé sur le sol iranien, mais 13 ont péri au Koweït, en Arabie saoudite et en Irak.",
+      "charStart": 2004,
+      "charEnd": 2327,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(11)"
+      }
+    },
+    {
+      "paragraphId": "para_a73986952ca0c88b",
+      "order": 11,
+      "text": "Les hostilités ont fait des milliers de morts, essentiellement en Iran et au Liban, s’étendant à plusieurs pays de la région.",
+      "charStart": 2329,
+      "charEnd": 2454,
+      "sourceHints": {
+        "tagName": "p",
+        "cssSelector": "p:nth-child(12)"
+      }
+    }
+  ],
+  "fullText": "Un nouvel ultimatum. Donald Trump a donné samedi « 48 heures » à l’Iran pour « conclure un accord ou rouvrir le détroit d’Ormuz », sans quoi les États-Unis déchaîneraient « les enfers sur eux ».\n\n« Vous vous souvenez quand j’ai donné 10 jours à l’Iran pour CONCLURE UN ACCORD ou ROUVRIR LE DETROIT D’ORMUZ. Le temps presse - 48 heures avant de déchaîner les enfers sur eux. Gloire à DIEU ! », a écrit le président américain sur sa plateforme Truth Social en ce week-end pascal.\n\nSamedi soir, l’Iran a rejeté cet ultimatum. « Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens » de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement des forces armées iraniennes.\n\n« Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place », a ajouté le général Abdollahi, cité par la télévision d’Etat sur Telegram.\n\nLe 26 mars, Donald Trump avait émis un ultimatum de 10 jours à Téhéran pour rouvrir le détroit d’Ormuz, voie maritime critique pour l’économie mondiale et bloquée par l’Iran depuis le début de la guerre.\n\nL’ultimatum avait alors été fixé au « lundi 6 avril à 20 heures, heure de Washington ».\n\nEn l’absence d’une réouverture du détroit, le président américain avait menacé de détruire les centrales électriques en Iran.\n\nVidéoDes policiers iraniens tirent sur deux hélicoptères américains\n\nAprès six semaines d’une guerre qui embrase le Moyen-Orient, déclenchée le 28 février par l’attaque américano-israélienne contre l’Iran, Téhéran ne plie pas. Ce samedi, la centrale nucléaire de Bouchehr, construite avec l’aide de la Russie, a été visée par une frappe, tuant un garde. Il s’agit de la seule installation nucléaire civile opérationnelle en Iran et elle a déjà été visée à quatre reprises depuis le début de la guerre le 28 février.\n\nPendant ce temps, Téhéran et Washington s’activent pour retrouver un des deux occupants du premier avion américain à s’être écrasé depuis le début de la guerre en Iran. Depuis le début de la guerre, aucun soldat américain n’a été tué ni capturé sur le sol iranien, mais 13 ont péri au Koweït, en Arabie saoudite et en Irak.\n\nLes hostilités ont fait des milliers de morts, essentiellement en Iran et au Liban, s’étendant à plusieurs pays de la région."
+}

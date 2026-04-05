@@ -1,0 +1,25 @@
+{
+  "archivedAt": "2026-04-05T03:18:06.910Z",
+  "attestationId": "b31433c9ad938a58fea774d3b14cef6076c0918cf5657b8d011150735f34ccae",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/politique/moqueries-de-trump-les-propos-que-jai-pu-entendre-ni-sont-ni-elegants-ni-a-la-hauteur-deplore-emmanuel-macron-02-04-2026-SUPVOSNTVNCKPNYJY4AIUYST7A.php",
+  "storageAdapter": "zerog",
+  "localArchiveDir": "C:\\Users\\hippo\\Documents\\Indelible\\output\\embeddings\\2026-04-05_031443_b31433c9ad938a58fea774d3b14cef6076c0918cf5657b8d011150735f34ccae",
+  "rawCaptureAddress": "0xc4d1dc013aa5228c9aec114f49e1722f340a1836cd99ce4fe00bfda0a3ff1ced",
+  "manifestAddress": "0x4dda24dc27c6bd290140d8a3428c26b7e2b2f5daf3d2f7e738e849cffd2c9203",
+  "addresses": {
+    "cleanArticle": "0xd149aa85e9e737b5b5ff72a4caa4121a96efc4603143df44bce7ddd79cbf4d60",
+    "statements": "0x7cd39c5bb07a58bda1e8fe9e70cb75e4c9330a8920168e8541a686fd744c008c",
+    "refinedStatements": "0x5ad8b4fc6e70b6fcdce2df085a57cd8eb17febd99d4405795a78456decafb99c",
+    "retrievalChunks": "0x709b59650e95d276201bfdd9e4182f9c54cef9530a669d370ad2f083e17b5409",
+    "embeddings": "0x6d2fa8751cbd51340a025b0197f825646842fdbdd7c578f10ff95ecb25585f6b"
+  },
+  "summary": {
+    "paragraphCount": 9,
+    "statementCount": 1,
+    "chunkCount": 10,
+    "vectorCount": 10,
+    "refinedStatementTotal": 1,
+    "refinedVerified": 1
+  }
+}

@@ -38,6 +38,37 @@ const DEFAULT_INDEXER_URL = "https://indexer-storage-testnet-turbo.0g.ai";
 /** Minimum balance considered safe for at least one upload (~0.001 A0GI). */
 const MIN_SAFE_BALANCE_WEI = 1_000_000_000_000_000n;
 
+/** Below this wei balance, a revert is treated as « likely out of gas / funds ». */
+const LOW_BALANCE_REVERT_THRESHOLD_WEI = 10n * MIN_SAFE_BALANCE_WEI;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+/** Outer retries (after SDK-internal retries) — skip for deterministic / config errors. */
+function isRetryableArtifactUploadError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  if (msg.includes("Insufficient A0GI balance on Galileo")) {
+    return false;
+  }
+  if (msg.includes("Merkle tree error")) {
+    return false;
+  }
+  if (msg.includes("ZEROG_PRIVATE_KEY is required")) {
+    return false;
+  }
+  return true;
+}
+
+function getUploadArtifactAttemptsFromEnv(): { maxAttempts: number; baseDelayMs: number } {
+  const maxAttempts = Math.max(1, parseInt(process.env.ZEROG_UPLOAD_ARTIFACT_ATTEMPTS ?? "3", 10) || 3);
+  const baseDelayMs = Math.max(
+    500,
+    parseInt(process.env.ZEROG_UPLOAD_ARTIFACT_RETRY_BASE_MS ?? "4000", 10) || 4000,
+  );
+  return { maxAttempts, baseDelayMs };
+}
+
 function getUploadTimeoutMsFromEnv(): number | null {
   const raw = process.env.ZEROG_UPLOAD_WAIT_TIMEOUT_MS;
   if (!raw || raw.trim() === "") {
@@ -152,13 +183,52 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     }
   }
 
+  /**
+   * En plus des retries **internes** au SDK (`ZEROG_UPLOAD_MAX_RETRIES`), on refait l’upload
+   * depuis zéro quelques fois (nouveau merkle + nouvelle tx) — utile si le revert est transitoire
+   * (nonce, RPC, estimation de gas). Mettre `ZEROG_UPLOAD_ARTIFACT_ATTEMPTS=1` pour désactiver.
+   */
   async uploadArtifact(fileName: string, data: string): Promise<ArtifactUploadResult> {
+    const { maxAttempts, baseDelayMs } = getUploadArtifactAttemptsFromEnv();
+    if (maxAttempts > 1) {
+      console.log(
+        `[0G] Outer upload retries: up to ${maxAttempts} attempt(s), backoff base ${baseDelayMs}ms (ZEROG_UPLOAD_ARTIFACT_ATTEMPTS / ZEROG_UPLOAD_ARTIFACT_RETRY_BASE_MS)`,
+      );
+    }
+
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await this.uploadArtifactOnce(fileName, data, attempt, maxAttempts);
+      } catch (err) {
+        lastErr = err;
+        const retryable = isRetryableArtifactUploadError(err);
+        if (!retryable || attempt >= maxAttempts) {
+          throw err;
+        }
+        const delay = baseDelayMs * 2 ** (attempt - 1);
+        const preview = err instanceof Error ? err.message.slice(0, 220) : String(err);
+        console.warn(
+          `[0G] "${fileName}" attempt ${attempt}/${maxAttempts} failed — ${preview}${preview.length >= 220 ? "…" : ""} — retrying in ${delay}ms…`,
+        );
+        await sleep(delay);
+      }
+    }
+    throw lastErr;
+  }
+
+  private async uploadArtifactOnce(
+    fileName: string,
+    data: string,
+    attempt: number,
+    maxAttempts: number,
+  ): Promise<ArtifactUploadResult> {
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
 
     // Flow contract is auto-discovered by the Indexer in the new SDK (first candidate only)
     const indexer = new Indexer(this.indexerUrl);
-    if (this.indexerUrlCandidates.length > 1) {
+    if (this.indexerUrlCandidates.length > 1 && attempt === 1) {
       console.log(
         `[0G] Indexer candidates for location polling: ${this.indexerUrlCandidates.join(" | ")} (upload uses first)`,
       );
@@ -170,10 +240,10 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     if (balance < MIN_SAFE_BALANCE_WEI) {
       throw new Error(
         `[ZeroGStorage] Insufficient A0GI balance on Galileo testnet.\n` +
-        `  Wallet:  ${address}\n` +
-        `  Balance: ${ethers.formatEther(balance)} A0GI (need at least 0.001 A0GI)\n` +
-        `  Faucet:  https://faucet.0g.ai\n` +
-        `  Explorer: https://chainscan-galileo.0g.ai/address/${address}`,
+          `  Wallet:  ${address}\n` +
+          `  Balance: ${ethers.formatEther(balance)} A0GI (need at least 0.001 A0GI)\n` +
+          `  Faucet:  https://faucet.0g.ai\n` +
+          `  Explorer: https://chainscan-galileo.0g.ai/address/${address}`,
       );
     }
 
@@ -192,8 +262,9 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     const retryOpts = buildRetryOptsFromEnv();
     const txOpts = buildTxOptsFromEnv();
 
+    const attemptLabel = maxAttempts > 1 ? ` (attempt ${attempt}/${maxAttempts})` : "";
     console.log(
-      `[0G] Uploading ${fileName} (${padded.length} bytes after prepare, ${data.length} bytes raw input)`,
+      `[0G] Uploading ${fileName}${attemptLabel} (${padded.length} bytes after prepare, ${data.length} bytes raw input)`,
     );
     console.log(`  wallet:  ${address} (${ethers.formatEther(balance)} A0GI)`);
     console.log(`  content preview: ${data.slice(0, 200)}${data.length > 200 ? " …" : ""}`);
@@ -250,7 +321,7 @@ export class ZeroGStorageAdapter implements StorageAdapter {
         }
         console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
         await this.waitForIndexerAfterUpload(rootHash, "post-upload (dedup)");
-        let storageSeq = await this.tryGetStorageSequenceFromNode(rootHash, indexer);
+        const storageSeq = await this.tryGetStorageSequenceFromNode(rootHash, indexer);
         return {
           dataAddress: rootHash,
           sequence: storageSeq,
@@ -284,21 +355,33 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
-      const isFundsError =
+      const looksLikeChainRevert =
         msg.includes("require(false)") ||
         msg.includes("insufficient funds") ||
         msg.includes("CALL_EXCEPTION") ||
-        msg.includes("NotEnoughFee");
+        msg.includes("NotEnoughFee") ||
+        msg.includes("reverted");
 
-      if (isFundsError) {
+      if (looksLikeChainRevert) {
         const balanceAfter = await provider.getBalance(address);
+        const lowFunds = balanceAfter < LOW_BALANCE_REVERT_THRESHOLD_WEI;
+        if (lowFunds) {
+          throw new Error(
+            `[0G] Transaction reverted on Galileo (chainId 16602).\n` +
+              `  Wallet:  ${address}\n` +
+              `  Balance: ${ethers.formatEther(balanceAfter)} A0GI (low for repeated uploads)\n` +
+              `  Try the faucet: https://faucet.0g.ai\n` +
+              `  Original error: ${msg}`,
+          );
+        }
         throw new Error(
-          `[0G] Transaction reverted on Galileo (chainId 16602).\n` +
-          `  Wallet:  ${address}\n` +
-          `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
-          `  This usually means the wallet ran out of A0GI mid-upload.\n` +
-          `  Faucet:  https://faucet.0g.ai\n` +
-          `  Original error: ${msg}`,
+          `[0G] Transaction reverted on Galileo (chainId 16602) with non-trivial balance.\n` +
+            `  Wallet:  ${address}\n` +
+            `  Balance: ${ethers.formatEther(balanceAfter)} A0GI\n` +
+            `  Often transient (RPC, nonce, gas). Outer retries (ZEROG_UPLOAD_ARTIFACT_ATTEMPTS) may help; ` +
+            `otherwise try ZEROG_GAS_LIMIT / ZEROG_GAS_PRICE or another RPC.\n` +
+            `  Faucet (if needed): https://faucet.0g.ai\n` +
+            `  Original error: ${msg}`,
         );
       }
 

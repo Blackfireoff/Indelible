@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "attestationId": "99ad9e5c837cdb99915d40f66664531c925e7961e34c7bc3246bd277c845ac01",
+  "requestId": "direct-request",
+  "sourceUrl": "https://www.leparisien.fr/international/etats-unis/guerre-en-iran-donald-trump-donne-48-heures-a-teheran-pour-conclure-un-accord-avant-de-dechainer-les-enfers-04-04-2026-ON22CXAW2FGLRGX72PXYKUOLGQ.php",
+  "extractionPolicy": {
+    "allowParaphrases": false,
+    "preserveExactText": true,
+    "speakerAttributionRequired": true
+  },
+  "statements": [
+    {
+      "statementId": "stmt_52424066f34a6d39",
+      "speaker": {
+        "name": "Ali Abdollahi",
+        "role": "general, chef du commandement des forces armées iraniennes",
+        "normalizedId": "ali_abdollahi"
+      },
+      "quoteType": "indirect",
+      "content": "Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens",
+      "cue": "rejeté cet ultimatum. « Le président américain agressif et belliqueux, après avoir subi des défaites successives, a entrepris, de façon impuissante, instable, énervée et stupide, de menacer les infrastructures et les biens » de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement d",
+      "sourceParagraphId": "para_aee5a37ce75319c1",
+      "charStart": 46,
+      "charEnd": 244,
+      "contextWindow": {
+        "precedingText": "Samedi soir, l’Iran a rejeté cet ultimatum. «",
+        "followingText": "» de l’Iran, a affirmé le général Ali Abdollahi, chef du commandement des forces armées iraniennes."
+      },
+      "confidence": 0.95,
+      "validation": {
+        "status": "auto_accepted",
+        "reviewRequired": false
+      }
+    },
+    {
+      "statementId": "stmt_ca1fa6289518e3ed",
+      "speaker": {
+        "name": "Ali Abdollahi",
+        "role": "general, chef du commandement des forces armées iraniennes",
+        "normalizedId": "ali_abdollahi"
+      },
+      "quoteType": "indirect",
+      "content": "Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place",
+      "cue": "« Avec nos forces armées, nous n’hésiterons pas un seul instant à défendre les droits de notre pays, à protéger nos biens et à remettre tout agresseur à sa place », a ajouté le général Abdollahi, cité par la télévision d’E",
+      "sourceParagraphId": "para_e05a6f1942eee1d3",
+      "charStart": 2,
+      "charEnd": 161,
+      "contextWindow": {
+        "precedingText": "«",
+        "followingText": "», a ajouté le général Abdollahi, cité par la télévision d’Etat sur Telegram."
+      },
+      "confidence": 0.95,
+      "validation": {
+        "status": "auto_accepted",
+        "reviewRequired": false
+      }
+    }
+  ]
+}
