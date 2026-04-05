@@ -9,8 +9,12 @@
  * (e.g. local mitmproxy, residential proxy). Uses `undici` `ProxyAgent`.
  *
  * Only the main document is requested (GET HTML). No subresource fetching.
+ *
+ * Fallback: if a plain fetch gets HTTP 402/403, we retry with a headless Chromium browser
+ * (Puppeteer) which renders JS, handles cookies, and passes bot detection.
  */
 import { fetch, ProxyAgent, type Dispatcher } from "undici";
+import { fetchWithBrowser } from "./fetchWithBrowser";
 
 export interface FetchResult {
   /** The exact raw response body */
@@ -31,6 +35,9 @@ const DEFAULT_USER_AGENT =
 
 const DEFAULT_SEC_CH_UA =
   '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"';
+
+/** HTTP status codes that trigger a browser fallback instead of a hard failure. */
+const BROWSER_FALLBACK_STATUSES = new Set([402, 403]);
 
 /**
  * Build request headers modeled on Chrome DevTools (same-origin navigation).
@@ -115,7 +122,12 @@ function resolveProxyDispatcher(): Dispatcher | undefined {
 
 /**
  * Fetch the raw content from a URL (HTML document only — no assets).
- * Throws if the request fails or returns a non-2xx status.
+ *
+ * Strategy:
+ * 1. Try a fast plain HTTP fetch with browser-like headers.
+ * 2. If the server returns 402 (paywall) or 403 (bot block), fall back
+ *    to a real headless Chromium browser via Puppeteer.
+ * 3. Throw on any other non-2xx status.
  */
 export async function fetchRawContent(url: string): Promise<FetchResult> {
   const dispatcher = resolveProxyDispatcher();
@@ -127,18 +139,24 @@ export async function fetchRawContent(url: string): Promise<FetchResult> {
     dispatcher,
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch ${url}: HTTP ${response.status} ${response.statusText}`,
-    );
+  // ── Happy path: 2xx ──
+  if (response.ok) {
+    const body = await response.text();
+    const contentType = response.headers.get("content-type") ?? "application/octet-stream";
+    return { body, contentType, status: response.status };
   }
 
-  const body = await response.text();
-  const contentType = response.headers.get("content-type") ?? "application/octet-stream";
+  // ── Paywall / bot block: fall back to headless browser ──
+  if (BROWSER_FALLBACK_STATUSES.has(response.status)) {
+    console.log(
+      `[fetchRawContent] HTTP ${response.status} — falling back to headless browser for: ${url}`,
+    );
+    return fetchWithBrowser(url);
+  }
 
-  return {
-    body,
-    contentType,
-    status: response.status,
-  };
+  // ── Other errors: throw ──
+  throw new Error(
+    `Failed to fetch ${url}: HTTP ${response.status} ${response.statusText}`,
+  );
 }
+
