@@ -109,7 +109,7 @@ export default function GetTokenClient() {
             address: '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f',
             symbol: 'INDL',
             decimals: 18,
-            image: window.location.origin + '/logo/circle.svg',
+            image: window.location.origin + '/logo/small.svg',
           },
         },
       })
