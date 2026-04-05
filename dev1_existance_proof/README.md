@@ -1,105 +1,74 @@
-# Dev 1 — Existence Proof Workflow
+# Dev 1 — Existence Proof Workflow (Standalone)
 
-On-chain triggered, CRE-orchestrated, 0G-stored existence proof for **Indelible**.
+Direct HTTP-to-0G existence proof workflow for **Indelible**.
 
 ## Architecture
 
 ```
-┌──────────┐    tx     ┌─────────────────────┐   event   ┌──────────────────┐
-│   User   │ ────────▷ │ SourceRequestRegistry│ ────────▷ │  Chainlink CRE   │
-│  (dApp)  │           │    (Smart Contract)  │           │    Workflow       │
-└──────────┘           └─────────────────────┘           └────────┬─────────┘
-                                                                  │
-                                                    ┌─────────────┼──────────────┐
-                                                    ▼             ▼              ▽
-                                              ┌──────────┐ ┌───────────┐ ┌──────────────────────┐
-                                              │ HTTP Fetch│ │ 0G Storage│ │SourceAttestationReg. │
-                                              │ (raw URL) │ │ (raw blob)│ │   (onchain record)   │
-                                              └──────────┘ └───────────┘ └──────────────────────┘
+┌──────────┐      URL       ┌──────────────────┐      Fetch      ┌──────────┐
+│  Server  │ ─────────────▷ │    Workflow      │ ─────────────▷ │ Public   │
+│  (Host)  │                │    (Script)      │ ◁───────────── │ URL      │
+└────┬─────┘                └────────┬─────────┘      Data      └──────────┘
+     │                               │
+     │                               ▼
+     │                         ┌───────────┐
+     │                         │ 0G Storage│
+     └───────────────────────▷ │ (raw blob)│
+                               └───────────┘
 ```
 
 ### Flow
 
-1. **User calls** `SourceRequestRegistry.requestSourceAttestation(url)` on-chain
-2. Contract emits `SourceAttestationRequested(requestId, requester, url, requestedAt)`
-3. **CRE Workflow** listens via EVM log trigger (filtered by contract address + event signature)
-4. Workflow **fetches raw content** from the URL (exact bytes, no normalization)
-5. Workflow **computes `rawHash`** = keccak256 of the exact fetched content
-6. Workflow **stores raw artifact** in 0G storage (→ receives `dataAddress`)
-7. Workflow **writes attestation** to `SourceAttestationRegistry.recordAttestation(...)` on-chain
-8. `SourceAttested` event is emitted confirming the proof
+1. **Host executes** the workflow script with a target URL.
+2. Workflow **fetches raw content** from the URL (exact bytes, no normalization).
+3. Workflow **computes `raw_hash`** using SHA-256 of the exact fetched content.
+4. Workflow **computes `attestationId`** = SHA-256(url + timestamp + raw_hash).
+5. Workflow **stores raw artifact** in 0G storage (→ receives `data_address`).
+6. Workflow **returns a metadata record** (attestation) linking the URL to its 0G storage location.
 
 ### Trust Model
 
-- **Trigger**: On-chain (no centralized API endpoint)
-- **Orchestration**: Chainlink CRE (decentralized oracle network)
-- **Raw storage**: 0G (decentralized storage with Merkle tree verification)
-- **Attestation**: On-chain (immutable, verifiable)
-
-## Target Chain
-
-**0G Galileo Testnet** — Chain ID `16602`
+- **Trigger**: Direct execution (server-side logic).
+- **Raw storage**: 0G (decentralized storage with Merkle tree verification).
+- **Integrity**: Deterministic SHA-256 hashing for both content and attestation records.
 
 ## Project Structure
 
 ```
 dev1_existance_proof/
-├── contracts/
-│   ├── SourceRequestRegistry.sol     # User-facing request contract
-│   └── SourceAttestationRegistry.sol # CRE-writable attestation registry
 ├── workflow/
-│   ├── index.ts                      # CRE workflow entry point
+│   ├── index.ts                      # Standalone entry point
 │   ├── handlers/
-│   │   └── onSourceRequested.ts      # Main event handler (decode → fetch → hash → store → attest)
+│   │   └── onSourceRequested.ts      # Main logic handler (fetch → hash → store)
 │   ├── adapters/
 │   │   ├── storage/
 │   │   │   ├── StorageAdapter.ts     # Interface
 │   │   │   ├── Mock0GStorageAdapter.ts  # In-memory mock
-│   │   │   └── Real0GStorageAdapter.ts  # 0G Galileo stub
+│   │   │   └── Sdk0GStorageAdapter.ts  # Real 0G SDK implementation
 │   │   └── http/
-│   │       └── fetchRawContent.ts    # Raw HTTP fetch
+│   │       └── fetchRawContent.ts    # Raw HTTP fetch utility
 │   ├── types/
-│   │   ├── SourceRequestEvent.ts
-│   │   ├── RawArtifact.ts
-│   │   ├── OnchainAttestation.ts
+│   │   ├── RawArtifact.ts            # 0G storage schema
+│   │   ├── OnchainAttestation.ts     # Attestation metadata schema
 │   │   └── index.ts                  # Barrel export
 │   └── utils/
-│       ├── hashing.ts                # keccak256 raw content hash
-│       ├── ids.ts                    # requestId / attestationId generation
+│       ├── hashing.ts                # SHA-256 raw content hash
+│       ├── ids.ts                    # attestationId generation
 │       ├── serialization.ts          # Deterministic JSON serialization
 │       └── mime.ts                   # Content-type extraction
-├── fixtures/
-│   ├── sample-request.json
-│   └── sample-raw-html.html
-├── tests/
+├── tests/                           # Unit tests (Vitest)
 │   ├── hashing.test.ts
 │   ├── ids.test.ts
 │   ├── serialization.test.ts
-│   ├── event-decoding.test.ts
-│   ├── contract-encoding.test.ts
 │   └── storage-adapter.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## EVM Log Trigger
-
-The CRE workflow uses an **EVM log trigger** from `@chainlink/cre-sdk`:
-
-```typescript
-evmClient.logTrigger({
-  addresses: [hexToBase64(config.contractAddress)],
-  topics: [{ values: [hexToBase64(SOURCE_ATTESTATION_REQUESTED_SIG)] }],
-  confidence: "CONFIDENCE_LEVEL_FINALIZED",
-})
-```
-
-- **`addresses`**: The deployed `SourceRequestRegistry` contract address (base64-encoded)
-- **`topics[0]`**: The keccak256 event signature of `SourceAttestationRequested(bytes32,address,string,uint64)`
-- **`confidence`**: Waits for finality to avoid chain reorgs
-
 ## 0G Storage Integration
+
+The workflow supports both a mock environment and the real 0G Galileo testnet.
 
 ### Interface
 
@@ -116,22 +85,22 @@ interface StorageAdapter {
 
 ### Real (production)
 
-`Sdk0GStorageAdapter` — uses `@0gfoundation/0g-ts-sdk` to upload to 0G Galileo testnet. Returns `0g://<merkleRootHash>` addresses. Requires:
+`Sdk0GStorageAdapter` — uses `@0gfoundation/0g-ts-sdk` to upload to 0G. Returns `0g://<merkleRootHash>` addresses. Requires environment variables:
 
 - `ZG_PRIVATE_KEY` — signer private key
-- `ZG_RPC_URL` — default: `https://evmrpc-testnet.0g.ai`
-- `ZG_INDEXER_URL` — default: `https://indexer-storage-testnet-turbo.0g.ai`
+- `ZG_RPC_URL` — e.g., `https://evmrpc-testnet.0g.ai`
+- `ZG_INDEXER_URL` — e.g., `https://indexer-storage-testnet-turbo.0g.ai`
 
 ### Raw Artifact Format (stored in 0G)
 
 ```json
 {
-  "attestationId": "0x...",
-  "requestId": "0x...",
-  "url": "https://lemonde.fr/article405",
-  "observed_at": "2026-04-04T12:00:00.000Z",
+  "attestationId": "...",
+  "requestId": "direct-request",
+  "url": "https://example.com/page",
+  "observed_at": "2026-04-05T12:00:00.000Z",
   "content_type": "text/html",
-  "raw_hash": "0x...",
+  "raw_hash": "...",
   "data_brut": "<html>...</html>"
 }
 ```
@@ -140,48 +109,38 @@ interface StorageAdapter {
 
 | ID | Formula | Purpose |
 |---|---|---|
-| `requestId` | `keccak256(abi.encodePacked(requester, url, requestedAt))` | Identifies the user's request |
-| `attestationId` | `keccak256(abi.encodePacked(url, observedAt, rawHash))` | Identifies the final attestation |
+| `raw_hash` | `sha256(rawContent)` | Integrity proof of the exact bytes fetched |
+| `attestationId` | `sha256(url + observedAt + rawHash)` | Deterministic unique ID for the capture |
 
-Both are computed identically on-chain (Solidity) and off-chain (TypeScript with viem).
+## Usage
 
-## Local Simulation
+### Installation
 
 ```bash
-cd dev1_existance_proof
 npm install
-npm test          # Run all 37 tests
-npm run typecheck # Verify TypeScript types
 ```
 
-The mock adapter allows running the entire workflow without 0G credentials or a real blockchain.
+### Running the Workflow
 
-## How Dev 2 Should Consume the Raw Artifact
+To process a URL and store it (defaults to Mock storage unless configured):
 
-Dev 2 (ingestion, canonicalization, chunking, embeddings) should:
+```bash
+npx tsx workflow/index.ts https://example.com
+```
 
-1. **Retrieve the raw artifact** from 0G using the `dataAddress` from the on-chain attestation
-2. **Parse `data_brut`** — the exact raw HTML/text as fetched
-3. **Use `content_type`** to determine the parser (HTML, text, PDF, etc.)
-4. **Use `raw_hash`** to verify integrity before processing
-5. **Use `attestationId`** and `requestId` to link back to the on-chain records
+### Running Tests
 
-The `StorageAdapter` interface is the API boundary — Dev 2 can use either the mock or real adapter.
-
-## Access Control
-
-The `SourceAttestationRegistry` has an `onlyOracle` modifier:
-- Only the designated `oracleWriter` address can call `recordAttestation()`
-- The contract owner can update the oracle writer via `setOracleWriter()`
-- This prevents unauthorized attestation writes
+```bash
+npm test          # Run Vitest suite
+npm run typecheck # Verify TypeScript types
+```
 
 ## Dependencies
 
 | Package | Purpose |
 |---|---|
-| `@chainlink/cre-sdk` | CRE workflow SDK (triggers, runtime, runner) |
-| `viem` | ABI encoding/decoding, keccak256, event parsing |
-| `@0gfoundation/0g-ts-sdk` | 0G storage uploads (optional, for real adapter) |
-| `ethers` | 0G signer setup (optional, for real adapter) |
-| `vitest` | Test runner |
-| `typescript` | Type checking |
+| `@0gfoundation/0g-ts-sdk` | 0G storage uploads |
+| `dotenv` | Environment variable management |
+| `vitest` | Unit testing |
+| `tsx` | Direct TypeScript execution |
+| `typescript` | Type safety |

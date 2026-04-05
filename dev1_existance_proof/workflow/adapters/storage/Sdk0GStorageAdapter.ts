@@ -56,8 +56,22 @@ export class Sdk0GStorageAdapter implements StorageAdapter {
       }
 
       const rootHash = tree!.rootHash() as string;
-      console.log(`[0G] Attempting on-chain submission for root: ${rootHash}...`);
+      
+      console.log(`[0G] Checking if file already exists for root: ${rootHash}...`);
+      try {
+        const locations = await indexer.getFileLocations(rootHash);
+        if (locations && locations.length > 0) {
+          console.log(`[0G] File already exists on 0G network (found ${locations.length} nodes). Skipping upload.`);
+          return `0g://${rootHash}`;
+        }
+      } catch (checkErr: any) {
+        if (!String(checkErr).toLowerCase().includes("file not found")) {
+          console.warn(`[0G] Warning checking file existence: ${checkErr?.message || String(checkErr)}`);
+        }
+        // "File not found" is expected. Proceed to upload.
+      }
 
+      console.log(`[0G] Attempting on-chain submission for root: ${rootHash}...`);
       const [tx, uploadErr] = await indexer.upload(memData, this.config.rpcUrl, signer);
 
       if (uploadErr !== null) {
