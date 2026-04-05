@@ -7,8 +7,8 @@ Transforms a raw HTML capture produced by Dev 1 into a structured, searchable, e
 | Artifact | Purpose |
 |---|---|
 | `clean_article.json` | Cleaned article text, ordered paragraphs, provenance |
-| `statements.json` | Exact political statements (deterministic extraction) |
-| `verified_statements.json` | Verified statements with span proofs (deterministic + optional LLM) |
+| `statements.json` | Exact political statements (LLM extraction depuis `clean_article`, puis validation) |
+| `verified_statements.json` | Même contenu ramené au schéma refined (`extracted_by: "llm"`) avec preuves de spans |
 | `retrieval_chunks.json` | Statement + paragraph chunks for semantic retrieval |
 | `embeddings.json` | Embedding vectors for all chunks (local model or stub) |
 | `document_manifest.json` | Entry point linking all artifacts via 0G data addresses |
@@ -25,18 +25,17 @@ extractMainArticle       ← Mozilla Readability + jsdom + fallback DOM walk
 buildCleanArticle        ← ordered paragraphs, clean text, offsets, provenance
     │
     ▼
-extractStatements        ← deterministic regex rules (always runs)
+extractStatementsFromCleanArticle  ← LLM (local ou 0G) sur JSON paragraphes, pas HTML
     │
     ▼
 validateStatements       ← exact substring verification (non-negotiable)
     │
     ▼
-[llmRefinement]          ← optional: local OpenAI-compatible endpoint (LM Studio)
-    │                       sends clean JSON, NOT raw HTML
-    │                       graceful fallback if endpoint unreachable
+filterConservativeStatements
+    │
     ▼
-verifyRefinedStatements  ← exact + normalized span verification
-    │                       unverified LLM output → discarded
+deterministicStatementsToRefined(llm)  ← statements → verified_statements (schéma refined)
+    │
     ▼
 buildRetrievalChunks     ← statement chunks + paragraph chunks
     │
@@ -66,15 +65,16 @@ buildDocumentManifest    ← links all artifact addresses
       loadRawCapture.ts
       extractMainArticle.ts
       buildCleanArticle.ts
-      extractStatements.ts
+      llmShared.ts
+      llmExtractStatements.ts   ← statements depuis clean_article (LLM)
+      extractStatements.ts      ← extracteur à règles (tests / scripts uniquement)
       validateStatements.ts
       buildRetrievalChunks.ts
       generateEmbeddings.ts
       uploadArtifacts.ts
       buildDocumentManifest.ts
-    /pipeline
-      llmRefinement.ts             ← local LLM refinement (LM Studio / any OpenAI-compat)
-      verifyRefinedStatements.ts   ← exact + normalized span verification
+      llmRefinement.ts             ← (optionnel) second passage refined — non utilisé par le job par défaut
+      verifyRefinedStatements.ts   ← helpers refined + conversion Statement → VerifiedRefinedStatement
     /schemas                       ← TypeScript types for all artifacts
     /utils
       ids.ts                       ← deterministic SHA-256-based IDs
@@ -192,8 +192,9 @@ $env:STORAGE_ADAPTER = "zerog"; $env:ZEROG_PRIVATE_KEY = "0xYOUR_KEY"; $env:RAW_
 
 ## Running with a local LLM (LM Studio)
 
-The LLM refinement step is **entirely optional**.  The pipeline always completes in
-deterministic-only mode.  The LLM only receives clean article JSON – never raw HTML.
+**Statement extraction** (`statements.json`) est produite par le LLM à partir du JSON
+`clean_article` (fenêtres de paragraphes). Sans endpoint joignable, l’extraction renvoie
+zéro statement (logs d’avertissement). Aucun HTML n’est envoyé au modèle.
 
 ### Setup
 
@@ -205,8 +206,10 @@ deterministic-only mode.  The LLM only receives clean article JSON – never raw
 
 ### Configure `.env`
 
+Les variables `LLM_REFINEMENT_*` / `LOCAL_LLM_*` configurent aussi l’extracteur (`llmExtractStatements.ts`).
+
 ```ini
-ENABLE_LLM_REFINEMENT=true
+LLM_REFINEMENT_PROVIDER=local
 LOCAL_LLM_BASE_URL=http://127.0.0.1:1234/v1
 LOCAL_LLM_API_KEY=lm-studio
 LOCAL_LLM_MODEL=qwen2.5-7b-instruct
@@ -220,12 +223,12 @@ npm run pipeline
 ```
 
 The pipeline will:
-1. Run the deterministic extraction (always).
-2. Connect to LM Studio and run the LLM on the clean article JSON (paragraph windows).
-3. Verify every LLM statement against the source text (exact or normalized span).
-4. Discard any statement the LLM fabricated that cannot be grounded back to the text.
-5. Produce `verified_statements.json` with `extracted_by: "llm_refinement"` markers.
-6. **If LM Studio is not running**, log a warning and continue in deterministic-only mode.
+1. Appeler le LLM sur des fenêtres de paragraphes (JSON `id` + `text`).
+2. Parser la réponse JSON ; pour chaque ligne, vérifier que `content` est une sous-chaîne
+   exacte (ou normalisée) du paragraphe — sinon la ligne est ignorée.
+3. Exécuter `validateStatements` et le filtre d’attribution conservateur.
+4. Écrire `verified_statements.json` via `deterministicStatementsToRefined(..., "llm")`
+   (`extracted_by: "llm"`, spans alignés sur les `Statement` validés).
 
 ### What the LLM receives
 
@@ -234,42 +237,23 @@ The LLM is given a JSON object like:
 ```json
 {
   "paragraphs": [
-    { "id": "para_abc123", "order": 1, "text": "Clean paragraph text…" }
+    { "id": "para_abc123", "text": "Clean paragraph text…" }
   ]
 }
 ```
 
 It is **never** given raw HTML, CSS, JavaScript, or any markup.
 
-### What the LLM must return
+### What the LLM must return (extraction statements)
 
-```json
-{
-  "statements": [
-    {
-      "speaker": "Donald Trump",
-      "speaker_role": "U.S. President",
-      "statement_text": "exact verbatim text from one of the paragraphs",
-      "statement_type": "direct_quote",
-      "attribution_text": "Trump said",
-      "evidence_paragraph_ids": ["para_abc123"],
-      "confidence": 0.9
-    }
-  ]
-}
-```
+Le prompt demande un objet `{ "statements": [ … ] }` avec notamment `content`, `speaker`,
+`source_paragraph_id`, `quote_type`, `cue`, `confidence` — voir `llmExtractStatements.ts`.
 
-### Verification guarantee
+### Vérifications côté pipeline
 
-Every statement where `statement_text` cannot be found in the referenced paragraphs
-(exact or normalized) is **silently discarded** before writing `verified_statements.json`.
-The field `verification_method` records how each statement was matched:
-
-| `verification_method` | Meaning |
-|---|---|
-| `exact_match` | `statement_text` found verbatim |
-| `normalized_match` | Found after stripping invisible Unicode + collapsing whitespace |
-| `unverified` | Not found (kept with `verified: false` only if `keepUnverified: true`) |
+Les énoncés qui ne se retrouvent pas dans le texte source après parsing sont **rejetés**
+avant `statements.json`. Le schéma `verified_statements` repose sur les spans validés
+dans `statements.json` (tous marqués `verification_method: "exact_match"` à l’export refined).
 
 ---
 
@@ -288,7 +272,7 @@ The field `verification_method` records how each statement was matched:
 | `ZEROG_PRIVATE_KEY` | — | Signing key for 0G uploads |
 | `ZEROG_UPLOAD_MINIFY_JSON` | — | Set `true` to compact JSON before 0G upload (new Merkle root; helps avoid stale artifact dedup) |
 | `ZEROG_UPLOAD_PAD_MIN_BYTES` | `2048` | Minimum UTF-8 length before padding spaces |
-| `ENABLE_LLM_REFINEMENT` | `false` | Enable LLM refinement step |
+| `LLM_REFINEMENT_PROVIDER` | `local` | `local` (OpenAI-compatible) ou `0g` (0G Compute) pour l’extraction des statements |
 | `LOCAL_LLM_BASE_URL` | `http://127.0.0.1:1234/v1` | OpenAI-compatible endpoint |
 | `LOCAL_LLM_API_KEY` | `lm-studio` | API key (any string for LM Studio) |
 | `LOCAL_LLM_MODEL` | `local-model` | Model identifier |
@@ -324,26 +308,18 @@ The field `verification_method` records how each statement was matched:
 
 ## Statement extraction strategy
 
-**Phase 1 – Deterministic rules (always runs):**
-- Pattern: `"quote", Speaker verb`
-- Pattern: `Speaker verb "quote"`
-- Pattern: `According to Speaker, "quote"`
-- All common attribution verbs: said, stated, declared, announced, warned, added, …
-- Output: `statements.json` – every statement is an exact verbatim substring
+**LLM (`extractStatementsFromCleanArticle`):**
+- Receives clean JSON with paragraph `id` / `text` (NOT raw HTML)
+- Fenêtres glissantes de paragraphes (taille configurable via `LlmRefinementConfig` / défaut dans `llmShared`)
+- The model returns `content` + `speaker` + `source_paragraph_id`, etc.; chaque ligne est
+  résolue en spans dans le paragraphe (`findExactSpan` / `findNormalizedSpan`) puis convertie en `Statement`
 
-**Phase 2 – LLM refinement (optional, `ENABLE_LLM_REFINEMENT=true`):**
-- Receives clean JSON with paragraph IDs (NOT raw HTML)
-- Processes in sliding windows (default 6 paragraphs per request)
-- Schema-validated output: must match `LlmRawStatement[]` shape
-- Every LLM result verified against source paragraphs before export
-- Unverifiable statements discarded (not even `needs_review`)
-- Results merged with Phase 1 (no duplicates); output: `verified_statements.json`
-- Graceful fallback if endpoint unreachable
+**Après extraction :**
+- `validateStatements` + `filterConservativeStatements`
+- `verified_statements.json` = `deterministicStatementsToRefined(statements, "llm")`
 
-**Span verification (both phases):**
-1. Exact substring match (`exact_match`)
-2. Normalized match – strip invisible Unicode + collapse whitespace (`normalized_match`)
-3. Discarded if neither succeeds
+**Legacy – `extractStatements.ts` (rules + optional LLM fallback dans ce module):**
+- Conservé pour tests Jest et scripts ; **non utilisé** par `runIngestionJob`.
 
 ## 0G Storage adapter
 
