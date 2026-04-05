@@ -372,17 +372,17 @@ export default function SearchResults() {
 
                       <Button
                         onPress={() => handleReadOriginalDocument(quote)}
-                        isLoading={isLoadingDocument}
-                        disabled={isLoadingDocument}
-                        className="bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+                        isDisabled={isLoadingDocument}
+                        className="bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium h-11 rounded-xl px-5 flex items-center justify-center gap-2 cursor-pointer disabled:bg-[var(--landing-primary-darker)]"
                       >
-                        {!isLoadingDocument && (
+                        {isLoadingDocument ? (
+                          <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 animate-spin text-[var(--landing-bg-white)]" />
+                        ) : (
                           <>
-                            Read Original Document
+                            Show source document
                             <FontAwesomeIcon icon={faUpRightFromSquare} className="w-4 h-4" />
                           </>
                         )}
-                        {isLoadingDocument && 'Loading...'}
                       </Button>
                     </div>
                   </div>
