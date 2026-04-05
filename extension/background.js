@@ -8,6 +8,10 @@
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
   .catch((err) => console.error('sidePanel.setPanelBehavior error:', err));
 
+// ── Side Panel Text Relay State ──
+let pendingTextSelection = null;
+let pendingTextSource = '';
+
 // ── Context Menu ──
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -19,21 +23,27 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === 'indelible-search' && info.selectionText) {
-    // Open the side panel first
+    // Store the selection
+    pendingTextSelection = info.selectionText;
+    pendingTextSource = tab.url ? new URL(tab.url).hostname + new URL(tab.url).pathname : '';
+
+    // Open the side panel
     try {
       await chrome.sidePanel.open({ tabId: tab.id });
+      // Forward text after side panel has time to initialize
+      setTimeout(() => {
+        if (pendingTextSelection) {
+          chrome.runtime.sendMessage({
+            type: 'TEXT_SELECTED',
+            text: pendingTextSelection,
+            source: pendingTextSource
+          }).catch(() => {});
+          pendingTextSelection = null;
+        }
+      }, 1000);
     } catch (e) {
       console.error('Could not open side panel:', e);
     }
-
-    // Small delay to let the panel initialize
-    setTimeout(() => {
-      chrome.runtime.sendMessage({
-        type: 'TEXT_SELECTED',
-        text: info.selectionText,
-        source: tab.url ? new URL(tab.url).hostname + new URL(tab.url).pathname : ''
-      }).catch(() => {});
-    }, 500);
   }
 });
 
@@ -44,6 +54,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Open side panel on the sender's tab
     if (sender.tab) {
       chrome.sidePanel.open({ tabId: sender.tab.id })
+        .then(() => {
+          // Forward any pending text selection to the side panel
+          if (pendingTextSelection) {
+            setTimeout(() => {
+              chrome.runtime.sendMessage({
+                type: 'TEXT_SELECTED',
+                text: pendingTextSelection,
+                source: pendingTextSource
+              }).catch(() => {});
+              pendingTextSelection = null;
+            }, 1000);
+          }
+        })
         .catch((e) => console.error('Could not open side panel:', e));
     }
     return;
@@ -71,8 +94,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'TEXT_SELECTED') {
-    // The content script sent selected text — relay to side panel
-    // Side panel is also a chrome.runtime listener, so this will reach it
+    // Store for relay when side panel opens
+    pendingTextSelection = message.text;
+    pendingTextSource = message.source || '';
     return;
   }
 });
