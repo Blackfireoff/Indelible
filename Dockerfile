@@ -4,8 +4,7 @@
 # =============================================================================
 # Stage 1: Dependencies
 # =============================================================================
-FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat python3 make g++
+FROM node:20 AS deps
 WORKDIR /app
 
 # Install dependencies
@@ -15,8 +14,7 @@ RUN npm i
 # =============================================================================
 # Stage 2: Builder
 # =============================================================================
-FROM node:20-alpine AS builder
-RUN apk add --no-cache libc6-compat python3 make g++
+FROM node:20 AS builder
 WORKDIR /app
 
 # Copy dependencies from deps stage
@@ -33,19 +31,18 @@ RUN npm run build
 # =============================================================================
 # Stage 3: Runner
 # =============================================================================
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nextjs
 
 # Set permissions for Next.js cache and static files
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir .next && chown nextjs:nodejs .next
 
 # Copy necessary files from builder
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
