@@ -188,7 +188,8 @@ import type { Statement } from "../schemas/statements.js";
  * These are always considered "verified" since they passed the deterministic validation.
  */
 export function deterministicStatementsToRefined(
-  statements: Statement[]
+  statements: Statement[],
+  extractedBy: "deterministic" | "llm" = "deterministic",
 ): VerifiedRefinedStatement[] {
   return statements
     .filter((s) => s.validation.status !== "rejected")
@@ -215,7 +216,7 @@ export function deterministicStatementsToRefined(
         verified: true,
         verification_method: "exact_match",
         matched_spans: [span],
-        extracted_by: "deterministic",
+        extracted_by: extractedBy,
       };
     });
 }

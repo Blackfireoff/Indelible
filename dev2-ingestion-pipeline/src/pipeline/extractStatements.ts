@@ -1,4 +1,7 @@
 /**
+ * Rules-based statement extraction (legacy / tests).
+ * The main ingestion job uses `llmExtractStatements.extractStatementsFromCleanArticle` instead.
+ *
  * Statement extraction pipeline – hybrid approach:
  *  Phase 1: Rules-based extraction for obvious direct quotes and attribution patterns.
  *  Phase 2: Constrained LLM fallback for ambiguous paragraphs (optional, skipped when
