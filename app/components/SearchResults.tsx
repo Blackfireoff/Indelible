@@ -14,6 +14,7 @@ const publicClient = createPublicClient({
 import NavBar from './NavBar'
 import Footer from './Footer'
 import SourcesModal, { type SourceDocument } from './SourcesModal'
+import SearchBar from './SearchBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faFileLines, faCalendarDays, faUpRightFromSquare, faMagnifyingGlass, faXmark, faQuoteLeft, faHandSparkles, faMagicWandSparkles, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
@@ -153,8 +154,11 @@ export default function SearchResults() {
   }
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
+    const trimmedQuery = searchQuery.trim()
+    if (trimmedQuery) {
+      lastSearchedQuery.current = trimmedQuery
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`)
+      performSearch(trimmedQuery)
     }
   }
 
@@ -202,40 +206,14 @@ export default function SearchResults() {
       <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
         {/* Search Input */}
         <div className="relative mb-6">
-          <div className="bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-xl shadow-sm h-14 flex items-center px-4 gap-3">
-            <button
-              onClick={() => setSearchQuery('')}
-              className="group relative w-10 h-10 flex items-center justify-center shrink-0 cursor-pointer"
-              type="button"
-              aria-label="Clear search"
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="w-5 h-5 text-[var(--landing-text-secondary)] transition-all duration-200 group-hover:opacity-0 group-hover:rotate-90 group-hover:scale-75"
-              />
-              <FontAwesomeIcon
-                icon={faXmark}
-                className="w-5 h-5 text-[var(--landing-text-secondary)] absolute transition-all duration-200 opacity-0 -rotate-90 scale-75 group-hover:opacity-100 group-hover:rotate-0 group-hover:scale-100"
-              />
-            </button>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search political speeches..."
-              className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-primary)] placeholder:text-[var(--landing-text-secondary)] outline-none"
-            />
-            <Button
-              onPress={handleSearch}
-              isDisabled={isLoading || !searchQuery.trim()}
-              className="h-10 bg-[var(--landing-primary-darker)] hover:bg-[var(--landing-primary-dark)] text-[var(--landing-bg-white)] font-medium rounded-xl px-6 cursor-pointer"
-            >
-              {isLoading ? (
-                <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 animate-spin" />
-              ) : 'Search'}
-            </Button>
-          </div>
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSearch={handleSearch}
+            isLoading={isLoading}
+            placeholder="Search political speeches..."
+            size="md"
+          />
         </div>
 
         {error && (

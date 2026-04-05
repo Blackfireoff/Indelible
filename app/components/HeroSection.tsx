@@ -7,6 +7,7 @@ import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation'
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react'
 import Image from 'next/image'
+import SearchBar from './SearchBar'
 
 const suggestions = [
   "Biden on climate change",
@@ -68,37 +69,14 @@ export default function HeroSection() {
           </p>
         </div>
 
-        {/* Search Input */}
-        <div className="max-w-[800px] w-full bg-[var(--landing-bg-white)] border border-[var(--landing-border)] rounded-2xl shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] h-16 flex items-center px-6 gap-4 mb-4">
-          <button
-            onClick={() => setQuery('')}
-            className="group relative w-10 h-10 flex items-center justify-center shrink-0 cursor-pointer"
-            type="button"
-            aria-label="Clear search"
-          >
-            <FontAwesomeIcon
-              icon={faMagnifyingGlass}
-              className="w-5 h-5 text-[var(--landing-text-secondary)] transition-all duration-200 group-hover:opacity-0 group-hover:rotate-90 group-hover:scale-75"
-            />
-            <FontAwesomeIcon
-              icon={faXmark}
-              className="w-5 h-5 text-[var(--landing-text-secondary)] absolute transition-all duration-200 opacity-0 -rotate-90 scale-75 group-hover:opacity-100 group-hover:rotate-0 group-hover:scale-100"
-            />
-          </button>
-          <input
-            type="text"
+        <div className="max-w-[800px] w-full mb-4">
+          <SearchBar
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onChange={setQuery}
+            onSearch={handleSearch}
             placeholder="Ask about a politician..."
-            className="flex-1 bg-transparent text-[16px] text-[var(--landing-text-primary)] placeholder:text-[var(--landing-text-muted)] outline-none"
+            size="lg"
           />
-          <Button
-            onPress={handleSearch}
-            className="bg-[var(--landing-primary-darker)] text-[var(--landing-bg-white)] hover:bg-[var(--landing-primary-dark)] font-medium h-12 rounded-xl px-6 cursor-pointer"
-          >
-            Search
-          </Button>
         </div>
 
         {/* Suggestions */}
