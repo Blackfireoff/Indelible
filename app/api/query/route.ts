@@ -12,7 +12,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, initialize0GProvider, configureAgent, listProviders, setStorageAdapter } from "../../../dev3-AI-RAG/agent/agent";
 import { ZeroGStorageAdapter } from "../../../dev3-AI-RAG/storage/0g-adapter";
-import { createPublicClient, http, parseAbiItem, parseUnits } from 'viem';
+import { createPublicClient, http, parseAbiItem, parseUnits, decodeEventLog, erc20Abi } from 'viem';
 import { sepolia } from 'viem/chains';
 
 let initialized = false;
@@ -96,37 +96,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Transaction already consumed." }, { status: 400 });
     }
 
-    try {
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
-      if (receipt.status !== 'success') {
-        return NextResponse.json({ error: "Transaction failed on-chain." }, { status: 400 });
-      }
+      try {
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
+        if (receipt.status !== 'success') {
+          return NextResponse.json({ error: "Transaction failed on-chain." }, { status: 400 });
+        }
 
-      const tx = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
+        const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f'.toLowerCase();
+        const BURN_ADDRESS = '0x000000000000000000000000000000000000dead';
+        let validTransferFound = false;
 
-      const INDL_TOKEN_ADDRESS = '0x230c1F84e14E355760c158f94D42d6Ef81a4D35f'.toLowerCase();
-      if (!tx.to || tx.to.toLowerCase() !== INDL_TOKEN_ADDRESS) {
-        return NextResponse.json({ error: "Transaction did not target INDL token." }, { status: 400 });
-      }
+        for (const log of receipt.logs as any[]) {
+          if (log.address.toLowerCase() === INDL_TOKEN_ADDRESS) {
+            try {
+              const decoded: any = decodeEventLog({
+                abi: erc20Abi,
+                data: log.data,
+                topics: log.topics,
+              });
 
-      // Check if it's a transfer to burn address
-      // MethodID for transfer(address,uint256) is 0xa9059cbb
-      // Data structure: 0xa9059cbb + 32 bytes (address) + 32 bytes (amount)
-      if (!tx.input.startsWith('0xa9059cbb')) {
-        return NextResponse.json({ error: "Transaction was not a standard transfer." }, { status: 400 });
-      }
+              if (decoded.eventName === 'Transfer') {
+                const to = decoded.args.to as string;
+                const value = decoded.args.value as bigint;
 
-      const rawToAddress = '0x' + tx.input.substring(34, 74);
-      const BURN_ADDRESS = '0x000000000000000000000000000000000000dead';
-      if (rawToAddress.toLowerCase() !== BURN_ADDRESS) {
-        return NextResponse.json({ error: "Tokens must be transferred to the burn address." }, { status: 400 });
-      }
+                if (to.toLowerCase() === BURN_ADDRESS && value >= parseUnits('1', 18)) {
+                  validTransferFound = true;
+                  break;
+                }
+              }
+            } catch (e) {
+              // Ignore logs that aren't valid ERC20 transfers
+            }
+          }
+        }
 
-      const amountHex = '0x' + tx.input.substring(74);
-      const amount = BigInt(amountHex);
-      if (amount < parseUnits('1', 18)) {
-        return NextResponse.json({ error: "Insufficient INDL amount paid." }, { status: 400 });
-      }
+        if (!validTransferFound) {
+          return NextResponse.json({ error: "Valid INDL burn transfer not found in transaction logs." }, { status: 400 });
+        }
 
       usedTxHashes.add(txHash);
     } catch (err) {
