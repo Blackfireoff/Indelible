@@ -128,6 +128,28 @@ To process a URL and store it (defaults to Mock storage unless configured):
 npx tsx workflow/index.ts https://example.com
 ```
 
+### Fetch HTTP (403/401, Reuters, etc.)
+
+Le fetch utilise des **en-têtes de navigateur** (Chrome, `Sec-Fetch-*`, `sec-ch-ua`, `Referer` = origine du site) et ne télécharge **que le document HTML** (une requête GET — pas d’assets).
+
+Si la cible renvoie encore **401/403** (bot detection, Akamai, etc.) :
+
+| Variable | Rôle |
+|----------|------|
+| `FETCH_HTTP_PROXY` ou `HTTPS_PROXY` | Proxy HTTP(S) (ex. `http://127.0.0.1:8888` pour mitmproxy, ou proxy résidentiel). |
+| `FETCH_COOKIE` | Cookie d’une session navigateur valide (copier depuis les DevTools → l’onglet réseau → en-tête `Cookie`). |
+| `FETCH_REFERER` | Surcharge du `Referer` (défaut = `origin/` de l’URL). |
+| `FETCH_SEC_FETCH_SITE` | `none` (défaut), `same-origin`, `same-site`, `cross-site` — certains WAF sont sensibles à cette valeur. |
+| `FETCH_USER_AGENT` | Surcharge du User-Agent. |
+| `FETCH_EXTRA_HEADERS` | JSON d’en-têtes supplémentaires, ex. `{"Cookie":"..."}`. |
+
+Exemple avec proxy local :
+
+```bash
+set FETCH_HTTP_PROXY=http://127.0.0.1:8080
+npx tsx workflow/index.ts "https://www.reuters.com/..."
+```
+
 ### Running Tests
 
 ```bash
@@ -140,6 +162,7 @@ npm run typecheck # Verify TypeScript types
 | Package | Purpose |
 |---|---|
 | `@0gfoundation/0g-ts-sdk` | 0G storage uploads |
+| `undici` | `fetch` + `ProxyAgent` (en-têtes « navigateur », proxy optionnel) |
 | `dotenv` | Environment variable management |
 | `vitest` | Unit testing |
 | `tsx` | Direct TypeScript execution |
