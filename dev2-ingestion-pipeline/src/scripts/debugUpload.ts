@@ -35,11 +35,13 @@ const testData = JSON.stringify({ test: true, timestamp: Date.now() });
 console.log("\n=== 0G Upload Diagnostic (ZeroGStorageAdapter) ===");
 console.log(`Payload: ${testData}`);
 
-const rootHash = await adapter.uploadArtifact("debug-upload.json", testData);
-console.log(`\nRoot hash returned: ${rootHash}`);
+const upload = await adapter.uploadArtifact("debug-upload.json", testData);
+console.log(`\nRoot hash (dataAddress): ${upload.dataAddress}`);
+console.log(`Sequence (submissionIndex / tx.seq): ${upload.sequence ?? "null"}`);
+console.log(`Flow tx hash: ${upload.flowTxHash ?? "null"}`);
 
 console.log("\n--- Downloading to verify round-trip … ---");
-const downloaded = await adapter.downloadArtifact(rootHash);
+const downloaded = await adapter.downloadArtifact(upload.dataAddress);
 
 if (downloaded === testData) {
   console.log("✓ Round-trip OK – content matches exactly");

@@ -1,6 +1,6 @@
-import { keccak256, toBytes } from "viem";
+import crypto from "crypto";
 import type { StorageAdapter } from "./StorageAdapter";
-import type { RawArtifact } from "../../types";
+import type { RawArtifact } from "../../types/RawArtifact";
 import { serializeRawArtifact, deserializeRawArtifact } from "../../utils/serialization";
 
 /**
@@ -12,7 +12,7 @@ export class Mock0GStorageAdapter implements StorageAdapter {
 
   async putRawArtifact(rawArtifact: RawArtifact): Promise<string> {
     const serialized = serializeRawArtifact(rawArtifact);
-    const hash = keccak256(toBytes(serialized));
+    const hash = crypto.createHash('sha256').update(serialized).digest('hex');
     const dataAddress = `0g://mock/${hash}`;
 
     this.store.set(dataAddress, serialized);

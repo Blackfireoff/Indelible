@@ -1,4 +1,4 @@
-import type { StorageAdapter } from "../adapters/storage/StorageAdapter.js";
+import type { ArtifactUploadResult, StorageAdapter } from "../adapters/storage/StorageAdapter.js";
 import type { CleanArticle } from "../schemas/cleanArticle.js";
 import type { StatementsArtifact } from "../schemas/statements.js";
 import type { RefinedStatementsArtifact } from "../schemas/refinedStatements.js";
@@ -6,16 +6,16 @@ import type { RetrievalChunksArtifact } from "../schemas/retrievalChunks.js";
 import type { EmbeddingsArtifact } from "../schemas/embeddings.js";
 
 export interface UploadedAddresses {
-  cleanArticle: string;
-  statements: string;
-  refinedStatements?: string;
-  retrievalChunks: string;
-  embeddings: string;
+  cleanArticle: ArtifactUploadResult;
+  statements: ArtifactUploadResult;
+  refinedStatements?: ArtifactUploadResult;
+  retrievalChunks: ArtifactUploadResult;
+  embeddings: ArtifactUploadResult;
 }
 
 /**
  * Serialize and upload all derived artifacts to storage.
- * Returns the data addresses for inclusion in the document manifest.
+ * Returns upload results (Merkle root + storage sequence + tx hash) for the document manifest.
  *
  * Copies JSON sur disque : faites par `runIngestionJob` (archives + option `SAVE_ARTIFACTS_BEFORE_UPLOAD`).
  */
@@ -35,13 +35,13 @@ export async function uploadArtifacts(
   console.log("[uploadArtifacts] Uploading statements.json …");
   const statementsAddress = await adapter.uploadArtifact("statements.json", statementsJson);
 
-  let refinedStatementsAddress: string | undefined;
+  let refinedStatementsAddress: ArtifactUploadResult | undefined;
   if (refinedStatements) {
     const refinedJson = JSON.stringify(refinedStatements, null, 2);
     console.log("[uploadArtifacts] Uploading verified_statements.json …");
     refinedStatementsAddress = await adapter.uploadArtifact(
       "verified_statements.json",
-      refinedJson
+      refinedJson,
     );
   }
 

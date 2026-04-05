@@ -11,8 +11,8 @@
       "speaker": "Trump",
       "speaker_role": null,
       "statement_text": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks",
-      "statement_type": "direct_quote",
-      "attribution_text": "says",
+      "statement_type": "reported_speech",
+      "attribution_text": "Trump says Iran has 48 hours to open Strait of Hormuz or face attacks",
       "evidence_paragraph_ids": [
         "para_a732cd5704ab132d"
       ],
@@ -31,8 +31,8 @@
     },
     {
       "statementId": "stmt_9928fdc8ed864005",
-      "speaker": "Trump and Israel",
-      "speaker_role": null,
+      "speaker": "Trump",
+      "speaker_role": "U.S. President",
       "statement_text": "U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure",
       "statement_type": "reported_speech",
       "attribution_text": "ON, April 5 (Reuters) - U.S. President Donald Trump and Israel on Saturday stepped up pressure on Iran to open the strategic Strait of Hormuz or face attacks on its energy infrastructure, while Iranian and U.S.",

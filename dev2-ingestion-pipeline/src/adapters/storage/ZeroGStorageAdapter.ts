@@ -11,13 +11,13 @@
  * @see https://github.com/0gfoundation/0g-storage-ts-starter-kit/tree/master/scripts
  */
 
-import { Indexer, ZgFile } from "@0gfoundation/0g-ts-sdk";
+import { FixedPriceFlow__factory, Indexer, StorageNode, ZgFile } from "@0gfoundation/0g-ts-sdk";
 import { ethers } from "ethers";
 import { readFileSync, unlinkSync, existsSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomBytes } from "crypto";
-import type { StorageAdapter } from "./StorageAdapter.js";
+import type { ArtifactUploadResult, StorageAdapter } from "./StorageAdapter.js";
 import {
   buildRetryOptsFromEnv,
   buildTxOptsFromEnv,
@@ -71,6 +71,48 @@ export class ZeroGStorageAdapter implements StorageAdapter {
    * `uploadArtifact` still returns the root hash. Set `ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD=true`
    * to restore hard-fail behavior (previous default semantics).
    */
+  /**
+   * Flow `Submit` event carries `submissionIndex` — the same sequence the SDK uses as `txSeq`
+   * for storage node calls (`getFileInfoByTxSeq`, segment uploads). See SDK `Uploader.processLogs`.
+   */
+  private parseSubmissionIndexFromReceipt(receipt: ethers.TransactionReceipt): number | null {
+    const iface = new ethers.Interface(FixedPriceFlow__factory.abi);
+    for (const log of receipt.logs) {
+      try {
+        const parsed = iface.parseLog({
+          topics: log.topics as string[],
+          data: log.data,
+        });
+        if (parsed?.name === "Submit") {
+          const r = parsed.args as ethers.Result;
+          const si = r.submissionIndex;
+          return si !== undefined ? Number(si) : null;
+        }
+      } catch {
+        continue;
+      }
+    }
+    return null;
+  }
+
+  /** Fallback when receipt parsing fails: ask a storage node for `FileInfo.tx.seq` (per Storage SDK). */
+  private async tryGetStorageSequenceFromNode(
+    rootHash: string,
+    indexerInstance: Indexer,
+  ): Promise<number | null> {
+    try {
+      const locs = await indexerInstance.getFileLocations(rootHash);
+      if (!locs || locs.length === 0) {
+        return null;
+      }
+      const node = new StorageNode(locs[0].url);
+      const info = await node.getFileInfo(rootHash, false);
+      return info?.tx?.seq ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   private async waitForIndexerAfterUpload(rootHash: string, label: string): Promise<void> {
     const strict = process.env.ZEROG_STRICT_INDEXER_SYNC_AFTER_UPLOAD === "true";
     try {
@@ -95,7 +137,7 @@ export class ZeroGStorageAdapter implements StorageAdapter {
     }
   }
 
-  async uploadArtifact(fileName: string, data: string): Promise<string> {
+  async uploadArtifact(fileName: string, data: string): Promise<ArtifactUploadResult> {
     const provider = new ethers.JsonRpcProvider(this.rpcUrl);
     const signer = new ethers.Wallet(this.privateKey, provider);
 
@@ -175,19 +217,38 @@ export class ZeroGStorageAdapter implements StorageAdapter {
           throw new Error(`Upload failed: ${errMsg}`);
         }
         console.log(`[0G] File already exists on storage nodes — waiting for indexer…`);
-        await waitUntilAnyIndexerHasLocations(
-          this.indexerUrlCandidates,
-          rootHash,
-          "post-upload (dedup)",
-        );
-        return rootHash;
+        await this.waitForIndexerAfterUpload(rootHash, "post-upload (dedup)");
+        let storageSeq = await this.tryGetStorageSequenceFromNode(rootHash, indexer);
+        return {
+          dataAddress: rootHash,
+          sequence: storageSeq,
+          flowTxHash: null,
+        };
       }
 
       const txId = "txHash" in tx ? tx.txHash : tx.txHashes[0];
       const returnedRoot = "rootHash" in tx ? tx.rootHash : tx.rootHashes[0];
       console.log(`[0G] ✓ Upload complete. TX: ${txId}, Root: ${returnedRoot}`);
+
+      let storageSeq: number | null = null;
+      if (txId) {
+        const receipt = await provider.getTransactionReceipt(txId);
+        if (receipt) {
+          storageSeq = this.parseSubmissionIndexFromReceipt(receipt);
+        }
+      }
+
       await this.waitForIndexerAfterUpload(returnedRoot, "post-upload");
-      return returnedRoot;
+
+      if (storageSeq === null) {
+        storageSeq = await this.tryGetStorageSequenceFromNode(returnedRoot, indexer);
+      }
+
+      return {
+        dataAddress: returnedRoot,
+        sequence: storageSeq,
+        flowTxHash: txId || null,
+      };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
