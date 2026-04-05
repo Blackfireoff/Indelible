@@ -23,5 +23,5 @@ export const metadata = {
   name: 'Indelible',
   description: 'Indelible. - Making political discourse transparent and accessible',
   url: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
-  icons: ['/logo/small.svg']
+  icons: [typeof window !== 'undefined' ? `${window.location.origin}/logo/small.svg` : 'http://localhost:3000/logo/small.svg']
 }

@@ -16,6 +16,8 @@ if (!globalAny.__appkit_modal__) {
     networks,
     projectId,
     metadata,
+    // @ts-ignore - Some versions of AppKit require this at the root despite typings
+    enableAnalytics: false,
     themeMode: 'light',
     themeVariables: {
     },

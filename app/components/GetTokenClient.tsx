@@ -29,15 +29,24 @@ const PACKAGES = [
 ]
 
 export default function GetTokenClient() {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, connector } = useAccount()
   const { data: balanceData } = useBalance({ address })
   const { walletProvider } = useAppKitProvider('eip155')
   const { open } = useAppKit()
+
+  // Detect if the user is using an AppKit embedded social/email wallet
+  const isSocialWallet = connector ? (
+    connector.id.toLowerCase().includes('auth') ||
+    connector.id.toLowerCase().includes('email') ||
+    connector.id.toLowerCase().includes('social') ||
+    connector.id.toLowerCase().includes('appkit')
+  ) : false
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
 
   const [customHash, setCustomHash] = useState<`0x${string}` | undefined>(undefined)
   const [isPending, setIsPending] = useState(false)
   const [errorObj, setErrorObj] = useState<Error | null>(null)
+  const [addTokenError, setAddTokenError] = useState<string | null>(null)
 
   // Read ETH price from contract
   const { data: ethPriceRaw } = useReadContract({
@@ -100,6 +109,7 @@ export default function GetTokenClient() {
 
   const handleAddToken = async () => {
     if (!walletProvider) return
+    setAddTokenError(null)
     try {
       await (walletProvider as any).request({
         method: 'wallet_watchAsset',
@@ -113,8 +123,14 @@ export default function GetTokenClient() {
           },
         },
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to add token to wallet', error)
+      const msg = error?.message?.toLowerCase() || String(error).toLowerCase()
+      if (msg.includes('not allowed') || msg.includes('aborted') || msg.includes('not supported')) {
+        setAddTokenError("Your current wallet (Social/Email Login) does not support manually importing tokens into an interface.")
+      } else {
+        setAddTokenError("Failed to add token or request was declined.")
+      }
     }
   }
 
@@ -267,16 +283,16 @@ export default function GetTokenClient() {
         </div>
 
         <button
-          onClick={isConnected ? handleAddToken : undefined}
-          disabled={!isConnected}
+          onClick={isConnected && !isSocialWallet ? handleAddToken : undefined}
+          disabled={!isConnected || isSocialWallet}
           className={`w-full h-12 rounded-xl font-semibold text-[14px] transition-all
-            ${isConnected
+            ${isConnected && !isSocialWallet
               ? 'bg-[var(--landing-primary-dark)] hover:bg-[var(--landing-primary)] text-white cursor-pointer shadow-sm'
               : 'bg-[var(--landing-bg-light)] border border-[var(--landing-border)] text-[var(--landing-text-muted)] cursor-not-allowed'
             }
           `}
         >
-          Add INDL to Wallet
+          {isSocialWallet ? 'Not supported by Social Wallet' : 'Add INDL to Wallet'}
         </button>
       </div>
     </div>
