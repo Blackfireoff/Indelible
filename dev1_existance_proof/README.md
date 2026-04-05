@@ -130,25 +130,39 @@ npx tsx workflow/index.ts https://example.com
 
 ### Fetch HTTP (403/401, Reuters, etc.)
 
-Le fetch utilise des **en-têtes de navigateur** (Chrome, `Sec-Fetch-*`, `sec-ch-ua`, `Referer` = origine du site) et ne télécharge **que le document HTML** (une requête GET — pas d’assets).
+Le fetch envoie **une seule requête GET** (HTML du document uniquement, pas d’assets). Les valeurs par défaut imitent **Chrome 146 sur Windows** : `Accept` (y compris `application/signed-exchange`), `sec-ch-ua`, `Priority: u=0, i`, `Sec-Fetch-Site: same-origin`, `Referer` = `https://<host>/` (navigation interne).
 
-Si la cible renvoie encore **401/403** (bot detection, Akamai, etc.) :
+Pour Reuters / Akamai, il faut en général **reproduire une session navigateur** :
+
+1. Ouvrir le site dans Chrome, naviguer normalement.
+2. DevTools → **Network** → cliquer la requête document → copier **`Cookie`** et un **`Referer`** plausible (autre article ou rubrique **sur le même origin**).
+3. Les coller dans `.env` :
+
+```env
+FETCH_COOKIE="usprivacy=...; datadome=...; ..."
+FETCH_REFERER="https://www.reuters.com/markets/econ-world/..."
+```
 
 | Variable | Rôle |
 |----------|------|
-| `FETCH_HTTP_PROXY` ou `HTTPS_PROXY` | Proxy HTTP(S) (ex. `http://127.0.0.1:8888` pour mitmproxy, ou proxy résidentiel). |
-| `FETCH_COOKIE` | Cookie d’une session navigateur valide (copier depuis les DevTools → l’onglet réseau → en-tête `Cookie`). |
-| `FETCH_REFERER` | Surcharge du `Referer` (défaut = `origin/` de l’URL). |
-| `FETCH_SEC_FETCH_SITE` | `none` (défaut), `same-origin`, `same-site`, `cross-site` — certains WAF sont sensibles à cette valeur. |
-| `FETCH_USER_AGENT` | Surcharge du User-Agent. |
-| `FETCH_EXTRA_HEADERS` | JSON d’en-têtes supplémentaires, ex. `{"Cookie":"..."}`. |
+| `FETCH_HTTP_PROXY` ou `HTTPS_PROXY` | Proxy HTTP(S) (ex. `http://127.0.0.1:8080`). |
+| `FETCH_COOKIE` | En-tête `Cookie` (session + datadome + Optanon, etc.). |
+| `FETCH_REFERER` | Page « précédente » sur le **même host** (défaut : `origin/` de l’URL cible). |
+| `FETCH_SEC_FETCH_SITE` | Défaut `same-origin` ; `none` si besoin (première visite sans cookie). |
+| `FETCH_ACCEPT` | Surcharge du `Accept` (défaut = Chrome document + signed-exchange). |
+| `FETCH_ACCEPT_LANGUAGE` | Défaut `fr-FR,fr;q=0.9`. |
+| `FETCH_USER_AGENT` | Surcharge (défaut Chrome 146 Windows). |
+| `FETCH_SEC_CH_UA` | Surcharge `sec-ch-ua`. |
+| `FETCH_EXTRA_HEADERS` | JSON d’en-têtes additionnels. |
 
-Exemple avec proxy local :
+Exemple avec proxy :
 
 ```bash
 set FETCH_HTTP_PROXY=http://127.0.0.1:8080
-npx tsx workflow/index.ts "https://www.reuters.com/..."
+npx tsx workflow/index.ts "https://www.reuters.com/world/..."
 ```
+
+Ne pas versionner le `.env` avec de vrais cookies (secrets).
 
 ### Running Tests
 
